@@ -2,18 +2,42 @@
 
 include(GNUInstallDirs)
 
-add_library(beman.monadics)
+add_library(beman.monadics INTERFACE)
 add_library(beman::monadics ALIAS beman.monadics)
-
-target_sources(beman.monadics PRIVATE monadics.cpp)
 
 target_sources(
     beman.monadics
-    PUBLIC
+    INTERFACE
         FILE_SET HEADERS
-        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../../../include
+        BASE_DIRS ../../../include
         FILES
-            ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/beman/monadics/monadics.hpp
+            ../../../include/beman/monadics/detail/and_then.hpp
+            ../../../include/beman/monadics/detail/as_pointer.hpp
+            ../../../include/beman/monadics/detail/decomposable.hpp
+            ../../../include/beman/monadics/detail/deduce_error_fn.hpp
+            ../../../include/beman/monadics/detail/deduce_error_type.hpp
+            ../../../include/beman/monadics/detail/deduce_lift_error_fn.hpp
+            ../../../include/beman/monadics/detail/deduce_lift_fn.hpp
+            ../../../include/beman/monadics/detail/deduce_rebind.hpp
+            ../../../include/beman/monadics/detail/deduce_rebind_error.hpp
+            ../../../include/beman/monadics/detail/deduce_value_fn.hpp
+            ../../../include/beman/monadics/detail/deduce_value_query_fn.hpp
+            ../../../include/beman/monadics/detail/deduce_value_type.hpp
+            ../../../include/beman/monadics/detail/extract_value_type.hpp
+            ../../../include/beman/monadics/detail/instance_of.hpp
+            ../../../include/beman/monadics/detail/meta_extract_value_type.hpp
+            ../../../include/beman/monadics/detail/meta_rebind_error.hpp
+            ../../../include/beman/monadics/detail/meta_rebind_value.hpp
+            ../../../include/beman/monadics/detail/or_else.hpp
+            ../../../include/beman/monadics/detail/pipe.hpp
+            ../../../include/beman/monadics/detail/same_box.hpp
+            ../../../include/beman/monadics/detail/same_template.hpp
+            ../../../include/beman/monadics/detail/same_unqualified_as.hpp
+            ../../../include/beman/monadics/detail/transform.hpp
+            ../../../include/beman/monadics/detail/transform_error.hpp
+            ../../../include/beman/monadics/detail/utility.hpp
+            ../../../include/beman/monadics/monadics.hpp
+            ../../../include/beman/monadics/box_traits.hpp
 )
 
 set_target_properties(
