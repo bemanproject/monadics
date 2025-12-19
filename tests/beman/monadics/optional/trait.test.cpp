@@ -7,6 +7,7 @@
 #include <concepts>
 #include <optional>
 #include <type_traits>
+#include <functional>
 
 namespace beman::monadics::tests {
 

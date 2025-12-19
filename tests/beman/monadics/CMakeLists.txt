@@ -4,6 +4,11 @@ find_package(Catch2 REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
 include(Catch)
 
+set(test_global_target "beman.monadics.tests")
+add_custom_target(${test_global_target})
+
+add_subdirectory(detail)
+
 set(tests
     optional
     raw_ptr
@@ -11,9 +16,6 @@ set(tests
     enum
     expected
 )
-
-set(test_global_target "beman.monadics.tests")
-add_custom_target(${test_global_target})
 
 foreach(test_dir ${tests})
     set(test_set

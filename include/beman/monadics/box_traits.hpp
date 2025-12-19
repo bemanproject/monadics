@@ -6,7 +6,6 @@
 #include <concepts>
 #include <type_traits>
 #include <utility>
-#include <functional>
 
 #include <beman/monadics/detail/as_pointer.hpp>
 #include <beman/monadics/detail/decomposable.hpp>
