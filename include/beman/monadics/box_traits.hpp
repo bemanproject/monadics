@@ -10,13 +10,15 @@
 
 #include <beman/monadics/detail/as_pointer.hpp>
 #include <beman/monadics/detail/decomposable.hpp>
+#include <beman/monadics/detail/deduce_error_fn.hpp>
+#include <beman/monadics/detail/deduce_error_type.hpp>
+#include <beman/monadics/detail/deduce_lift_error_fn.hpp>
+#include <beman/monadics/detail/deduce_lift_fn.hpp>
+#include <beman/monadics/detail/deduce_rebind.hpp>
+#include <beman/monadics/detail/deduce_rebind_error.hpp>
 #include <beman/monadics/detail/deduce_value_fn.hpp>
 #include <beman/monadics/detail/deduce_value_query_fn.hpp>
 #include <beman/monadics/detail/deduce_value_type.hpp>
-#include <beman/monadics/detail/deduce_error_fn.hpp>
-#include <beman/monadics/detail/deduce_error_type.hpp>
-#include <beman/monadics/detail/deduce_rebind.hpp>
-#include <beman/monadics/detail/deduce_rebind_error.hpp>
 #include <beman/monadics/detail/instance_of.hpp>
 #include <beman/monadics/detail/same_template.hpp>
 #include <beman/monadics/detail/same_unqualified_as.hpp>
@@ -24,67 +26,6 @@
 namespace beman::monadics {
 
 namespace detail::_box_traits {
-
-template <typename Fn, typename Box, typename R>
-concept invocable_r = requires {
-    requires std::invocable<Fn, Box>;
-    { std::invoke(std::declval<Fn>(), std::declval<Box>()) } -> same_unqualified_as<R>;
-};
-
-template <typename Box, typename Traits, typename T>
-consteval auto deduce_lift_fn() noexcept {
-    if constexpr (requires { Traits::lift(std::declval<T>()); }) {
-        return [](auto&& v) { return Traits::lift(std::forward<decltype(v)>(v)); };
-    } else if constexpr (requires { &Traits::lift; }) {
-        // return &Traits::lift;
-        return [](auto& v) { return Traits::lift(std::forward<decltype(v)>(v)); };
-    } else if constexpr (std::is_void_v<T>) {
-        return []() { return Box{}; };
-    } else if constexpr (std::constructible_from<Box, T>) {
-        return [](auto&& v) { return Box{std::forward<decltype(v)>(v)}; };
-    }
-};
-
-template <typename Box, typename Traits, typename T>
-concept has_lift_fn = requires {
-    requires requires {
-        { deduce_lift_fn<Box, Traits, T>() } -> std::invocable<T&>; // T& for raw_ptr value
-        // { deduce_lift_fn<Box, Traits, T>()(std::declval<T>()) } -> same_unqualified_as<Box>;
-        // { deduce_lift_fn<Box, Traits, T>()(std::declval<T>()) } -> same_unqualified_as<Box>;
-    } || requires {
-        requires std::is_void_v<T>;
-        { deduce_lift_fn<Box, Traits, T>() } -> std::invocable;
-        // { deduce_lift_fn<Box, Traits, T>() } -> same_unqualified_as<Box>;
-    };
-};
-
-template <typename Box, typename Traits, typename T>
-    requires has_lift_fn<Box, Traits, T>
-inline constexpr auto lift_fn = deduce_lift_fn<Box, Traits, T>();
-
-template <typename Box, typename Traits, typename E>
-consteval auto deduce_lift_error_fn() noexcept {
-    if constexpr (requires { Traits::lift_error(std::declval<E>()); }) {
-        return [](auto&& e) { return Traits::lift_error(std::forward<decltype(e)>(e)); };
-    } else if constexpr (std::constructible_from<Box, E>) {
-        return [](auto&& e) { return Box{std::forward<decltype(e)>(e)}; };
-    }
-};
-
-template <typename Box, typename Traits, typename E>
-concept has_lift_error_fn = requires {
-    requires requires {
-        { deduce_lift_error_fn<Box, Traits, E>() } -> std::invocable<E>;
-        { deduce_lift_error_fn<Box, Traits, E>()(std::declval<E>()) } -> same_unqualified_as<Box>;
-    } || requires {
-        { deduce_lift_error_fn<Box, Traits, E>() } -> std::invocable;
-        { deduce_lift_error_fn<Box, Traits, E>()() } -> same_unqualified_as<Box>;
-    };
-};
-
-template <typename Box, typename Traits, typename E>
-    requires has_lift_error_fn<Box, Traits, E>
-inline constexpr auto lift_error_fn = deduce_lift_error_fn<Box, Traits, E>();
 
 template <typename Box, typename Traits>
 concept is_box = requires {
@@ -117,8 +58,8 @@ struct deduce_traits {
     inline static constexpr auto value     = deduce_value_fn<Box, Traits>;
     inline static constexpr auto error     = deduce_error_fn<Box, Traits>;
 
-    inline static constexpr auto lift       = lift_fn<Box, Traits, value_type>;
-    inline static constexpr auto lift_error = lift_error_fn<Box, Traits, error_type>;
+    inline static constexpr auto lift       = deduce_lift_fn<Box, Traits, value_type>;
+    inline static constexpr auto lift_error = deduce_lift_error_fn<Box, Traits, error_type>;
 
     template <typename Fn, typename B>
     // requires requires {
