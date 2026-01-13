@@ -29,11 +29,14 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-include(CTest)
+include(infra/cmake/beman-install-library-config.cmake)
 
 add_subdirectory(src/beman/monadics)
 
+beman_install_library(beman.monadics)
+
 if(BEMAN_MONADICS_BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests/beman/monadics)
 endif()
 
