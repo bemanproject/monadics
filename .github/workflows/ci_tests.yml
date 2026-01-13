@@ -139,7 +139,7 @@ jobs:
     with:
       image: ghcr.io/bemanproject/infra-containers-gcc:latest
       cxx_standard: 26
-      main_header: identity.hpp
+      main_header: monadics.hpp
 
   create-issue-when-fault:
     needs: [preset-test, build-and-test]
