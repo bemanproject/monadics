@@ -37,7 +37,7 @@ struct beman::monadics::box_traits<Box> {
 
     [[nodiscard]] inline static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }
 
-    inline static constexpr value_type value(Box&& box) noexcept {}
+    inline static constexpr value_type value(Box&&) noexcept {}
 
     [[nodiscard]] inline static constexpr decltype(auto) error(auto&& box) noexcept {
         return std::forward<decltype(box)>(box);
