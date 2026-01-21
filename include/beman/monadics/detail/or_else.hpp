@@ -3,13 +3,13 @@
 #ifndef BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 #define BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 
-#include "beman/monadics/box_traits.hpp"
 #include <beman/monadics/detail/pipe.hpp>
+
 #include <type_traits>
 
-namespace beman::monadics {
+namespace beman::monadics::detail {
 
-namespace detail::_or_else {
+namespace _or_else {
 
 template <typename Fn, typename Box, typename BoxTraits>
 consteval auto invoke_result() {
@@ -70,10 +70,10 @@ struct op_fn {
     }
 };
 
-} // namespace detail::_or_else
+} // namespace _or_else
 
-inline constexpr detail::pipe_for<detail::_or_else::op_fn> or_else{};
+inline constexpr pipe_for<_or_else::op_fn> or_else{};
 
-} // namespace beman::monadics
+} // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_OR_ELSE_HPP

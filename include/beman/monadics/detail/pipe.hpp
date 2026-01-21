@@ -4,7 +4,7 @@
 #define BEMAN_MONADICS_DETAIL_PIPE_HPP
 
 #include <beman/monadics/detail/same_unqualified_as.hpp>
-#include <beman/monadics/box_traits.hpp>
+#include <beman/monadics/detail/deduce_box_traits.hpp>
 
 #include <utility>
 

@@ -3,7 +3,6 @@
 #ifndef BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 #define BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 
-#include "beman/monadics/box_traits.hpp"
 #include <beman/monadics/detail/pipe.hpp>
 
 #include <concepts>
@@ -11,9 +10,9 @@
 #include <functional>
 #include <utility>
 
-namespace beman::monadics {
+namespace beman::monadics::detail {
 
-namespace detail::_and_then {
+namespace _and_then {
 
 template <typename Fn, typename Value>
 [[nodiscard]] consteval decltype(auto) invoke_result() noexcept {
@@ -104,10 +103,10 @@ struct op_fn {
     }
 };
 
-} // namespace detail::_and_then
+} // namespace _and_then
 
-inline constexpr detail::pipe_for<detail::_and_then::op_fn> and_then{};
+inline constexpr pipe_for<_and_then::op_fn> and_then{};
 
-} // namespace beman::monadics
+} // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_AND_THEN_HPP

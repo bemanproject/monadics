@@ -3,14 +3,14 @@
 #ifndef BEMAN_MONADICS_DETAIL_TRANSFORM_ERROR_HPP
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_ERROR_HPP
 
-#include "beman/monadics/box_traits.hpp"
 #include <beman/monadics/detail/or_else.hpp>
+
 #include <type_traits>
 #include <utility>
 
-namespace beman::monadics {
+namespace beman::monadics::detail {
 
-namespace detail::_transform_error {
+namespace _transform_error {
 
 template <typename Fn, typename Box, typename BoxTraits>
 consteval auto invoke_result() {
@@ -46,10 +46,10 @@ struct op_fn {
     }
 };
 
-} // namespace detail::_transform_error
+} // namespace _transform_error
 
-inline constexpr detail::pipe_for<detail::_transform_error::op_fn> transform_error{};
+inline constexpr pipe_for<_transform_error::op_fn> transform_error{};
 
-} // namespace beman::monadics
+} // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_TRANSFORM_ERROR_HPP

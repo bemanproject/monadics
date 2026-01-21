@@ -3,7 +3,7 @@
 #ifndef BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
 #define BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
 
-#include <beman/monadics/box_traits.hpp>
+#include <beman/monadics/monadics.hpp>
 
 #include <type_traits>
 

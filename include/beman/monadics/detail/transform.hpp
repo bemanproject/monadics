@@ -3,14 +3,14 @@
 #ifndef BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 
-#include "beman/monadics/box_traits.hpp"
 #include <beman/monadics/detail/and_then.hpp>
+
 #include <type_traits>
 #include <utility>
 
-namespace beman::monadics {
+namespace beman::monadics::detail {
 
-namespace detail::_transform {
+namespace _transform {
 
 template <typename Fn, typename Value>
 consteval auto invoke_result() {
@@ -78,10 +78,10 @@ struct op_fn {
     }
 };
 
-} // namespace detail::_transform
+} // namespace _transform
 
-inline constexpr detail::pipe_for<detail::_transform::op_fn> transform{};
+inline constexpr pipe_for<_transform::op_fn> transform{};
 
-} // namespace beman::monadics
+} // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_TRANSFORM_HPP

@@ -35,7 +35,6 @@ target_sources(
             ../../../include/beman/monadics/detail/transform_error.hpp
             ../../../include/beman/monadics/detail/utility.hpp
             ../../../include/beman/monadics/monadics.hpp
-            ../../../include/beman/monadics/box_traits.hpp
 )
 
 set_target_properties(

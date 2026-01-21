@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_BOX_TRAITS_HPP
-#define BEMAN_MONADICS_BOX_TRAITS_HPP
+#ifndef BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
+#define BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
 
 #include <concepts>
 #include <type_traits>
@@ -22,11 +22,11 @@
 #include <beman/monadics/detail/same_template.hpp>
 #include <beman/monadics/detail/same_unqualified_as.hpp>
 
-namespace beman::monadics {
+namespace beman::monadics::detail {
 
-namespace detail::_box_traits {
+namespace _deduce_box_traits {
 
-template <typename Box, typename Traits>
+template <typename Box, typename Traits = std::remove_cvref_t<Box>>
 concept is_box = requires {
     requires has_value_type<Box, Traits>;
     requires has_error_type<Box, Traits>;
@@ -42,7 +42,7 @@ concept is_box = requires {
 };
 
 template <typename Box, typename Traits>
-struct deduce_traits {
+struct traits {
     using box_type   = Box;
     using value_type = deduce_value_type<Box, Traits>;
     using error_type = deduce_error_type<Box, Traits>;
@@ -108,7 +108,7 @@ struct deduce_traits {
     }
 };
 
-} // namespace detail::_box_traits
+} // namespace _deduce_box_traits
 
 template <typename T>
 struct box_traits {
@@ -118,13 +118,13 @@ struct box_traits {
 template <typename Box>
 concept is_box = requires {
     typename box_traits<std::remove_cvref_t<Box>>;
-    requires detail::_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
-                                         box_traits<std::remove_cvref_t<Box>>>;
+    requires detail::_deduce_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
+                                                box_traits<std::remove_cvref_t<Box>>>;
 };
 
 template <is_box T>
-using box_traits_for = detail::_box_traits::deduce_traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
+using box_traits_for = detail::_deduce_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
-} // namespace beman::monadics
+} // namespace beman::monadics::detail
 
-#endif // BEMAN_MONADICS_BOX_TRAITS_HPP
+#endif // BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP

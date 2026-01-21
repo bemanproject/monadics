@@ -3,8 +3,7 @@
 #ifndef BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
 #define BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
 
-#define BEMAN_MONADICS_BOX_TRAITS_BUILDER 1
-#include <beman/monadics/box_traits.hpp>
+#include <beman/monadics/monadics.hpp>
 
 #include <memory>
 

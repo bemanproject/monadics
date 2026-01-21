@@ -3,10 +3,21 @@
 #ifndef BEMAN_MONADICS_MONADICS_HPP
 #define BEMAN_MONADICS_MONADICS_HPP
 
-#include <beman/monadics/box_traits.hpp>
+#include <beman/monadics/detail/deduce_box_traits.hpp>
 #include <beman/monadics/detail/and_then.hpp>
 #include <beman/monadics/detail/or_else.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
+
+namespace beman::monadics {
+
+using detail::and_then;
+using detail::box_traits;
+using detail::box_traits_for;
+using detail::or_else;
+using detail::transform;
+using detail::transform_error;
+
+} // namespace beman::monadics
 
 #endif // BEMAN_MONADICS_MONADICS_HPP
