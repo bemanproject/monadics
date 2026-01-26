@@ -2,6 +2,8 @@
 
 cmake_minimum_required(VERSION 3.25)
 
+set(CMAKE_LINK_DEPENDS_NO_SHARED ${BUILD_SHARED_LIBS})
+
 project(
     beman.monadics
     DESCRIPTION "A Beman Library Monadics"

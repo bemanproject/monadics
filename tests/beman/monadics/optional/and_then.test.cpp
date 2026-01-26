@@ -32,4 +32,19 @@ TEST_CASE("with-value-variadic") {
     STATIC_REQUIRE(result.value() == 1);
 }
 
+template <typename Box, auto op, auto fn>
+concept monadic_invocable = requires (Box &&box) {
+  { box | op(fn) };
+};
+
+TEST_CASE("with-value-variadic2") {
+  STATIC_REQUIRE(monadic_invocable<std::optional<int>, and_then, [](int) { return std::optional{10}; }>);
+  STATIC_REQUIRE(!monadic_invocable<std::optional<int>, and_then, []() { return std::optional{10}; }>);
+    constexpr auto result = std::optional<int>{10} | and_then([](int) { return 10; });
+    // STATIC_REQUIRE(std::same_as<decltype(result), const std::optional<std::size_t>>);
+    // STATIC_REQUIRE(result.has_value() == true);
+    // STATIC_REQUIRE(result.value() == 1);
+
+}
+
 } // namespace beman::monadics::tests

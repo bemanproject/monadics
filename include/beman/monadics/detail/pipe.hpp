@@ -19,13 +19,21 @@ struct pipe_for {
         Fn fn;
 
         template <typename Box, typename Traits = box_traits_for<Box>>
-        [[nodiscard]] inline constexpr decltype(auto) operator()(Box&& box) noexcept {
+        [[nodiscard]] inline constexpr decltype(auto) operator()(Box&& box) noexcept
+            requires requires {
+              { cpo.template operator()<Traits>(std::forward<Box>(box), std::forward<Fn>(fn)) };
+            }
+        {
             // static_assert(std::same_as<decltype(box), Boo*&&>);
             return cpo.template operator()<Traits>(std::forward<Box>(box), std::forward<Fn>(fn));
         }
 
         template <is_box Box, same_unqualified_as<action> A>
-        [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept {
+        [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
+            requires requires {
+              { std::forward<A>(a)(std::forward<Box>(box)) };
+            }
+        {
             return std::forward<A>(a)(std::forward<Box>(box));
         }
     };
