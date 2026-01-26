@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_INVOKE_WITH_VALUE_HPP
 #define BEMAN_MONADICS_DETAIL_INVOKE_WITH_VALUE_HPP
 
+#include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {

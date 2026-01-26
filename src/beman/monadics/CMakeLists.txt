@@ -11,7 +11,9 @@ target_sources(
         FILES
             ../../../include/beman/monadics/detail/and_then.hpp
             ../../../include/beman/monadics/detail/as_pointer.hpp
+            ../../../include/beman/monadics/detail/box_traits.hpp
             ../../../include/beman/monadics/detail/decomposable.hpp
+            ../../../include/beman/monadics/detail/deduce_box_traits.hpp
             ../../../include/beman/monadics/detail/deduce_error_fn.hpp
             ../../../include/beman/monadics/detail/deduce_error_type.hpp
             ../../../include/beman/monadics/detail/deduce_lift_error_fn.hpp
@@ -23,6 +25,9 @@ target_sources(
             ../../../include/beman/monadics/detail/deduce_value_type.hpp
             ../../../include/beman/monadics/detail/extract_value_type.hpp
             ../../../include/beman/monadics/detail/instance_of.hpp
+            ../../../include/beman/monadics/detail/invoke_with_value.hpp
+            ../../../include/beman/monadics/detail/make_with_error.hpp
+            ../../../include/beman/monadics/detail/make_with_value.hpp
             ../../../include/beman/monadics/detail/meta_extract_value_type.hpp
             ../../../include/beman/monadics/detail/meta_rebind_error.hpp
             ../../../include/beman/monadics/detail/meta_rebind_value.hpp
