@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 
+#include "beman/monadics/detail/invoke_with_value.hpp"
 #include <beman/monadics/detail/and_then.hpp>
 
 #include <type_traits>
@@ -10,77 +11,61 @@
 
 namespace beman::monadics::detail {
 
-namespace _transform {
+struct transform_t {
+    template <typename Fn>
+    struct action {
+        Fn fn;
 
-template <typename Fn, typename Value>
-consteval auto invoke_result() {
-    if constexpr (std::is_void_v<Value>) {
-        return std::type_identity<std::invoke_result_t<Fn>>{};
-    } else {
-        return std::type_identity<std::invoke_result_t<Fn, Value>>{};
-    }
-}
-
-template <typename Fn, typename Value>
-    requires requires {
-        requires std::is_void_v<Value>;
-        requires std::invocable<Fn>;
-    } || requires { requires std::invocable<Fn, Value>; }
-using invoke_result_t = decltype(invoke_result<Fn, Value>())::type;
-
-template <typename Fn, typename NewTraits>
-struct LiftedFn {
-    Fn fn;
-
-    [[nodiscard]] inline constexpr decltype(auto) operator()(auto&&... v) const noexcept {
-        if constexpr (std::is_void_v<typename NewTraits::value_type>) {
-            std::forward<Fn>(fn)(std::forward<decltype(v)>(v)...);
-            return NewTraits::lift();
-        } else {
-            return NewTraits::lift(std::forward<Fn>(fn)(std::forward<decltype(v)>(v)...));
-        }
-    }
-};
-
-template <typename T>
-concept False = false;
-
-struct op_fn {
-    template <typename Traits, typename Box, typename Fn>
-    [[nodiscard]] inline constexpr auto operator()(Box&& box, Fn&& fn) const noexcept {
-        using NewValue  = decltype(Traits::invoke_with_value(std::forward<Fn>(fn), std::forward<Box>(box)));
-        using NewTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
-
-        if (Traits::has_value(box)) {
-            if constexpr (std::is_void_v<typename NewTraits::value_type>) {
-                Traits::invoke_with_value(std::forward<Fn>(fn), std::forward<Box>(box));
-                return NewTraits::lift();
-            } else {
-                return NewTraits::lift(Traits::invoke_with_value(std::forward<Fn>(fn), std::forward<Box>(box)));
+        template <is_box Box, same_unqualified_as<action> A, typename Traits = box_traits_for<Box>>
+        [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
+            requires requires {
+                { Traits::invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)) };
             }
+        /*
+            requires {
+              { box | and_then(...) } -> same_box2<Box>
+            }
+        */
+        {
+
+            // return box | and_then([f = std::forward<A>(a).fn] (auto &&...value) {
+            // using NewValue = decltype(f(std::forward<decltype(value)>(value)...));
+            // using NewBoxTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
+
+            // if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
+            // Traits::invoke_with_value(f, Traits::lift(value...));
+            // return NewBoxTraits::lift();
+            // } else {
+            // return NewBoxTraits::lift(Traits::invoke_with_value(f, value...));
+            // }
+
+            // // return invoke_with_value<Traits>(f, Traits::lift(std::forward<decltype(value)>(value)...));
+            // });
+
+            using NewValue     = decltype(Traits::invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
+            using NewBoxTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
+
+            if (Traits::has_value(box)) {
+                if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
+                    invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box));
+                    return NewBoxTraits::lift();
+                } else {
+                    return NewBoxTraits::lift(
+                        invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
+                }
+            }
+
+            return make_with_error<NewBoxTraits, Traits>(std::forward<Box>(box));
         }
+    };
 
-        return NewTraits::lift_with_error(std::forward<Box>(box));
-
-        // return std::forward<Box>(box)
-        // | and_then([f = std::forward<Fn>(fn)](auto&&... v) mutable -> typename NewTraits::box_type {
-        // if constexpr (sizeof...(v) == 1) {
-        // return NewTraits::lift(std::forward<decltype(f)>(f)(std::forward<decltype(v)>(v)...));
-        // } else if constexpr (std::is_void_v<typename NewTraits::value_type>) {
-        // std::forward<decltype(f)>(f)();
-        // return NewTraits::lift();
-        // } else if constexpr (std::is_void_v<typename Traits::value_type>) {
-        // return NewTraits::lift(std::forward<decltype(f)>(f)());
-        // } else {
-        // static_assert(False<Box>, "something went wrong");
-        // }
-        // });
+    template <typename Fn>
+    [[nodiscard]] constexpr decltype(auto) operator()(Fn&& fn) const noexcept {
+        return action<decltype(fn)>{std::forward<Fn>(fn)};
     }
 };
 
-} // namespace _transform
-
-inline constexpr pipe_for<_transform::op_fn> transform{};
+inline constexpr transform_t transform{};
 
 } // namespace beman::monadics::detail
 

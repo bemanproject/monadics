@@ -8,6 +8,7 @@
 #include <utility>
 
 #include <beman/monadics/detail/as_pointer.hpp>
+#include <beman/monadics/detail/box_traits.hpp>
 #include <beman/monadics/detail/decomposable.hpp>
 #include <beman/monadics/detail/deduce_error_fn.hpp>
 #include <beman/monadics/detail/deduce_error_type.hpp>
@@ -96,12 +97,10 @@ struct traits {
         }
     }
 
-    template <typename B>
+    template <typename BT, typename B>
     [[nodiscard]] static constexpr decltype(auto) lift_with_error(B&& box) noexcept {
-        if constexpr (requires { error(std::forward<B>(box)); }) {
-            return lift_error(error(std::forward<B>(box)));
-            // } else if constexpr (requires { error(); }) {
-            // return lift_error();
+        if constexpr (requires { BT::error(std::forward<B>(box)); }) {
+            return lift_error(BT::error(std::forward<B>(box)));
         } else {
             return lift_error(error());
         }
@@ -109,11 +108,6 @@ struct traits {
 };
 
 } // namespace _deduce_box_traits
-
-template <typename T>
-struct box_traits {
-    using box_type = T;
-};
 
 template <typename Box>
 concept is_box = requires {
