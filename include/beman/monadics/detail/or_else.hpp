@@ -21,9 +21,7 @@ struct or_else_t {
                 { invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)) } -> same_box<Box>;
             }
         {
-            using NewBox       = decltype(invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)));
-            using NewBoxTraits = box_traits_for<NewBox>;
-
+            using NewBox = decltype(invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)));
             if (!BoxTraits::has_value(box)) {
                 return invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box));
             }

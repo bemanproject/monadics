@@ -8,7 +8,6 @@
 #include "beman/monadics/detail/invoke_with_value.hpp"
 #include "beman/monadics/detail/same_box.hpp"
 
-#include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {
@@ -28,8 +27,7 @@ struct and_then_t {
                 return invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box));
             }
 
-            using NewBox       = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
-            using NewBoxTraits = box_traits_for<NewBox>;
+            using NewBox = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
 
             return rebox_error<NewBox>(std::forward<Box>(box));
         }
