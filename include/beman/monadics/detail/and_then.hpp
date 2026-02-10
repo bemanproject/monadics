@@ -28,10 +28,10 @@ struct and_then_t {
             }
         {
             if (Traits::has_value(box)) {
-                return invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box));
+                return invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box));
             }
 
-            using NewBox       = decltype(invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
+            using NewBox       = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
             using NewBoxTraits = box_traits_for<NewBox>;
 
             return rebox_error<NewBox>(std::forward<Box>(box));
