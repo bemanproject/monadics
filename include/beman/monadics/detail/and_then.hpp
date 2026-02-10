@@ -6,17 +6,12 @@
 #include "beman/monadics/detail/deduce_box_traits.hpp"
 #include "beman/monadics/detail/rebox_error.hpp"
 #include "beman/monadics/detail/invoke_with_value.hpp"
+#include "beman/monadics/detail/same_box.hpp"
 
 #include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {
-
-template <typename NewBox, typename Traits, typename NewBoxTraits = box_traits_for<NewBox>>
-concept same_box2 = requires {
-    requires std::same_as<typename NewBoxTraits::template rebind<typename Traits::value_type>,
-                          typename Traits::box_type>;
-};
 
 struct and_then_t {
     template <typename Fn>
@@ -27,9 +22,9 @@ struct and_then_t {
         [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
                 { Traits::value(std::forward<Box>(box)) } -> std::same_as<void>;
-                { std::forward<A>(a).fn() } -> same_box2<Traits>;
+                { std::forward<A>(a).fn() } -> same_box<Box>;
             } || requires {
-                { std::forward<A>(a).fn(Traits::value(std::forward<Box>(box))) } -> same_box2<Traits>;
+                { std::forward<A>(a).fn(Traits::value(std::forward<Box>(box))) } -> same_box<Box>;
             }
         {
             if (Traits::has_value(box)) {
