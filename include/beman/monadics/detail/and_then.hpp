@@ -4,7 +4,7 @@
 #define BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 
 #include "beman/monadics/detail/deduce_box_traits.hpp"
-#include "beman/monadics/detail/make_with_error.hpp"
+#include "beman/monadics/detail/rebox_error.hpp"
 #include "beman/monadics/detail/invoke_with_value.hpp"
 
 #include <concepts>
@@ -39,7 +39,7 @@ struct and_then_t {
             using NewBox       = decltype(invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
             using NewBoxTraits = box_traits_for<NewBox>;
 
-            return make_with_error<NewBoxTraits, Traits>(std::forward<Box>(box));
+            return rebox_error<NewBox>(std::forward<Box>(box));
         }
     };
 

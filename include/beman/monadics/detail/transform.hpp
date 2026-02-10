@@ -4,6 +4,7 @@
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 
 #include <beman/monadics/detail/invoke_with_value.hpp>
+#include <beman/monadics/detail/rebox_error.hpp>
 #include <beman/monadics/detail/and_then.hpp>
 
 #include <type_traits>
@@ -28,7 +29,8 @@ struct transform_t {
         */
         {
             using NewValue     = decltype(invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
-            using NewBoxTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
+            using NewBox       = typename Traits::template rebind<NewValue>;
+            using NewBoxTraits = box_traits_for<NewBox>;
 
             if (Traits::has_value(box)) {
                 if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
@@ -40,7 +42,7 @@ struct transform_t {
                 }
             }
 
-            return make_with_error<NewBoxTraits, Traits>(std::forward<Box>(box));
+            return rebox_error<NewBox>(std::forward<Box>(box));
         }
     };
 
