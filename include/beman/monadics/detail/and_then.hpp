@@ -21,10 +21,7 @@ struct and_then_t {
         template <is_box Box, same_unqualified_as<action> A, typename Traits = box_traits_for<Box>>
         [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
-                { Traits::value(std::forward<Box>(box)) } -> std::same_as<void>;
-                { std::forward<A>(a).fn() } -> same_box<Box>;
-            } || requires {
-                { std::forward<A>(a).fn(Traits::value(std::forward<Box>(box))) } -> same_box<Box>;
+                { invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)) } -> same_box<Box>;
             }
         {
             if (Traits::has_value(box)) {
