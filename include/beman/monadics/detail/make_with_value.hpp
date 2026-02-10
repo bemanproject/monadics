@@ -11,9 +11,9 @@ namespace beman::monadics::detail {
 template <typename NewBoxTraits, typename BoxTraits, typename Box>
 [[nodiscard]] constexpr decltype(auto) make_with_value(Box&& box) noexcept {
     if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
-        return NewBoxTraits::lift();
+        return NewBoxTraits::make();
     } else {
-        return NewBoxTraits::lift(BoxTraits::value(std::forward<Box>(box)));
+        return NewBoxTraits::make(BoxTraits::value(std::forward<Box>(box)));
     }
 }
 

@@ -43,11 +43,11 @@ struct beman::monadics::box_traits<Box> {
         return std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] inline static constexpr decltype(auto) lift(auto&& v) noexcept {
+    [[nodiscard]] inline static constexpr decltype(auto) make(auto&& v) noexcept {
         return std::forward<decltype(v)>(v);
     }
 
-    [[nodiscard]] inline static constexpr decltype(auto) lift_error(auto&& e) noexcept {
+    [[nodiscard]] inline static constexpr decltype(auto) make_error(auto&& e) noexcept {
         return std::forward<decltype(e)>(e);
     }
 };

@@ -3,14 +3,11 @@
 #ifndef BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 #define BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 
-// #include "beman/monadics/detail/same_box.hpp"
 #include "beman/monadics/detail/deduce_box_traits.hpp"
 #include "beman/monadics/detail/make_with_error.hpp"
 #include "beman/monadics/detail/invoke_with_value.hpp"
 
 #include <concepts>
-#include <type_traits>
-#include <functional>
 #include <utility>
 
 namespace beman::monadics::detail {

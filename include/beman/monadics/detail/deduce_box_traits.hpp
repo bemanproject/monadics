@@ -10,8 +10,8 @@
 #include <beman/monadics/detail/decomposable.hpp>
 #include <beman/monadics/detail/deduce_error_fn.hpp>
 #include <beman/monadics/detail/deduce_error_type.hpp>
-#include <beman/monadics/detail/deduce_lift_error_fn.hpp>
-#include <beman/monadics/detail/deduce_lift_fn.hpp>
+#include <beman/monadics/detail/deduce_make_error_fn.hpp>
+#include <beman/monadics/detail/deduce_make_fn.hpp>
 #include <beman/monadics/detail/deduce_rebind.hpp>
 #include <beman/monadics/detail/deduce_rebind_error.hpp>
 #include <beman/monadics/detail/deduce_value_fn.hpp>
@@ -36,8 +36,8 @@ concept is_box = requires {
     requires has_value_fn<Box, Traits>;
     requires has_error_fn<Box, Traits>;
 
-    requires has_lift_fn<Box, Traits, deduce_value_type<Box, Traits>>;
-    requires has_lift_error_fn<Box, Traits, deduce_error_type<Box, Traits>>;
+    requires has_make_fn<Box, Traits, deduce_value_type<Box, Traits>>;
+    requires has_make_error_fn<Box, Traits, deduce_error_type<Box, Traits>>;
 };
 
 template <typename Box, typename Traits>
@@ -56,8 +56,8 @@ struct traits {
     inline static constexpr auto value     = deduce_value_fn<Box, Traits>;
     inline static constexpr auto error     = deduce_error_fn<Box, Traits>;
 
-    inline static constexpr auto lift       = deduce_lift_fn<Box, Traits, value_type>;
-    inline static constexpr auto lift_error = deduce_lift_error_fn<Box, Traits, error_type>;
+    inline static constexpr auto make       = deduce_make_fn<Box, Traits, value_type>;
+    inline static constexpr auto make_error = deduce_make_error_fn<Box, Traits, error_type>;
 };
 
 } // namespace _deduce_box_traits

@@ -13,23 +13,23 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(std::same_as<Traits::rebind<double>, std::shared_ptr<double>>);
     STATIC_REQUIRE(std::same_as<Traits::rebind_error<double>, std::shared_ptr<int>>);
 
-    const auto sp1 = Traits::lift(10);
+    const auto sp1 = Traits::make(10);
     const auto sp2 = std::make_shared<int>(10);
     REQUIRE(sp1);
     REQUIRE(sp2);
     REQUIRE(*sp1 == *sp2);
 
-    // REQUIRE(Traits::lift_error() == std::shared_ptr<int>{});
+    // REQUIRE(Traits::make_error() == std::shared_ptr<int>{});
     REQUIRE(Traits::value(std::make_shared<int>(10)) == 10);
 }
 
 template <typename Traits>
 concept transformable = requires() {
-    // { Traits::lift(typename Traits::value_type{})  };
-    { Traits::lift(std::declval<typename Traits::value_type>()) };
+    // { Traits::make(typename Traits::value_type{})  };
+    { Traits::make(std::declval<typename Traits::value_type>()) };
 };
 
-TEST_CASE("liftable-value") {
+TEST_CASE("makeable-value") {
     using Traits = box_traits_for<std::shared_ptr<int>>;
     STATIC_REQUIRE(transformable<Traits>);
 

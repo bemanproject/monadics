@@ -33,9 +33,9 @@ struct transform_t {
             if (Traits::has_value(box)) {
                 if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
                     invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box));
-                    return NewBoxTraits::lift();
+                    return NewBoxTraits::make();
                 } else {
-                    return NewBoxTraits::lift(
+                    return NewBoxTraits::make(
                         invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
                 }
             }

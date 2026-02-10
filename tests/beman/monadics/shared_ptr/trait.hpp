@@ -19,7 +19,7 @@ struct beman::monadics::box_traits<std::shared_ptr<T>> {
 
     [[nodiscard]] inline static constexpr auto error() noexcept { return nullptr; }
 
-    [[nodiscard]] inline static constexpr decltype(auto) lift(auto&& value) noexcept {
+    [[nodiscard]] inline static constexpr decltype(auto) make(auto&& value) noexcept {
         return std::make_shared<T>(std::forward<decltype(value)>(value));
     }
 };

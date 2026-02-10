@@ -42,7 +42,7 @@ struct op_fn {
 
         // transform_error does not make sense if you don't have error
         return std::forward<Box>(box)
-             | or_else([&fn](auto&& v) { return NewBoxTraits::lift_error(fn(std::forward<decltype(v)>(v))); });
+             | or_else([&fn](auto&& v) { return NewBoxTraits::make_error(fn(std::forward<decltype(v)>(v))); });
     }
 };
 

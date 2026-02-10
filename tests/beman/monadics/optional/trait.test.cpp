@@ -20,8 +20,8 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(Traits::has_value(std::optional{5}));
     STATIC_REQUIRE(Traits::has_value(std::optional<int>{}) == false);
     STATIC_REQUIRE(std::same_as<decltype(Traits::error()), std::nullopt_t>);
-    STATIC_REQUIRE(Traits::lift(10) == std::optional{10});
-    STATIC_REQUIRE(Traits::lift_error(Traits::error()) == std::optional<int>{});
+    STATIC_REQUIRE(Traits::make(10) == std::optional{10});
+    STATIC_REQUIRE(Traits::make_error(Traits::error()) == std::optional<int>{});
 }
 
 /*
@@ -78,8 +78,8 @@ concept is_box = requires {
     };
   };
 
-  // lift
-  // lift_error
+  // make
+  // make_error
 };
 
 
@@ -302,20 +302,20 @@ concept HasError = requires {
 // } || requires;
 
 // template <typename Traits, typename Box>
-// concept HasLift = requires {
+// concept Hasmake = requires {
   // typename ValueType<Traits, Box>;
   // requires std::is_void_v<ValueType<typename Traits, typename Box>
 // };
 
 template <typename Traits, typename Box, typename Value>
-consteval auto liftValue() noexcept {
-    if constexpr (requires { Traits::lift(); }) {
-        return &Traits::lift;
-    } else if constexpr (requires { Traits::lift(Traits::value(std::declval<Box>())); }) {
-        return [](auto&& v) -> decltype(Traits::lift(std::forward<decltype(v)>(v))) {
-            return Traits::lift(std::forward<decltype(v)>(v));
+consteval auto makeValue() noexcept {
+    if constexpr (requires { Traits::make(); }) {
+        return &Traits::make;
+    } else if constexpr (requires { Traits::make(Traits::value(std::declval<Box>())); }) {
+        return [](auto&& v) -> decltype(Traits::make(std::forward<decltype(v)>(v))) {
+            return Traits::make(std::forward<decltype(v)>(v));
         };
-        // return [](auto&& v) { return Traits::lift(std::forward<decltype(v)>(v)); };
+        // return [](auto&& v) { return Traits::make(std::forward<decltype(v)>(v)); };
     } else if constexpr (std::is_void_v<Value>) {
         return []() -> Box { return {}; };
     } else {
@@ -324,11 +324,11 @@ consteval auto liftValue() noexcept {
 };
 
 template <typename Traits, typename Box>
-consteval auto liftError() noexcept {
-    if constexpr (requires { Traits::lift_error(); }) {
-        return &Traits::lift_error;
-    } else if constexpr (requires { Traits::lift_error(Traits::error()); }) {
-        return [](auto&& e) { return Traits::lift_error(std::forward<decltype(e)>(e)); };
+consteval auto makeError() noexcept {
+    if constexpr (requires { Traits::make_error(); }) {
+        return &Traits::make_error;
+    } else if constexpr (requires { Traits::make_error(Traits::error()); }) {
+        return [](auto&& e) { return Traits::make_error(std::forward<decltype(e)>(e)); };
     } else if constexpr (requires { Traits::error(); }) {
         return []() -> Box { return {}; };
     } else {
@@ -712,7 +712,7 @@ struct op_fn {
             invoke_result_t<decltype(std::forward<Fn>(fn)), decltype(BoxTraits::value(std::forward<Box>(box)))>;
         using NewBoxTraits = box_traits_for<typename BoxTraits::template rebind<NewValue>>;
 
-        return std::forward<Box>(box) | and_then(LiftedFn<decltype(fn), NewBoxTraits>{std::forward<Fn>(fn)});
+        return std::forward<Box>(box) | and_then(makeedFn<decltype(fn), NewBoxTraits>{std::forward<Fn>(fn)});
     }
 };
 */
@@ -751,8 +751,8 @@ struct op_fn {
 // // STATIC_REQUIRE(Traits::has_value(std::optional{5}));
 // // STATIC_REQUIRE(Traits::has_value(std::optional<int>{} == false));
 // // STATIC_REQUIRE(std::same_as<decltype(Traits::error()), std::nullopt_t>);
-// // STATIC_REQUIRE(Traits::lift(10) == std::optional{10});
-// // STATIC_REQUIRE(Traits::lift_error() == std::optional<int>{});
+// // STATIC_REQUIRE(Traits::make(10) == std::optional{10});
+// // STATIC_REQUIRE(Traits::make_error() == std::optional<int>{});
 // }
 
 } // namespace beman::monadics::tests

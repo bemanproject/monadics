@@ -15,8 +15,8 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(std::same_as<Traits::rebind_error<double>, stdx::expected<void, double>>);
     STATIC_REQUIRE(std::same_as<decltype(Traits::value(Expected{10})), void>);
     STATIC_REQUIRE(Traits::error(Expected{10}) == 10);
-    STATIC_REQUIRE(Traits::lift() == Expected{});
-    STATIC_REQUIRE(Traits::lift_error(1) == Expected{1});
+    STATIC_REQUIRE(Traits::make() == Expected{});
+    STATIC_REQUIRE(Traits::make_error(1) == Expected{1});
 }
 
 TEST_CASE("box-trait-for-non-void-value") {
@@ -28,8 +28,8 @@ TEST_CASE("box-trait-for-non-void-value") {
     STATIC_REQUIRE(std::same_as<Traits::rebind_error<double>, stdx::expected<char, double>>);
     STATIC_REQUIRE(Traits::value(Expected{'a'}) == 'a');
     STATIC_REQUIRE(Traits::error(Expected{10}) == 10);
-    STATIC_REQUIRE(Traits::lift('b') == Expected{'b'});
-    STATIC_REQUIRE(Traits::lift_error(1) == Expected{1});
+    STATIC_REQUIRE(Traits::make('b') == Expected{'b'});
+    STATIC_REQUIRE(Traits::make_error(1) == Expected{1});
 }
 
 } // namespace beman::monadics::tests
