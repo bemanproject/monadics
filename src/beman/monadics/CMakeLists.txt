@@ -28,12 +28,12 @@ target_sources(
             ../../../include/beman/monadics/detail/invoke_with_value.hpp
             ../../../include/beman/monadics/detail/invoke_with_error.hpp
             ../../../include/beman/monadics/detail/make_with_error.hpp
-            ../../../include/beman/monadics/detail/make_with_value.hpp
             ../../../include/beman/monadics/detail/meta_extract_value_type.hpp
             ../../../include/beman/monadics/detail/meta_rebind_error.hpp
             ../../../include/beman/monadics/detail/meta_rebind_value.hpp
             ../../../include/beman/monadics/detail/or_else.hpp
             ../../../include/beman/monadics/detail/pipe.hpp
+            ../../../include/beman/monadics/detail/rebox_value.hpp
             ../../../include/beman/monadics/detail/same_box.hpp
             ../../../include/beman/monadics/detail/same_template.hpp
             ../../../include/beman/monadics/detail/same_unqualified_as.hpp

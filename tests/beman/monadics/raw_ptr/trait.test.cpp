@@ -8,7 +8,7 @@ namespace beman::monadics::tests {
 
 template <typename T>
 concept hm = requires {
-    { box_traits<int*>::lift(std::declval<T>()) };
+    { box_traits<int*>::make(std::declval<T>()) };
 };
 
 TEST_CASE("box-trait-for") {

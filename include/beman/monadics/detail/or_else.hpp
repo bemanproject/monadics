@@ -4,7 +4,7 @@
 #define BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 
 #include <beman/monadics/detail/pipe.hpp>
-#include <beman/monadics/detail/make_with_value.hpp>
+#include <beman/monadics/detail/rebox_value.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
 
 #include <type_traits>
@@ -45,7 +45,7 @@ struct op_fn {
             return invoke_with_error<BoxTraits>(std::forward<Fn>(fn), std::forward<Box>(box));
         }
 
-        return make_with_value<NewBoxTraits, BoxTraits>(std::forward<Box>(box));
+        return rebox_value<NewBox>(std::forward<Box>(box));
     }
 };
 
