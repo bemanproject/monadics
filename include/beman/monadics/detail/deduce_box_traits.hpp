@@ -3,9 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
 #define BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
 
-#include <concepts>
 #include <type_traits>
-#include <utility>
 
 #include <beman/monadics/detail/as_pointer.hpp>
 #include <beman/monadics/detail/box_traits.hpp>
@@ -60,51 +58,6 @@ struct traits {
 
     inline static constexpr auto lift       = deduce_lift_fn<Box, Traits, value_type>;
     inline static constexpr auto lift_error = deduce_lift_error_fn<Box, Traits, error_type>;
-
-    template <typename Fn, typename B>
-    // requires requires {
-    // requires std::is_void_v<value_type>;
-    // requires std::invocable<Fn>;
-    // } || requires { requires std::invocable<Fn, value_type>; }
-    [[nodiscard]] static constexpr decltype(auto) invoke_with_value(Fn&& fn, B&& box) noexcept {
-        if constexpr (std::is_void_v<value_type> && std::invocable<Fn>) {
-            // should just invoke Traits::value(box);
-            return std::forward<Fn>(fn)();
-        } else {
-            return std::forward<Fn>(fn)(value(std::forward<B>(box)));
-        }
-    }
-
-    template <typename Fn, typename B>
-        requires requires {
-            { error(std::declval<Box>()) };
-            requires std::invocable<Fn, error_type>;
-        } || requires { requires std::invocable<Fn>; }
-    [[nodiscard]] static constexpr decltype(auto) invoke_with_error(Fn&& fn, B&& box) noexcept {
-        if constexpr (requires { error(std::forward<B>(box)); }) {
-            return std::forward<Fn>(fn)(error(std::forward<B>(box)));
-        } else {
-            return std::forward<Fn>(fn)();
-        }
-    }
-
-    template <typename B>
-    [[nodiscard]] static constexpr decltype(auto) lift_with_value(B&& box) noexcept {
-        if constexpr (std::is_void_v<value_type>) {
-            return lift();
-        } else {
-            return lift(value(std::forward<B>(box)));
-        }
-    }
-
-    template <typename BT, typename B>
-    [[nodiscard]] static constexpr decltype(auto) lift_with_error(B&& box) noexcept {
-        if constexpr (requires { BT::error(std::forward<B>(box)); }) {
-            return lift_error(BT::error(std::forward<B>(box)));
-        } else {
-            return lift_error(error());
-        }
-    }
 };
 
 } // namespace _deduce_box_traits

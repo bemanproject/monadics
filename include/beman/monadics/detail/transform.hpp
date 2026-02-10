@@ -3,7 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 
-#include "beman/monadics/detail/invoke_with_value.hpp"
+#include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/and_then.hpp>
 
 #include <type_traits>
@@ -19,7 +19,7 @@ struct transform_t {
         template <is_box Box, same_unqualified_as<action> A, typename Traits = box_traits_for<Box>>
         [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
-                { Traits::invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)) };
+                { invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)) };
             }
         /*
             requires {
@@ -27,22 +27,7 @@ struct transform_t {
             }
         */
         {
-
-            // return box | and_then([f = std::forward<A>(a).fn] (auto &&...value) {
-            // using NewValue = decltype(f(std::forward<decltype(value)>(value)...));
-            // using NewBoxTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
-
-            // if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
-            // Traits::invoke_with_value(f, Traits::lift(value...));
-            // return NewBoxTraits::lift();
-            // } else {
-            // return NewBoxTraits::lift(Traits::invoke_with_value(f, value...));
-            // }
-
-            // // return invoke_with_value<Traits>(f, Traits::lift(std::forward<decltype(value)>(value)...));
-            // });
-
-            using NewValue     = decltype(Traits::invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
+            using NewValue     = decltype(invoke_with_value<Traits>(std::forward<A>(a).fn, std::forward<Box>(box)));
             using NewBoxTraits = box_traits_for<typename Traits::template rebind<NewValue>>;
 
             if (Traits::has_value(box)) {

@@ -4,6 +4,8 @@
 #define BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 
 #include <beman/monadics/detail/pipe.hpp>
+#include <beman/monadics/detail/make_with_value.hpp>
+#include <beman/monadics/detail/invoke_with_error.hpp>
 
 #include <type_traits>
 
@@ -34,39 +36,16 @@ template <typename Fn, typename Box, typename BoxTraits>
 using invoke_result_t = decltype(invoke_result<Fn, Box, BoxTraits>())::type;
 
 struct op_fn {
-    template <typename Traits, typename Box, typename Fn>
+    template <typename BoxTraits, typename Box, typename Fn>
     [[nodiscard]] inline constexpr auto operator()(Box&& box, Fn&& fn) const noexcept {
-        using NewBox = decltype(Traits::invoke_with_error(std::forward<Fn>(fn), std::forward<Box>(box)));
-        // using NewBox    = invoke_result_t<decltype(std::forward<Fn>(fn)), decltype(std::forward<Box>(box)), Traits>;
+        using NewBox       = decltype(invoke_with_error<BoxTraits>(std::forward<Fn>(fn), std::forward<Box>(box)));
         using NewBoxTraits = box_traits_for<NewBox>;
 
-        if (!Traits::has_value(box)) {
-            return Traits::invoke_with_error(std::forward<Fn>(fn), std::forward<Box>(box));
+        if (!BoxTraits::has_value(box)) {
+            return invoke_with_error<BoxTraits>(std::forward<Fn>(fn), std::forward<Box>(box));
         }
 
-        return NewBoxTraits::lift_with_value(std::forward<Box>(box));
-
-        // if (!std::invoke(&BoxTraits::has_value, box)) {
-        // if (!Traits::has_value(box)) {
-        // return Traits::template invoke_with<&Traits::error>();
-
-        // if constexpr (requires { BoxTraits::error(std::forward<Box>(box)); }) {
-        // // if constexpr (std::is_void_v<typename BoxTraits::value_type>) {
-        // return std::forward<Fn>(fn)(BoxTraits::error(std::forward<Box>(box)));
-        // } else {
-        // return std::forward<Fn>(fn)();
-        // }
-        // }
-
-        // return NewBoxTraits::lift_with<&Traits::value>(std::forward<Box>(box));
-        // if constexpr (requires {
-        // { BoxTraits::value(std::forward<Box>(box)) } -> std::same_as<void>;
-        // }) {
-        // return NewBoxTraits::lift();
-        // } else {
-        // return NewBoxTraits::lift(BoxTraits::value(std::forward<Box>(box)));
-        // // return NewBoxTraits::lift(BoxTraits::value());
-        // }
+        return make_with_value<NewBoxTraits, BoxTraits>(std::forward<Box>(box));
     }
 };
 
