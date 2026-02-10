@@ -35,8 +35,9 @@ struct transform_t {
             using NewBox       = typename Traits::template rebind<NewValue>;
             using NewBoxTraits = box_traits_for<NewBox>;
 
+            // box | and_then
             if (Traits::has_value(box)) {
-                if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {
+                if constexpr (std::is_void_v<NewValue>) {
                     invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box));
                     return NewBoxTraits::make();
                 } else {
