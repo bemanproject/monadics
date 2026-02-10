@@ -3,17 +3,19 @@
 #ifndef BEMAN_MONADICS_DETAIL_INVOKE_WITH_ERROR_HPP
 #define BEMAN_MONADICS_DETAIL_INVOKE_WITH_ERROR_HPP
 
+#include "beman/monadics/detail/deduce_box_traits.hpp"
 #include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {
 
-template <typename BoxTraits, typename Fn, typename Box>
-// requires requires {
-// { error(std::declval<Box>()) };
-// requires std::invocable<Fn, error_type>;
-// } || requires { requires std::invocable<Fn>; }
-[[nodiscard]] static constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept {
+template <typename Fn, typename Box, typename BoxTraits = box_traits_for<Box>>
+[[nodiscard]] static constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept
+    requires requires {
+        { BoxTraits::error(std::forward<Box>(box)) };
+        { std::forward<Fn>(fn)(BoxTraits::error(std::forward<Box>(box))) };
+    } || requires { requires std::invocable<Fn>; }
+{
     if constexpr (requires { BoxTraits::error(std::forward<Box>(box)); }) {
         return std::forward<Fn>(fn)(BoxTraits::error(std::forward<Box>(box)));
     } else {
