@@ -8,43 +8,42 @@
 
 namespace beman::monadics::tests {
 
-TEST_CASE("void-value-return-non-void-value") {
-    constexpr auto result = stdx::expected<void, int>{} | transform_error([](int v) { return v * 2.0; });
+TEST_CASE("void-value") {
+    auto fn = [](int v) { return v * 2.0; };
 
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
-    STATIC_REQUIRE(result.has_value());
-    // STATIC_REQUIRE(result.value() == 0.0);
+    SECTION("with-value") {
+        constexpr auto result = stdx::expected<void, int>{} | transform_error(fn);
+
+        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+        STATIC_REQUIRE(result.has_value());
+    }
+
+    SECTION("without-value") {
+        constexpr auto result = stdx::expected<void, int>{10} | transform_error(fn);
+
+        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+        STATIC_REQUIRE(result.has_value() == false);
+        STATIC_REQUIRE(result.error() == 20.0);
+    }
 }
 
-// TEST_CASE("void-value-return-void-value") {
-// constexpr auto result = stdx::expected<void, int>{}
-// | transform([] () {
-// return;
-// });
+TEST_CASE("non-void-value") {
+    auto fn = [](int v) { return v * 2.0; };
 
-// STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, int>>);
-// STATIC_REQUIRE(result.has_value() == true);
-// }
+    SECTION("with-value") {
+        constexpr auto result = stdx::expected<char, int>{} | transform_error(fn);
 
-// TEST_CASE("value-return-different-value") {
-// constexpr auto result = stdx::expected<int, double>{10}
-// | transform([] (auto) {
-// return std::string_view{"some"};
-// });
+        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<char, double>>);
+        STATIC_REQUIRE(result.has_value());
+    }
 
-// STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<std::string_view, double>>);
-// STATIC_REQUIRE(result.has_value());
-// STATIC_REQUIRE(result.value() == "some");
-// }
+    SECTION("without-value") {
+        constexpr auto result = stdx::expected<char, int>{10} | transform_error(fn);
 
-// TEST_CASE("value-return-void-value") {
-// constexpr auto result = stdx::expected<int, double>{10}
-// | transform([] (auto) {
-// return;
-// });
-
-// STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
-// STATIC_REQUIRE(result.has_value());
-// }
+        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<char, double>>);
+        STATIC_REQUIRE(result.has_value() == false);
+        STATIC_REQUIRE(result.error() == 20.0);
+    }
+}
 
 } // namespace beman::monadics::tests
