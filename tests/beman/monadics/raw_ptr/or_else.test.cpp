@@ -8,7 +8,7 @@
 
 namespace beman::monadics::tests {
 
-TEST_CASE("with-value") {
+TEST_CASE("with-nullptr") {
     constexpr int value = []() {
         int  value{10};
         int* p = nullptr;
@@ -20,17 +20,17 @@ TEST_CASE("with-value") {
     STATIC_REQUIRE(value == 10);
 }
 
-// TEST_CASE("with-null") {
-// constexpr int value = []() {
-// int v1{10};
-// int v2{15};
+TEST_CASE("with-value") {
+    constexpr int value = []() {
+        int v1{10};
+        int v2{15};
 
-// auto result = &v1 | or_else([&v2]() { return &v2; });
-// return *result;
-// }();
+        auto result = &v1 | or_else([&v2]() { return &v2; });
+        return *result;
+    }();
 
-// STATIC_REQUIRE(value == 10);
-// }
+    STATIC_REQUIRE(value == 10);
+}
 
 // test to don't allow rebind error
 
