@@ -31,7 +31,6 @@ target_sources(
             ../../../include/beman/monadics/detail/meta_rebind_error.hpp
             ../../../include/beman/monadics/detail/meta_rebind_value.hpp
             ../../../include/beman/monadics/detail/or_else.hpp
-            ../../../include/beman/monadics/detail/pipe.hpp
             ../../../include/beman/monadics/detail/rebox_value.hpp
             ../../../include/beman/monadics/detail/rebox_error.hpp
             ../../../include/beman/monadics/detail/same_box.hpp
