@@ -22,17 +22,14 @@ struct transform_error_t {
                                       std::forward<A>(a).fn, std::forward<Box>(box)))>>;
             }
         {
-            {
+            using NewError     = decltype(invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)));
+            using NewBox       = typename BoxTraits::template rebind_error<NewError>;
+            using NewBoxTraits = box_traits_for<NewBox>;
 
-                using NewError     = decltype(invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)));
-                using NewBox       = typename BoxTraits::template rebind_error<NewError>;
-                using NewBoxTraits = box_traits_for<NewBox>;
-
-                // transform_error does not make sense if you don't have error
-                return std::forward<Box>(box) | or_else([f = std::forward<A>(a).fn](auto&& e) {
-                           return NewBoxTraits::make_error(f(std::forward<decltype(e)>(e)));
-                       });
-            }
+            // transform_error does not make sense if you don't have error
+            return std::forward<Box>(box) | or_else([f = std::forward<A>(a).fn](auto&& e) {
+                       return NewBoxTraits::make_error(f(std::forward<decltype(e)>(e)));
+                   });
         }
     };
 
