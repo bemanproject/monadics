@@ -18,7 +18,7 @@ struct transform_error_t {
         [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
                 requires same_box<Box,
-                                  typename BoxTraits::template rebind<decltype(invoke_with_error(
+                                  typename BoxTraits::template rebind_error<decltype(invoke_with_error(
                                       std::forward<A>(a).fn, std::forward<Box>(box)))>>;
             }
         {
