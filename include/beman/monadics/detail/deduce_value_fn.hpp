@@ -5,7 +5,6 @@
 
 #include <beman/monadics/detail/deduce_value_type.hpp>
 #include <beman/monadics/detail/instance_of.hpp>
-#include <beman/monadics/detail/meta_rebind_error.hpp>
 
 #include <concepts>
 #include <utility>

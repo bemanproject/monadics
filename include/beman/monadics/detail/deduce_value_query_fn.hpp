@@ -4,7 +4,6 @@
 #define BEMAN_MONADICS_DETAIL_DEDUCE_VALUE_QUERY_HPP
 
 #include <beman/monadics/detail/instance_of.hpp>
-#include <beman/monadics/detail/meta_rebind_error.hpp>
 
 #include <concepts>
 #include <utility>
