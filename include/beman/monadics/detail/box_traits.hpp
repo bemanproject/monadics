@@ -6,9 +6,7 @@
 namespace beman::monadics::detail {
 
 template <typename T>
-struct box_traits {
-    using box_type = T;
-};
+struct box_traits {};
 
 } // namespace beman::monadics::detail
 
