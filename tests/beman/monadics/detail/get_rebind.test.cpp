@@ -3,9 +3,8 @@
 #include <beman/monadics/detail/get_rebind.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
-#include <catch2/catch_test_macros.hpp>
 
-#include <concepts>
+#include <optional>
 
 namespace beman::monadics::detail::tests {
 
@@ -14,43 +13,36 @@ namespace {
 template <typename T>
 struct box_traits {};
 
-// Branch 1: Traits::template rebind<T>
-template <typename T>
-struct ReboundByTraits {};
+struct TypeAndTraitsWithoutRebind {};
 
-struct TraitsRebind {};
+template <typename T>
+struct TypeWithRebind {
+    template <typename U>
+    using rebind = TypeWithRebind<U>;
+};
+
+struct TraitsWithRebind {};
 
 template <>
-struct box_traits<TraitsRebind> {
+struct box_traits<TraitsWithRebind> {
     template <typename T>
-    using rebind = ReboundByTraits<T>;
+    using rebind = TraitsWithRebind;
 };
 
-// Branch 2: Box::template rebind<T>
+template <typename T, typename U = void>
+struct ExtractValueType {};
+
 template <typename T>
-struct BoxRebind {
+struct TypeAndTraitsWithRebind {
     template <typename U>
-    using rebind = BoxRebind<U>;
+    using rebind = std::optional<U>;
 };
 
-// Branch 3: deducible first template parameter (meta_rebind)
 template <typename T>
-struct Wrap {};
-
-// Traits::rebind takes priority over Box::rebind
-template <typename T>
-struct BothRebind {
+struct box_traits<TypeAndTraitsWithRebind<T>> {
     template <typename U>
-    using rebind = BothRebind<U>; // box provides rebind
+    using rebind = TypeAndTraitsWithRebind<U>;
 };
-
-template <typename T>
-struct box_traits<BothRebind<T>> {
-    template <typename U>
-    using rebind = ReboundByTraits<U>; // traits provides rebind — should win
-};
-
-struct NoRebind {};
 
 } // namespace
 
@@ -58,36 +50,29 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        "",
                        ((typename Box, bool Has), Box, Has),
                        (int, false),
-                       (NoRebind, false),
-                       (TraitsRebind, true),
-                       (BoxRebind<int>, true),
-                       (Wrap<int>, true),
-                       (BothRebind<int>, true)) {
+                       (TypeAndTraitsWithoutRebind, false),
+                       (TypeWithRebind<int>, true),
+                       (TraitsWithRebind, true),
+                       (std::optional<int>, true),
+                       (ExtractValueType<int>, true),
+                       (TypeAndTraitsWithRebind<int>, true)) {
     using Traits = box_traits<Box>;
-    STATIC_REQUIRE(has_rebind<Box, Traits, double> == Has);
+    if constexpr (Has) {
+        STATIC_REQUIRE(has_rebind<Box, Traits, double>);
+    } else {
+        STATIC_REQUIRE_FALSE(has_rebind<Box, Traits, double>);
+    }
 }
 
-TEST_CASE("traits-branch-provider-is-Traits") {
-    using Provider = deduce_rebind<TraitsRebind, box_traits<TraitsRebind>, double>;
-    STATIC_REQUIRE(std::same_as<Provider, box_traits<TraitsRebind>>);
-    STATIC_REQUIRE(std::same_as<Provider::template rebind<double>, ReboundByTraits<double>>);
-}
-
-TEST_CASE("box-branch-provider-is-Box") {
-    using Provider = deduce_rebind<BoxRebind<int>, box_traits<BoxRebind<int>>, double>;
-    STATIC_REQUIRE(std::same_as<Provider, BoxRebind<int>>);
-    STATIC_REQUIRE(std::same_as<Provider::template rebind<double>, BoxRebind<double>>);
-}
-
-TEST_CASE("meta-branch-provider-is-meta_rebind") {
-    using Provider = deduce_rebind<Wrap<int>, box_traits<Wrap<int>>, double>;
-    STATIC_REQUIRE(std::same_as<Provider::template rebind<double>, Wrap<double>>);
-}
-
-TEST_CASE("traits-wins-over-box") {
-    using Provider = deduce_rebind<BothRebind<int>, box_traits<BothRebind<int>>, double>;
-    STATIC_REQUIRE(std::same_as<Provider, box_traits<BothRebind<int>>>);
-    STATIC_REQUIRE(std::same_as<Provider::template rebind<double>, ReboundByTraits<double>>);
+TEMPLATE_TEST_CASE_SIG("get",
+                       "",
+                       ((typename Box, typename Expected), Box, Expected),
+                       (TraitsWithRebind, TraitsWithRebind),
+                       (TypeWithRebind<int>, TypeWithRebind<double>),
+                       (ExtractValueType<int>, ExtractValueType<double>),
+                       (TypeAndTraitsWithRebind<int>, TypeAndTraitsWithRebind<double>)) {
+    using Traits = box_traits<Box>;
+    STATIC_REQUIRE(std::same_as<typename get_rebind_t<Box, Traits, int>::template rebind<double>, Expected>);
 }
 
 } // namespace beman::monadics::detail::tests

@@ -13,12 +13,13 @@ namespace beman::monadics::detail {
 
 template <typename Box, typename Traits, typename T>
 [[nodiscard]] consteval decltype(auto) get_rebind() noexcept {
-    if constexpr (requires { typename Traits::template rebind<T>; })
+    if constexpr (requires { typename Traits::template rebind<T>; }) {
         return std::type_identity<Traits>{};
-    else if constexpr (requires { typename Box::template rebind<T>; })
+    } else if constexpr (requires { typename Box::template rebind<T>; }) {
         return std::type_identity<Box>{};
-    else if constexpr (requires { get_meta_rebind<Box>(); })
+    } else if constexpr (requires { get_meta_rebind<Box>(); }) {
         return get_meta_rebind<Box>();
+    }
 }
 
 template <typename Box, typename Traits, typename T>
@@ -28,7 +29,7 @@ concept has_rebind = requires {
 
 template <typename Box, typename Traits, typename T>
     requires has_rebind<Box, Traits, T>
-using deduce_rebind = typename decltype(get_rebind<Box, Traits, T>())::type;
+using get_rebind_t = typename decltype(get_rebind<Box, Traits, T>())::type;
 
 } // namespace beman::monadics::detail
 

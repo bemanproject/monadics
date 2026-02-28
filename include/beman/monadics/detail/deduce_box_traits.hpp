@@ -45,7 +45,7 @@ struct traits {
     using error_type = deduce_error_type<Box, Traits>;
 
     template <typename T>
-    using rebind = deduce_rebind<Box, Traits, value_type>::template rebind<T>;
+    using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template <typename E>
     using rebind_error = deduce_rebind_error<Box, Traits, error_type>::template rebind_error<E>;
