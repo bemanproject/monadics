@@ -48,7 +48,7 @@ struct traits {
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template <typename E>
-    using rebind_error = deduce_rebind_error<Box, Traits, error_type>::template rebind_error<E>;
+    using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
     inline static constexpr auto has_value = get_value_query_fn<Box, Traits>();
     inline static constexpr auto value     = get_value_fn<Box, Traits>();

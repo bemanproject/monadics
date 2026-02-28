@@ -22,15 +22,16 @@ struct no_rebind_error {
 
 template <typename Box, typename Traits, typename E>
 [[nodiscard]] consteval decltype(auto) get_rebind_error() noexcept {
-    if constexpr (requires { typename Traits::template rebind_error<E>; })
+    if constexpr (requires { typename Traits::template rebind_error<E>; }) {
         return std::type_identity<Traits>{};
-    else if constexpr (requires { typename Box::template rebind_error<E>; })
+    } else if constexpr (requires { typename Box::template rebind_error<E>; }) {
         return std::type_identity<Box>{};
-    else if constexpr (requires { Traits::error(); })
+    } else if constexpr (requires { Traits::error(); }) {
         // No parametric error channel — use the sentinel so has_error_channel evaluates to false.
         return std::type_identity<no_rebind_error<Box>>{};
-    else if constexpr (requires { get_meta_rebind_error<Box>(); })
+    } else if constexpr (requires { get_meta_rebind_error<Box>(); }) {
         return get_meta_rebind_error<Box>();
+    }
 }
 
 template <typename Box, typename Traits, typename E>
@@ -43,7 +44,7 @@ concept has_rebind_error =
 
 template <typename Box, typename Traits, typename E>
     requires has_rebind_error<Box, Traits, E>
-using deduce_rebind_error = typename decltype(get_rebind_error<Box, Traits, E>())::type;
+using get_rebind_error_t = typename decltype(get_rebind_error<Box, Traits, E>())::type;
 
 } // namespace beman::monadics::detail
 

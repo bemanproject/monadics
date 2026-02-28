@@ -12,7 +12,7 @@ namespace beman::monadics::detail {
 template <template <typename...> class Box, typename T, typename... Args>
 struct meta_rebind_error {
     template <typename E>
-    using rebind = Box<T, E, Args...>;
+    using rebind_error = Box<T, E, Args...>;
 };
 
 template <decomposable<2> Box>
