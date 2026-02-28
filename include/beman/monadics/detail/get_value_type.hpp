@@ -29,7 +29,7 @@ concept has_value_type = requires {
 
 template <typename Box, typename Traits>
     requires has_value_type<Box, Traits>
-using deduce_value_type = typename decltype(get_value_type<Box, Traits>())::type;
+using get_value_type_t = typename decltype(get_value_type<Box, Traits>())::type;
 
 } // namespace beman::monadics::detail
 

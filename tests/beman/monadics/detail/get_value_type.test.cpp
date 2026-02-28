@@ -53,7 +53,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
 TEMPLATE_TEST_CASE("get", "", std::optional<int>, TraitsValueType, ExtractValueType<int>, BothValueType) {
     using Box    = TestType;
     using Traits = box_traits<Box>;
-    STATIC_REQUIRE(std::is_same_v<deduce_value_type<Box, Traits>, int>);
+    STATIC_REQUIRE(std::same_as<get_value_type_t<Box, Traits>, int>);
 }
 
 } // namespace beman::monadics::detail::tests
