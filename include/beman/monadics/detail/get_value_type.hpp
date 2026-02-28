@@ -13,12 +13,13 @@ namespace beman::monadics::detail {
 
 template <typename Box, typename Traits>
 [[nodiscard]] consteval decltype(auto) get_value_type() noexcept {
-    if constexpr (requires { typename Traits::value_type; })
+    if constexpr (requires { typename Traits::value_type; }) {
         return std::type_identity<typename Traits::value_type>{};
-    else if constexpr (requires { typename Box::value_type; })
+    } else if constexpr (requires { typename Box::value_type; }) {
         return std::type_identity<typename Box::value_type>{};
-    else if constexpr (requires { meta_extract_value_type<Box>(); })
+    } else if constexpr (requires { meta_extract_value_type<Box>(); }) {
         return meta_extract_value_type<Box>();
+    }
 }
 
 template <typename Box, typename Traits>
