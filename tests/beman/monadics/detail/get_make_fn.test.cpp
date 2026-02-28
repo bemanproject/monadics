@@ -12,31 +12,41 @@ namespace {
 template <typename T>
 struct box_traits {};
 
-// Branch 1: Traits::make(T)
 struct TraitsMakeBox {
     int val{};
 };
 
 template <>
 struct box_traits<TraitsMakeBox> {
-    static constexpr TraitsMakeBox make(int v) noexcept { return TraitsMakeBox{v}; }
+    static constexpr TraitsMakeBox make(int v) noexcept { return {v}; }
 };
 
-// Branch 3: std::is_void_v<T> — default-construct Box
-struct VoidBox {};
+struct BoxWithVoidValue {};
 
-// Branch 4: std::constructible_from<Box, T>
-struct ConstructibleBox {
+struct TypeConstructibleWithValue {
     int val{};
 };
-// No box_traits specialization — relies on Box{T} constructor.
+
+struct TypeAndTraitsConstruibleWithValue {
+    int val{};
+};
+
+template <>
+struct box_traits<TypeAndTraitsConstruibleWithValue> {
+    static constexpr TypeAndTraitsConstruibleWithValue make(int v) noexcept { return {-v}; }
+};
+
+template <>
+struct box_traits<int*> {
+    static constexpr const int* make(const int& v) noexcept { return &v; }
+};
 
 // Nothing works
-struct NonConstructibleBox {
+struct NonTypeConstructibleWithValue {
     struct tag {};
 
-    NonConstructibleBox() = delete;
-    explicit NonConstructibleBox(struct tag) {}
+    NonTypeConstructibleWithValue() = delete;
+    explicit NonTypeConstructibleWithValue(tag) {}
 };
 
 } // namespace
@@ -45,9 +55,11 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        "",
                        ((typename Box, typename T, bool Has), Box, T, Has),
                        (TraitsMakeBox, int, true),
-                       (VoidBox, void, true),
-                       (ConstructibleBox, int, true),
-                       (NonConstructibleBox, int, false)) {
+                       (int*, int, true),
+                       (BoxWithVoidValue, void, true),
+                       (TypeConstructibleWithValue, int, true),
+                       (TypeAndTraitsConstruibleWithValue, int, true),
+                       (NonTypeConstructibleWithValue, int, false)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
         STATIC_REQUIRE(has_make_fn<Box, Traits, T>);
@@ -56,26 +68,72 @@ TEMPLATE_TEST_CASE_SIG("concept",
     }
 }
 
-TEST_CASE("traits-branch") {
-    constexpr auto fn = get_make_fn<TraitsMakeBox, box_traits<TraitsMakeBox>, int>();
-    REQUIRE(fn(7).val == 7);
+TEMPLATE_TEST_CASE_SIG("fn",
+                       "",
+                       ((typename Box, typename T, int Expected), Box, T, Expected),
+                       (TraitsMakeBox, int, 42),
+                       (BoxWithVoidValue, void, 0), // 0 unused; void branch dispatched below
+                       (TypeConstructibleWithValue, int, 42),
+                       (TypeAndTraitsConstruibleWithValue, int, -42)) {
+    using Traits      = box_traits<Box>;
+    constexpr auto fn = get_make_fn<Box, Traits, T>();
+    if constexpr (std::is_void_v<T>) {
+        [[maybe_unused]] Box b = fn();
+    } else {
+        STATIC_REQUIRE(fn(42).val == Expected);
+    }
 }
 
-TEST_CASE("void-T-branch") {
-    constexpr auto           fn     = get_make_fn<VoidBox, box_traits<VoidBox>, void>();
-    [[maybe_unused]] VoidBox result = fn();
+TEST_CASE("pointer-lvalue") {
+    using Box         = int*;
+    using Traits      = box_traits<Box>;
+    constexpr auto fn = get_make_fn<Box, Traits, int>();
+    constexpr int  x  = 42;
+    STATIC_REQUIRE(fn(x) == &x);
 }
 
-TEST_CASE("constructible-branch") {
-    constexpr auto fn = get_make_fn<ConstructibleBox, box_traits<ConstructibleBox>, int>();
-    REQUIRE(fn(7).val == 7);
+struct MoveTracker {
+    int copies{};
+    int moves{};
+
+    constexpr MoveTracker() = default;
+    constexpr MoveTracker(const MoveTracker& o) noexcept : copies(o.copies + 1), moves(o.moves) {}
+    constexpr MoveTracker(MoveTracker&& o) noexcept : copies(o.copies), moves(o.moves + 1) {}
+};
+
+namespace {
+
+struct MakeTrackerBox {
+    MoveTracker val{};
+};
+
+template <>
+struct box_traits<MakeTrackerBox> {
+    static constexpr decltype(auto) make(auto&& v) { return MakeTrackerBox{std::forward<decltype(v)>(v)}; }
+};
+
+} // namespace
+
+TEST_CASE("lvalue-arg-is-copied-not-moved") {
+    constexpr auto result = [] {
+        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, MoveTracker>();
+        MoveTracker    t;
+        return fn(t);
+    }();
+
+    STATIC_REQUIRE(result.val.moves == 0);
+    STATIC_REQUIRE(result.val.copies == 1);
 }
 
-TEST_CASE("traits-wins-over-constructible-when-both-present") {
-    // TraitsMakeBox is also constructible from int via aggregate init,
-    // but Traits::make is checked first and wins.
-    constexpr auto fn = get_make_fn<TraitsMakeBox, box_traits<TraitsMakeBox>, int>();
-    REQUIRE(fn(7).val == 7);
+TEST_CASE("rvalue-arg-is-moved-not-copied") {
+    constexpr auto result = [] {
+        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, MoveTracker>();
+        MoveTracker    t;
+        return fn(std::move(t));
+    }();
+
+    STATIC_REQUIRE(result.val.moves == 1);
+    STATIC_REQUIRE(result.val.copies == 0);
 }
 
 } // namespace beman::monadics::detail::tests

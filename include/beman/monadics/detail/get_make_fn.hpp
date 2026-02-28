@@ -12,14 +12,15 @@ namespace beman::monadics::detail {
 
 template <typename Box, typename Traits, typename T>
 [[nodiscard]] consteval decltype(auto) get_make_fn() noexcept {
-    if constexpr (requires { Traits::make(std::declval<T>()); })
-        return [](auto&& v) { return Traits::make(std::forward<decltype(v)>(v)); };
-    else if constexpr (requires { &Traits::make; })
-        return [](auto& v) { return Traits::make(std::forward<decltype(v)>(v)); };
-    else if constexpr (std::is_void_v<T>)
-        return []() { return Box{}; };
-    else if constexpr (std::constructible_from<Box, T>)
-        return [](auto&& v) { return Box{std::forward<decltype(v)>(v)}; };
+    if constexpr (requires { Traits::make(std::declval<T>()); }) {
+        return [](auto&& v) -> decltype(auto) { return Traits::make(std::forward<decltype(v)>(v)); };
+    } else if constexpr (requires { Traits::make(std::declval<T&>()); }) {
+        return [](auto& v) -> decltype(auto) { return Traits::make(v); };
+    } else if constexpr (std::is_void_v<T>) {
+        return []() -> decltype(auto) { return Box{}; };
+    } else if constexpr (std::constructible_from<Box, T>) {
+        return [](auto&& v) -> decltype(auto) { return Box{std::forward<decltype(v)>(v)}; };
+    }
 }
 
 template <typename Box, typename Traits, typename T>
