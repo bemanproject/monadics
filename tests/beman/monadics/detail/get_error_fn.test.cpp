@@ -3,7 +3,6 @@
 #include <beman/monadics/detail/get_error_fn.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
-#include <catch2/catch_test_macros.hpp>
 
 namespace beman::monadics::detail::tests {
 
@@ -12,47 +11,54 @@ namespace {
 template <typename T>
 struct box_traits {};
 
-// Branch 1: nullary Traits::error()
-struct NullaryTraitsError {};
-
-template <>
-struct box_traits<NullaryTraitsError> {
-    static constexpr int error() noexcept { return 1; }
-};
-
-// Branch 2: unary Traits::error(box)
-struct UnaryTraitsError {};
-
-template <>
-struct box_traits<UnaryTraitsError> {
-    static constexpr int error(const auto&) noexcept { return 2; }
-};
-
-// Branch 3: Box::error() member
 struct MemberError {
-    constexpr int error() const noexcept { return 3; }
+    int ec{1};
+
+    constexpr int&        error() & { return ec; }
+    constexpr int&&       error() && { return std::move(ec); }
+    constexpr const int&  error() const& { return ec; }
+    constexpr const int&& error() const&& { return std::move(ec); }
 };
 
-// Priority: nullary (1) wins over unary (2)
-struct NullaryAndUnaryTraitsError {};
+struct TraitsErrorWithoutErrorChannel {};
 
 template <>
-struct box_traits<NullaryAndUnaryTraitsError> {
+struct box_traits<TraitsErrorWithoutErrorChannel> {
     static constexpr int error() noexcept { return 1; }
-    static constexpr int error(const auto&) noexcept { return 2; }
 };
 
-// Priority: unary (2) wins over member (3)
-struct UnaryTraitsAndMemberError {
-    constexpr int error() const noexcept { return 3; }
+struct TraitsErrorWithErrorChannel {
+    int ec{1};
+
+    constexpr int&        errorCode() & { return ec; }
+    constexpr int&&       errorCode() && { return std::move(ec); }
+    constexpr const int&  errorCode() const& { return ec; }
+    constexpr const int&& errorCode() const&& { return std::move(ec); }
 };
 
 template <>
-struct box_traits<UnaryTraitsAndMemberError> {
-    static constexpr int error(const auto&) noexcept { return 2; }
+struct box_traits<TraitsErrorWithErrorChannel> {
+    static constexpr decltype(auto) error(auto&& b) noexcept { return std::forward<decltype(b)>(b).errorCode(); }
 };
 
-struct NoError {};
+struct MemberAndTraitsWithoutErrorChannel {
+    int error() noexcept { return 2; }
+};
+
+template <>
+struct box_traits<MemberAndTraitsWithoutErrorChannel> {
+    static constexpr int error() noexcept { return 1; }
+};
+
+struct MemberAndTraitsWithErrorChannel {
+    int error() noexcept { return 2; }
+    int code{1};
+};
+
+template <>
+struct box_traits<MemberAndTraitsWithErrorChannel> {
+    static constexpr int error(auto&& box) noexcept { return box.code; }
+};
 
 } // namespace
 
@@ -60,12 +66,11 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        "",
                        ((typename Box, bool Has), Box, Has),
                        (int, false),
-                       (NoError, false),
-                       (NullaryTraitsError, true),
-                       (UnaryTraitsError, true),
                        (MemberError, true),
-                       (NullaryAndUnaryTraitsError, true),
-                       (UnaryTraitsAndMemberError, true)) {
+                       (TraitsErrorWithoutErrorChannel, true),
+                       (TraitsErrorWithErrorChannel, true),
+                       (MemberAndTraitsWithoutErrorChannel, true),
+                       (MemberAndTraitsWithErrorChannel, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
         STATIC_REQUIRE(has_error_fn<Box, Traits>);
@@ -74,31 +79,48 @@ TEMPLATE_TEST_CASE_SIG("concept",
     }
 }
 
-TEST_CASE("nullary-traits-branch") {
-    constexpr auto fn = get_error_fn<NullaryTraitsError, box_traits<NullaryTraitsError>>();
-    STATIC_REQUIRE(fn() == 1);
+TEMPLATE_TEST_CASE("get",
+                   "",
+                   MemberError,
+                   MemberAndTraitsWithErrorChannel,
+                   MemberAndTraitsWithoutErrorChannel,
+                   TraitsErrorWithErrorChannel,
+                   TraitsErrorWithoutErrorChannel) {
+    using Box         = TestType;
+    using Traits      = box_traits<Box>;
+    constexpr auto fn = get_error_fn<Box, Traits>();
+    if constexpr (std::invocable<decltype(fn)>) {
+        STATIC_REQUIRE(fn() == 1);
+    } else {
+        STATIC_REQUIRE(fn(Box{}) == 1);
+    }
 }
 
-TEST_CASE("unary-traits-branch") {
-    constexpr auto fn = get_error_fn<UnaryTraitsError, box_traits<UnaryTraitsError>>();
-    STATIC_REQUIRE(fn(UnaryTraitsError{}) == 2);
+TEMPLATE_TEST_CASE("keep-value-category", "", TraitsErrorWithErrorChannel, MemberError) {
+    using Box    = TestType;
+    using Traits = box_traits<Box>;
+
+    constexpr auto fn = get_error_fn<Box, Traits>();
+
+    STATIC_REQUIRE(requires(Box b) {
+        { fn(b) } -> std::same_as<int&>;
+    });
+    STATIC_REQUIRE(requires(const Box& b) {
+        { fn(b) } -> std::same_as<const int&>;
+    });
+    STATIC_REQUIRE(requires {
+        { fn(Box{}) } -> std::same_as<int&&>;
+    });
+    STATIC_REQUIRE(requires(const Box b) {
+        { fn(std::move(b)) } -> std::same_as<const int&&>;
+    });
 }
 
-TEST_CASE("member-branch") {
-    constexpr auto fn = get_error_fn<MemberError, box_traits<MemberError>>();
-    STATIC_REQUIRE(fn(MemberError{}) == 3);
-}
+TEST_CASE(".") {
 
-TEST_CASE("nullary-traits-wins-over-unary-traits") {
-    constexpr auto fn = get_error_fn<NullaryAndUnaryTraitsError, box_traits<NullaryAndUnaryTraitsError>>();
-    // nullary returns 1; unary would return 2
-    STATIC_REQUIRE(fn() == 1);
-}
+    auto f = []() -> decltype(auto) { return 1; };
 
-TEST_CASE("unary-traits-wins-over-member") {
-    constexpr auto fn = get_error_fn<UnaryTraitsAndMemberError, box_traits<UnaryTraitsAndMemberError>>();
-    // unary returns 2; member would return 3
-    STATIC_REQUIRE(fn(UnaryTraitsAndMemberError{}) == 2);
+    constexpr auto v = f();
 }
 
 } // namespace beman::monadics::detail::tests

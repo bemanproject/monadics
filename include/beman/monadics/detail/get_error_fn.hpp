@@ -11,12 +11,13 @@ namespace beman::monadics::detail {
 
 template <typename Box, typename Traits>
 [[nodiscard]] consteval decltype(auto) get_error_fn() noexcept {
-    if constexpr (requires { Traits::error(); })
-        return []() { return Traits::error(); };
-    else if constexpr (requires { Traits::error(std::declval<Box>()); })
-        return [](auto&& b) { return Traits::error(std::forward<decltype(b)>(b)); };
-    else if constexpr (requires { std::declval<Box>().error(); })
-        return [](auto&& b) { return std::forward<decltype(b)>(b).error(); };
+    if constexpr (requires { Traits::error(); }) {
+        return []() -> decltype(auto) { return Traits::error(); };
+    } else if constexpr (requires { Traits::error(std::declval<Box>()); }) {
+        return [](auto&& b) -> decltype(auto) { return Traits::error(std::forward<decltype(b)>(b)); };
+    } else if constexpr (requires { std::declval<Box>().error(); }) {
+        return [](auto&& b) -> decltype(auto) { return std::forward<decltype(b)>(b).error(); };
+    }
 }
 
 template <typename Box, typename Traits>
