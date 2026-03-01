@@ -5,16 +5,20 @@
 
 #include <beman/monadics/detail/as_pointer.hpp>
 
-#include <cstddef>
-
 namespace beman::monadics::detail {
 
+namespace _decomposable {
+
 template <typename T, std::size_t N>
-concept decomposable = requires {
-    []<template <typename...> class U, typename... Args>
-        requires(sizeof...(Args) >= N)
-    (U<Args...>*) {}(as_pointer<T>);
-};
+struct impl : std::false_type {};
+
+template <template <class...> typename U, typename... Args, std::size_t N>
+struct impl<U<Args...>, N> : std::bool_constant<(sizeof...(Args) >= N)> {};
+
+} // namespace _decomposable
+
+template <typename T, std::size_t N>
+concept decomposable = _decomposable::impl<std::remove_cvref_t<T>, N>::value;
 
 } // namespace beman::monadics::detail
 
