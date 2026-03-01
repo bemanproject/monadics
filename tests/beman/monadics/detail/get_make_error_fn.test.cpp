@@ -3,7 +3,6 @@
 #include <beman/monadics/detail/get_make_error_fn.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
-#include <catch2/catch_test_macros.hpp>
 
 namespace beman::monadics::detail::tests {
 
@@ -12,27 +11,41 @@ namespace {
 template <typename T>
 struct box_traits {};
 
-// Branch 1: Traits::make_error(E)
-struct TraitsMakeErrorBox {
+struct TraitsMakeError {
     int err{};
 };
 
 template <>
-struct box_traits<TraitsMakeErrorBox> {
-    static constexpr TraitsMakeErrorBox make_error(int e) noexcept { return TraitsMakeErrorBox{e}; }
+struct box_traits<TraitsMakeError> {
+    static constexpr auto make_error(int e) noexcept { return TraitsMakeError{e}; }
 };
 
-// Branch 2: std::constructible_from<Box, E>
-struct ConstructibleErrorBox {
+struct TypeConstructibleWithError {
     int err{};
 };
-// No box_traits specialization — relies on Box{E} constructor.
 
-// Nothing works
-struct NonConstructibleErrorBox {
+struct MoveTracker {
+    int copies{};
+    int moves{};
+
+    constexpr MoveTracker() = default;
+    constexpr MoveTracker(const MoveTracker& o) : copies(o.copies + 1), moves(o.moves) {}
+    constexpr MoveTracker(MoveTracker&& o) noexcept : copies(o.copies), moves(o.moves + 1) {}
+};
+
+struct TraitsAndTypeConstructibleWithError {
+    int err{};
+};
+
+template <>
+struct box_traits<TraitsAndTypeConstructibleWithError> {
+    static constexpr TraitsAndTypeConstructibleWithError make_error(int e) noexcept { return {-e}; }
+};
+
+struct NonTypeConstructibleWithError {
     struct tag {};
-    NonConstructibleErrorBox() = delete;
-    explicit NonConstructibleErrorBox(struct tag) {}
+    NonTypeConstructibleWithError() = delete;
+    explicit NonTypeConstructibleWithError(struct tag) {}
 };
 
 } // namespace
@@ -40,9 +53,10 @@ struct NonConstructibleErrorBox {
 TEMPLATE_TEST_CASE_SIG("concept",
                        "",
                        ((typename Box, typename E, bool Has), Box, E, Has),
-                       (TraitsMakeErrorBox, int, true),
-                       (ConstructibleErrorBox, int, true),
-                       (NonConstructibleErrorBox, int, false)) {
+                       (TraitsMakeError, int, true),
+                       (TypeConstructibleWithError, int, true),
+                       (TraitsAndTypeConstructibleWithError, int, true),
+                       (NonTypeConstructibleWithError, int, false)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
         STATIC_REQUIRE(has_make_error_fn<Box, Traits, E>);
@@ -51,21 +65,53 @@ TEMPLATE_TEST_CASE_SIG("concept",
     }
 }
 
-TEST_CASE("traits-branch") {
-    constexpr auto fn = get_make_error_fn<TraitsMakeErrorBox, box_traits<TraitsMakeErrorBox>, int>();
-    REQUIRE(fn(-1).err == -1);
+TEMPLATE_TEST_CASE_SIG("get",
+                       "",
+                       ((typename Box, typename E, int Expected), Box, E, Expected),
+                       (TraitsMakeError, int, -1),
+                       (TypeConstructibleWithError, int, -1),
+                       (TraitsAndTypeConstructibleWithError, int, 1)) {
+    using Traits      = box_traits<Box>;
+    constexpr auto fn = get_make_error_fn<Box, Traits, E>();
+    REQUIRE(fn(-1).err == Expected);
 }
 
-TEST_CASE("constructible-branch") {
-    constexpr auto fn = get_make_error_fn<ConstructibleErrorBox, box_traits<ConstructibleErrorBox>, int>();
-    REQUIRE(fn(-1).err == -1);
+namespace {
+
+struct MakeErrorTrackerBox {
+    MoveTracker err{};
+};
+
+template <>
+struct box_traits<MakeErrorTrackerBox> {
+    static constexpr decltype(auto) make_error(auto&& e) { return MakeErrorTrackerBox{std::forward<decltype(e)>(e)}; }
+};
+
+} // namespace
+
+TEST_CASE("lvalue-arg-is-copied-not-moved") {
+    using Box    = MakeErrorTrackerBox;
+    using Traits = box_traits<Box>;
+
+    constexpr auto result = [] {
+        constexpr auto fn = get_make_error_fn<Box, Traits, MoveTracker>();
+        MoveTracker    t;
+        return fn(t);
+    }();
+
+    STATIC_REQUIRE(result.err.moves == 0);
+    STATIC_REQUIRE(result.err.copies == 1);
 }
 
-TEST_CASE("traits-wins-over-constructible-when-both-present") {
-    // TraitsMakeErrorBox is also constructible from int via aggregate init,
-    // but Traits::make_error is checked first and wins.
-    constexpr auto fn = get_make_error_fn<TraitsMakeErrorBox, box_traits<TraitsMakeErrorBox>, int>();
-    REQUIRE(fn(-1).err == -1);
+TEST_CASE("rvalue-arg-is-moved-not-copied") {
+    constexpr auto result = [] {
+        auto        fn = get_make_error_fn<MakeErrorTrackerBox, box_traits<MakeErrorTrackerBox>, MoveTracker>();
+        MoveTracker t;
+        return fn(std::move(t));
+    }();
+
+    STATIC_REQUIRE(result.err.moves == 1);
+    STATIC_REQUIRE(result.err.copies == 0);
 }
 
 } // namespace beman::monadics::detail::tests

@@ -29,7 +29,9 @@ struct and_then_t {
 
             using NewBox = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
 
-            return rebox_error<NewBox>(std::forward<Box>(box));
+            // workaround after make_error return decltype(auto)
+            return static_cast<NewBox>(rebox_error<NewBox>(std::forward<Box>(box)));
+            // return rebox_error<NewBox>(std::forward<Box>(box));
         }
     };
 
