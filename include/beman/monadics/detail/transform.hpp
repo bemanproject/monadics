@@ -18,7 +18,7 @@ struct transform_t {
     struct action {
         Fn fn;
 
-        template <is_box Box, same_unqualified_as<action> A, typename Traits = box_traits_for<Box>>
+        template <is_box Box, same_unqualified_as<action> A, typename Traits = get_box_traits<Box>>
         [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
                 requires same_box<Box,
@@ -33,7 +33,7 @@ struct transform_t {
         {
             using NewValue     = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
             using NewBox       = typename Traits::template rebind<NewValue>;
-            using NewBoxTraits = box_traits_for<NewBox>;
+            using NewBoxTraits = get_box_traits<NewBox>;
 
             // box | and_then
             if (Traits::has_value(box)) {

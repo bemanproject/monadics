@@ -7,7 +7,7 @@
 namespace beman::monadics::tests {
 
 TEST_CASE("box-trait-for") {
-    using Traits = box_traits_for<std::shared_ptr<int>>;
+    using Traits = get_box_traits<std::shared_ptr<int>>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, int>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, std::nullptr_t>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<double>, std::shared_ptr<double>>);
@@ -30,7 +30,7 @@ concept transformable = requires() {
 };
 
 TEST_CASE("makeable-value") {
-    using Traits = box_traits_for<std::shared_ptr<int>>;
+    using Traits = get_box_traits<std::shared_ptr<int>>;
     STATIC_REQUIRE(transformable<Traits>);
 
     // STATIC_REQUIRE(std::same_as<decltype(std::declval<int>()), int&>);

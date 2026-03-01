@@ -14,6 +14,7 @@ set(tests
     get_error_type
     get_rebind
     get_rebind_error
+    has_box_traits
 )
 
 foreach(test_name ${tests})

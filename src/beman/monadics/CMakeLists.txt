@@ -13,7 +13,7 @@ target_sources(
             ../../../include/beman/monadics/detail/as_pointer.hpp
             ../../../include/beman/monadics/detail/box_traits.hpp
             ../../../include/beman/monadics/detail/decomposable.hpp
-            ../../../include/beman/monadics/detail/deduce_box_traits.hpp
+            ../../../include/beman/monadics/detail/get_box_traits.hpp
             ../../../include/beman/monadics/detail/get_error_fn.hpp
             ../../../include/beman/monadics/detail/get_error_type.hpp
             ../../../include/beman/monadics/detail/get_make_error_fn.hpp

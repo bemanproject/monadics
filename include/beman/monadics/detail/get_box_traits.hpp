@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
-#define BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
+#ifndef BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
+#define BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
 
 #include <type_traits>
 
@@ -18,7 +18,7 @@
 
 namespace beman::monadics::detail {
 
-namespace _deduce_box_traits {
+namespace _get_box_traits {
 
 template <typename Box, typename Traits>
 concept is_box = has_value_type<Box, Traits>
@@ -51,15 +51,15 @@ struct traits {
     inline static constexpr auto make_error = get_make_error_fn<Box, Traits, error_type>();
 };
 
-} // namespace _deduce_box_traits
+} // namespace _get_box_traits
 
 template <typename Box>
-concept is_box = detail::_deduce_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
-                                                    box_traits<std::remove_cvref_t<Box>>>;
+concept is_box = _get_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
+                                         box_traits<std::remove_cvref_t<Box>>>;
 
 template <is_box T>
-using box_traits_for = detail::_deduce_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
+using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 } // namespace beman::monadics::detail
 
-#endif // BEMAN_MONADICS_DETAIL_DEDUCE_BOX_TRAITS_HPP
+#endif // BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP

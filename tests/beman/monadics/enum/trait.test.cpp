@@ -7,7 +7,7 @@
 namespace beman::monadics::tests {
 
 TEST_CASE("box-trait-for") {
-    using Traits = box_traits_for<CURLcode>;
+    using Traits = get_box_traits<CURLcode>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, void>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, CURLcode>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<int>, CURLcode>);

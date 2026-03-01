@@ -48,10 +48,10 @@ foreach(test_dir ${tests})
             ${test_target}
             PRIVATE ${CMAKE_CURRENT_LIST_DIR}/${test_name}
         )
-        target_compile_options(
-            ${test_target}
-            PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-fconcepts-diagnostics-depth=10>"
-        )
+        # target_compile_options(
+        # ${test_target}
+        # PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-fconcepts-diagnostics-depth=10>"
+        # )
 
         catch_discover_tests(${test_target}
           TEST_PREFIX "${test_target}."

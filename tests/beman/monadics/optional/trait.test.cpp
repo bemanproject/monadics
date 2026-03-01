@@ -8,7 +8,7 @@
 namespace beman::monadics::tests {
 
 TEST_CASE("box-trait-for") {
-    using Traits = box_traits_for<std::optional<int>>;
+    using Traits = get_box_traits<std::optional<int>>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, int>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, std::nullopt_t>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<float>, std::optional<float>>);
