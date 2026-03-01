@@ -12,12 +12,13 @@ namespace beman::monadics::detail {
 
 template <typename Box, typename Traits>
 [[nodiscard]] consteval decltype(auto) get_error_type() noexcept {
-    if constexpr (requires { typename Traits::error_type; })
+    if constexpr (requires { typename Traits::error_type; }) {
         return std::type_identity<typename Traits::error_type>{};
-    else if constexpr (requires { typename Box::error_type; })
+    } else if constexpr (requires { typename Box::error_type; }) {
         return std::type_identity<typename Box::error_type>{};
-    else if constexpr (requires { Traits::error(); })
+    } else if constexpr (requires { Traits::error(); }) {
         return std::type_identity<std::remove_cvref_t<decltype(Traits::error())>>{};
+    }
 }
 
 template <typename Box, typename Traits>
@@ -27,7 +28,7 @@ concept has_error_type = requires {
 
 template <typename Box, typename Traits>
     requires has_error_type<Box, Traits>
-using deduce_error_type = typename decltype(get_error_type<Box, Traits>())::type;
+using get_error_type_t = typename decltype(get_error_type<Box, Traits>())::type;
 
 } // namespace beman::monadics::detail
 

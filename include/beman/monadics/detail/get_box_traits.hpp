@@ -24,18 +24,18 @@ template <typename Box, typename Traits>
 concept is_box = has_value_type<Box, Traits>
               && has_error_type<Box, Traits>
               && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
-              && has_rebind_error<Box, Traits, deduce_error_type<Box, Traits>>
+              && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
               && has_value_query_fn<Box, Traits>
               && has_value_fn<Box, Traits>
               && has_error_fn<Box, Traits>
               && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
-              && has_make_error_fn<Box, Traits, deduce_error_type<Box, Traits>>;
+              && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
 
 template <typename Box, typename Traits>
 struct traits {
     using box_type   = Box;
     using value_type = get_value_type_t<Box, Traits>;
-    using error_type = deduce_error_type<Box, Traits>;
+    using error_type = get_error_type_t<Box, Traits>;
 
     template <typename T>
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
