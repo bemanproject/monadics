@@ -14,15 +14,15 @@ target_sources(
             ../../../include/beman/monadics/detail/box_traits.hpp
             ../../../include/beman/monadics/detail/decomposable.hpp
             ../../../include/beman/monadics/detail/deduce_box_traits.hpp
-            ../../../include/beman/monadics/detail/deduce_error_fn.hpp
-            ../../../include/beman/monadics/detail/deduce_error_type.hpp
-            ../../../include/beman/monadics/detail/deduce_make_error_fn.hpp
-            ../../../include/beman/monadics/detail/deduce_make_fn.hpp
-            ../../../include/beman/monadics/detail/deduce_rebind.hpp
-            ../../../include/beman/monadics/detail/deduce_rebind_error.hpp
-            ../../../include/beman/monadics/detail/deduce_value_fn.hpp
-            ../../../include/beman/monadics/detail/deduce_value_query_fn.hpp
-            ../../../include/beman/monadics/detail/deduce_value_type.hpp
+            ../../../include/beman/monadics/detail/get_error_fn.hpp
+            ../../../include/beman/monadics/detail/get_error_type.hpp
+            ../../../include/beman/monadics/detail/get_make_error_fn.hpp
+            ../../../include/beman/monadics/detail/get_make_fn.hpp
+            ../../../include/beman/monadics/detail/get_rebind.hpp
+            ../../../include/beman/monadics/detail/get_rebind_error.hpp
+            ../../../include/beman/monadics/detail/get_value_fn.hpp
+            ../../../include/beman/monadics/detail/get_value_query_fn.hpp
+            ../../../include/beman/monadics/detail/get_value_type.hpp
             ../../../include/beman/monadics/detail/extract_value_type.hpp
             ../../../include/beman/monadics/detail/instance_of.hpp
             ../../../include/beman/monadics/detail/invoke_with_value.hpp

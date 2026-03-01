@@ -5,7 +5,6 @@ add_custom_target(${test_dir_target})
 add_dependencies(${test_global_target} ${test_dir_target})
 
 set(tests
-    deduce_value_type
     get_value_query_fn
     get_value_fn
     get_error_fn
@@ -26,10 +25,6 @@ foreach(test_name ${tests})
     target_link_libraries(
         ${test_target}
         PRIVATE beman::monadics Catch2::Catch2WithMain
-    )
-    target_compile_options(
-        ${test_target}
-        PRIVATE "$<$<CXX_COMPILER_ID:GNU>:-fconcepts-diagnostics-depth=10>"
     )
 
     catch_discover_tests(${test_target}
