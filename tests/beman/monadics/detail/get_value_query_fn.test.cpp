@@ -27,7 +27,7 @@ struct box_traits<TraitsHasValue> {
 
 struct MemberAndTraits {
     bool valid{};
-    bool value_flag;
+    bool value_flag{};
 
     bool has_value() const noexcept { return value_flag; }
 };
