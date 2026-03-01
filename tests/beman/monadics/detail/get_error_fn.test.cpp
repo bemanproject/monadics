@@ -116,11 +116,4 @@ TEMPLATE_TEST_CASE("keep-value-category", "", TraitsErrorWithErrorChannel, Membe
     });
 }
 
-TEST_CASE(".") {
-
-    auto f = []() -> decltype(auto) { return 1; };
-
-    constexpr auto v = f();
-}
-
 } // namespace beman::monadics::detail::tests
