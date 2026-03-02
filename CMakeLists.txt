@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.30...4.3)
 
 set(CMAKE_LINK_DEPENDS_NO_SHARED ${BUILD_SHARED_LIBS})
 
 project(
     beman.monadics
-    DESCRIPTION "A Beman Library Monadics"
+    DESCRIPTION "Freestanding monadic operations"
     LANGUAGES CXX
     VERSION 0.0.1
 )
@@ -25,15 +25,20 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-option(
-    BEMAN_MONADICS_INSTALL_CONFIG_FILE_PACKAGE
-    "Enable creating and installing a CMake config-file package. Default: ${PROJECT_IS_TOP_LEVEL}. Values: { ON, OFF }."
-    ${PROJECT_IS_TOP_LEVEL}
-)
-
+# for find of beman-install-library
 include(infra/cmake/beman-install-library-config.cmake)
 
-add_subdirectory(src/beman/monadics)
+add_library(beman.monadics INTERFACE)
+add_library(beman::monadics ALIAS beman.monadics)
+
+target_sources(
+    beman.monadics
+    PUBLIC FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+set_target_properties(beman.monadics PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON)
+
+add_subdirectory(include/beman/monadics)
 
 beman_install_library(beman.monadics)
 

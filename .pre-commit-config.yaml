@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -13,17 +13,18 @@ repos:
     # This brings in a portable version of clang-format.
     # See also: https://github.com/ssciwr/clang-format-wheel
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v21.1.5
+    rev: v22.1.0
     hooks:
     - id: clang-format
       types_or: [c++, c]
 
     # CMake linting and formatting
   - repo: https://github.com/BlankSpruce/gersemi
-    rev: 0.15.1
+    rev: 0.26.0
     hooks:
     - id: gersemi
       name: CMake linting
+      exclude: ^.*/tests/.*/data/ # Exclude test data directories
 
     # Markdown linting
     # Config file: .markdownlint.yaml
@@ -34,8 +35,8 @@ repos:
   #   - id: markdownlint
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
       - id: codespell
 
-exclude: 'cookiecutter/'
+exclude: 'cookiecutter/|infra/'
