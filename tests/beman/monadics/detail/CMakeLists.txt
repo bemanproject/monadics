@@ -15,6 +15,7 @@ set(tests
     get_rebind
     get_rebind_error
     as_pointer
+    decomposable
 )
 
 foreach(test_name ${tests})
