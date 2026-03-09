@@ -24,6 +24,7 @@ set(tests
     meta_rebind_value
     rebox_error
     rebox_value
+    same_box
 )
 
 foreach(test_name ${tests})
