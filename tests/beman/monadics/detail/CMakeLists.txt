@@ -19,6 +19,7 @@ set(tests
     instance_of
     invoke_with_error
     invoke_with_value
+    meta_extract_value_type
 )
 
 foreach(test_name ${tests})
