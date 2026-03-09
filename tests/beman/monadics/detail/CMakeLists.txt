@@ -5,17 +5,17 @@ add_custom_target(${test_dir_target})
 add_dependencies(${test_global_target} ${test_dir_target})
 
 set(tests
-    get_value_query_fn
-    get_value_fn
-    get_error_fn
-    get_make_fn
-    get_make_error_fn
-    get_value_type
-    get_error_type
-    get_rebind
-    get_rebind_error
     as_pointer
     decomposable
+    get_error_fn
+    get_error_type
+    get_make_error_fn
+    get_make_fn
+    get_rebind
+    get_rebind_error
+    get_value_fn
+    get_value_query_fn
+    get_value_type
     instance_of
     invoke_with_error
     invoke_with_value
