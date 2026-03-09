@@ -16,6 +16,7 @@ set(tests
     get_rebind_error
     as_pointer
     decomposable
+    instance_of
 )
 
 foreach(test_name ${tests})
