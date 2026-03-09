@@ -17,6 +17,7 @@ set(tests
     as_pointer
     decomposable
     instance_of
+    invoke_with_error
 )
 
 foreach(test_name ${tests})
