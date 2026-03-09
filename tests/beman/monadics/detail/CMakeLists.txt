@@ -14,6 +14,7 @@ set(tests
     get_error_type
     get_rebind
     get_rebind_error
+    as_pointer
 )
 
 foreach(test_name ${tests})
