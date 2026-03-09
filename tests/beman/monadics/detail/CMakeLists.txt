@@ -21,6 +21,7 @@ set(tests
     invoke_with_value
     meta_extract_value_type
     meta_rebind_error
+    meta_rebind_value
 )
 
 foreach(test_name ${tests})
