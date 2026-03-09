@@ -18,6 +18,7 @@ set(tests
     decomposable
     instance_of
     invoke_with_error
+    invoke_with_value
 )
 
 foreach(test_name ${tests})
