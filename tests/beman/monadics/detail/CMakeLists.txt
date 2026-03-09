@@ -23,6 +23,7 @@ set(tests
     meta_rebind_error
     meta_rebind_value
     rebox_error
+    rebox_value
 )
 
 foreach(test_name ${tests})
