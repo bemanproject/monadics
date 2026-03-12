@@ -19,7 +19,6 @@ target_sources(
                 detail/get_value_fn.hpp
                 detail/get_value_query_fn.hpp
                 detail/get_value_type.hpp
-                detail/extract_value_type.hpp
                 detail/instance_of.hpp
                 detail/invoke_with_value.hpp
                 detail/invoke_with_error.hpp
