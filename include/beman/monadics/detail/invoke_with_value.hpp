@@ -10,20 +10,20 @@
 
 namespace beman::monadics::detail {
 
-template <typename Fn, is_box Box, typename BoxTraits = get_box_traits<Box>>
+template <typename Fn, is_box Box, typename Traits = get_box_traits<Box>>
 [[nodiscard]] constexpr decltype(auto) invoke_with_value(Fn&& fn, Box&& box) noexcept
     requires requires {
-        { BoxTraits::value(std::forward<Box>(box)) } -> std::same_as<void>;
+        { Traits::value(std::forward<Box>(box)) } -> std::same_as<void>;
         { fn() };
     } || requires {
-        { fn(BoxTraits::value(std::forward<Box>(box))) };
+        { fn(Traits::value(std::forward<Box>(box))) };
     }
 {
-    if constexpr (std::is_void_v<typename BoxTraits::value_type> && std::invocable<Fn>) {
+    if constexpr (std::is_void_v<typename Traits::value_type> && std::invocable<Fn>) {
         // should just invoke Traits::value(box);
         return std::forward<Fn>(fn)();
     } else {
-        return std::forward<Fn>(fn)(BoxTraits::value(std::forward<Box>(box)));
+        return std::forward<Fn>(fn)(Traits::value(std::forward<Box>(box)));
     }
 }
 

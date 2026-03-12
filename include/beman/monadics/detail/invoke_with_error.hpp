@@ -10,15 +10,15 @@
 
 namespace beman::monadics::detail {
 
-template <typename Fn, typename Box, typename BoxTraits = get_box_traits<Box>>
+template <typename Fn, typename Box, typename Traits = get_box_traits<Box>>
 [[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept
     requires requires {
-        { BoxTraits::error(std::forward<Box>(box)) };
-        { std::forward<Fn>(fn)(BoxTraits::error(std::forward<Box>(box))) };
+        { Traits::error(std::forward<Box>(box)) };
+        { std::forward<Fn>(fn)(Traits::error(std::forward<Box>(box))) };
     } || requires { requires std::invocable<Fn>; }
 {
-    if constexpr (requires { BoxTraits::error(std::forward<Box>(box)); }) {
-        return std::forward<Fn>(fn)(BoxTraits::error(std::forward<Box>(box)));
+    if constexpr (requires { Traits::error(std::forward<Box>(box)); }) {
+        return std::forward<Fn>(fn)(Traits::error(std::forward<Box>(box)));
     } else {
         return std::forward<Fn>(fn)();
     }
