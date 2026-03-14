@@ -33,19 +33,17 @@ struct beman::monadics::box_traits<Box> {
     template <typename>
     using rebind_error = Box;
 
-    [[nodiscard]] inline static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }
+    [[nodiscard]] static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }
 
-    inline static constexpr value_type value(Box&&) noexcept {}
+    static constexpr value_type value(Box&&) noexcept {}
 
-    [[nodiscard]] inline static constexpr decltype(auto) error(auto&& box) noexcept {
+    [[nodiscard]] static constexpr decltype(auto) error(auto&& box) noexcept {
         return std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] inline static constexpr decltype(auto) make(auto&& v) noexcept {
-        return std::forward<decltype(v)>(v);
-    }
+    [[nodiscard]] static constexpr decltype(auto) make(auto&& v) noexcept { return std::forward<decltype(v)>(v); }
 
-    [[nodiscard]] inline static constexpr decltype(auto) make_error(auto&& e) noexcept {
+    [[nodiscard]] static constexpr decltype(auto) make_error(auto&& e) noexcept {
         return std::forward<decltype(e)>(e);
     }
 };
