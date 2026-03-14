@@ -9,17 +9,17 @@
 
 template <typename T>
 struct beman::monadics::box_traits<std::shared_ptr<T>> {
-    [[nodiscard]] inline static constexpr bool has_value(const std::shared_ptr<T>& box) noexcept {
+    [[nodiscard]] static constexpr bool has_value(const std::shared_ptr<T>& box) noexcept {
         return static_cast<bool>(box);
     }
 
-    [[nodiscard]] inline static constexpr decltype(auto) value(auto&& box) noexcept {
+    [[nodiscard]] static constexpr decltype(auto) value(auto&& box) noexcept {
         return *std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] inline static constexpr auto error() noexcept { return nullptr; }
+    [[nodiscard]] static constexpr auto error() noexcept { return nullptr; }
 
-    [[nodiscard]] inline static constexpr decltype(auto) make(auto&& value) noexcept {
+    [[nodiscard]] static constexpr decltype(auto) make(auto&& value) noexcept {
         return std::make_shared<T>(std::forward<decltype(value)>(value));
     }
 };
