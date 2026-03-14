@@ -15,7 +15,7 @@ struct transform_error_t {
         Fn fn;
 
         template <is_box Box, same_unqualified_as<action> A, typename Traits = get_box_traits<Box>>
-        [[nodiscard]] friend inline constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
+        [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
             requires requires {
                 requires same_box<Box,
                                   typename Traits::template rebind_error<decltype(invoke_with_error(
