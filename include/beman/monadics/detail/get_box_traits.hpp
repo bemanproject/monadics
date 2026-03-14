@@ -43,12 +43,12 @@ struct traits {
     template <typename E>
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
-    inline static constexpr auto has_value = get_value_query_fn<Box, Traits>();
-    inline static constexpr auto value     = get_value_fn<Box, Traits>();
-    inline static constexpr auto error     = get_error_fn<Box, Traits>();
+    static constexpr auto has_value = get_value_query_fn<Box, Traits>();
+    static constexpr auto value     = get_value_fn<Box, Traits>();
+    static constexpr auto error     = get_error_fn<Box, Traits>();
 
-    inline static constexpr auto make       = get_make_fn<Box, Traits, value_type>();
-    inline static constexpr auto make_error = get_make_error_fn<Box, Traits, error_type>();
+    static constexpr auto make       = get_make_fn<Box, Traits, value_type>();
+    static constexpr auto make_error = get_make_error_fn<Box, Traits, error_type>();
 };
 
 } // namespace _get_box_traits
