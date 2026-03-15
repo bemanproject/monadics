@@ -8,10 +8,9 @@
 #include <variant>
 #include <optional>
 
-
 template <typename T, typename E>
 struct Box : std::variant<T, E> {
-  using std::variant<T, E>::variant;
+    using std::variant<T, E>::variant;
 };
 
 namespace beman::monadics::detail {
@@ -32,7 +31,9 @@ struct box_traits<Box<T, E>> {
     static constexpr decltype(auto) error(auto&& b) { return std::get<1>(std::forward<decltype(b)>(b)); }
 
     static constexpr auto make(auto&& v) { return Box<T, E>{std::in_place_index<0>, std::forward<decltype(v)>(v)}; }
-    static constexpr auto make_error(auto&& e) { return Box<T, E>{std::in_place_index<1>, std::forward<decltype(e)>(e)}; }
+    static constexpr auto make_error(auto&& e) {
+        return Box<T, E>{std::in_place_index<1>, std::forward<decltype(e)>(e)};
+    }
 };
 
 template <typename T>
@@ -45,21 +46,21 @@ struct box_traits<std::optional<T>> {
 namespace beman::monadics::detail::tests {
 
 TEST_CASE("with-error-channel") {
-  constexpr auto result = [] () {
-      Box<int, double> src{1};
-      return rebox_value<Box<double, double>>(std::move(src));
-  }();
+    constexpr auto result = []() {
+        Box<int, double> src{1};
+        return rebox_value<Box<double, double>>(std::move(src));
+    }();
 
-  STATIC_REQUIRE(std::get<0>(result) == 1.0);
+    STATIC_REQUIRE(std::get<0>(result) == 1.0);
 }
 
 TEST_CASE("without-error-channel") {
-  constexpr auto result = [] () {
-      std::optional<int> src{10};
-      return rebox_value<std::optional<double>>(std::move(src));
-  }();
+    constexpr auto result = []() {
+        std::optional<int> src{10};
+        return rebox_value<std::optional<double>>(std::move(src));
+    }();
 
-  STATIC_REQUIRE(result.value() == 10.0);
+    STATIC_REQUIRE(result.value() == 10.0);
 }
 
 } // namespace beman::monadics::detail::tests

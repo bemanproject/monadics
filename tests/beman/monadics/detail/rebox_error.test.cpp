@@ -10,7 +10,7 @@
 
 template <typename T, typename E>
 struct Box : std::variant<T, E> {
-  using std::variant<T, E>::variant;
+    using std::variant<T, E>::variant;
 };
 
 namespace beman::monadics::detail {
@@ -41,21 +41,21 @@ struct box_traits<std::optional<T>> {
 namespace beman::monadics::detail::tests {
 
 TEST_CASE("with-error-channel") {
-  constexpr auto result = [] () {
-      Box<int, float> src{1.0f};
-      return rebox_error<Box<int, double>>(std::move(src));
-  }();
+    constexpr auto result = []() {
+        Box<int, float> src{1.0f};
+        return rebox_error<Box<int, double>>(std::move(src));
+    }();
 
-  STATIC_REQUIRE(std::get<1>(result) == 1.0);
+    STATIC_REQUIRE(std::get<1>(result) == 1.0);
 }
 
 TEST_CASE("without-error-channel") {
-  constexpr auto result = [] () {
-      std::optional<int> src{std::nullopt};
-      return rebox_error<std::optional<double>>(std::move(src));
-  }();
+    constexpr auto result = []() {
+        std::optional<int> src{std::nullopt};
+        return rebox_error<std::optional<double>>(std::move(src));
+    }();
 
-  STATIC_REQUIRE_FALSE(result.has_value());
+    STATIC_REQUIRE_FALSE(result.has_value());
 }
 
 } // namespace beman::monadics::detail::tests

@@ -25,7 +25,7 @@ concept rebindable = requires { get_meta_rebind<T>(); };
 TEST_CASE("requires-minimum-1-template-args") {
     STATIC_REQUIRE_FALSE(rebindable<int>);
 
-    struct Foo{};
+    struct Foo {};
     STATIC_REQUIRE_FALSE(rebindable<Foo>);
 }
 

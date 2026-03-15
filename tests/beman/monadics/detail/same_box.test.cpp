@@ -10,7 +10,7 @@
 
 template <typename T, typename E>
 struct Box : std::variant<T, E> {
-  using std::variant<T, E>::variant;
+    using std::variant<T, E>::variant;
 };
 
 namespace beman::monadics::detail {
@@ -41,7 +41,7 @@ struct box_traits<std::optional<T>> {
 namespace beman::monadics::detail::tests {
 
 TEMPLATE_TEST_CASE("identical", "", (Box<int, double>), (std::optional<int>)) {
-  STATIC_REQUIRE(same_box<TestType, TestType>);
+    STATIC_REQUIRE(same_box<TestType, TestType>);
 }
 
 TEST_CASE("rebind-value-type") {
@@ -49,9 +49,7 @@ TEST_CASE("rebind-value-type") {
     STATIC_REQUIRE(same_box<std::optional<float>, std::optional<int>>);
 }
 
-TEST_CASE("rebinding-error-type") {
-    STATIC_REQUIRE(same_box<Box<int, float>, Box<int, double>>);
-}
+TEST_CASE("rebinding-error-type") { STATIC_REQUIRE(same_box<Box<int, float>, Box<int, double>>); }
 
 TEST_CASE("non-box") {
     STATIC_REQUIRE_FALSE(same_box<int, int>);
