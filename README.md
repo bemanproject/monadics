@@ -114,3 +114,17 @@ int main() {
 
     return 0;
 }
+
+## Build Requirements
+
+### Supported Platforms
+
+| Compiler   | Version | C++ Standards | Standard Library  |
+|------------|---------|---------------|-------------------|
+| GCC        | 15-13   | C++26-C++20   | libstdc++         |
+| GCC        | 12-11   | C++23, C++20  | libstdc++         |
+| Clang      | 22-19   | C++26-C++20   | libstdc++, libc++ |
+| Clang      | 18-17   | C++26-C++20   | libc++            |
+| Clang      | 18-17   | C++20         | libstdc++         |
+| AppleClang | latest  | C++26-C++20   | libc++            |
+| MSVC       | latest  | C++23         | MSVC STL          |
