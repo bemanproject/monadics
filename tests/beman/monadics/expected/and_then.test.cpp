@@ -4,13 +4,12 @@
 
 #include "beman/monadics/detail/and_then.hpp"
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
 
 TEST_CASE("with-void-value-return-non-void-with-value") {
     constexpr auto result = stdx::expected<void, int>{} | and_then([]() { return stdx::expected<double, int>(2.0); });
-
     STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<double, int>>);
     STATIC_REQUIRE(result.has_value());
     STATIC_REQUIRE(result.value() == 2.0);
@@ -68,11 +67,29 @@ TEST_CASE("with-value-return-void-with-value") {
 
 TEST_CASE("with-value-return-void-with-error") {
     constexpr auto result =
-        stdx::expected<int, double>{10} | and_then([](auto) -> stdx::expected<void, double> { return {5.0}; });
+        stdx::expected<int, double>{10} | and_then([](int&&) -> stdx::expected<void, double> { return {5.0}; });
 
     STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 5.0);
+}
+
+TEMPLATE_TEST_CASE_SIG(
+    "keep-value-category",
+    "",
+    ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
+    (
+        stdx::expected<int, double>&, [](int&) { return stdx::expected<int, double>{10}; }, true),
+    (
+        stdx::expected<int, double>&, [](int&&) { return stdx::expected<int, double>{10}; }, false),
+    (
+        stdx::expected<int, double>&&, [](int&&) { return stdx::expected<int, double>{10}; }, true),
+    (
+        stdx::expected<int, double>&&, [](int&) { return stdx::expected<int, double>{10}; }, false),
+    (
+        const stdx::expected<int, double>&, [](const int&) { return stdx::expected<int, double>{10}; }, true),
+    (const stdx::expected<int, double>&, [](int&) { return stdx::expected<int, double>{10}; }, false)) {
+    STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }
 
 } // namespace beman::monadics::tests
