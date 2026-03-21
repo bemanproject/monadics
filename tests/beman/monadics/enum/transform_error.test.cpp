@@ -4,10 +4,27 @@
 
 #include "beman/monadics/detail/transform_error.hpp"
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
 
 TEST_CASE("not-supported") {}
+
+TEMPLATE_TEST_CASE_SIG("keep-value-category",
+                       "",
+                       ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
+                       (
+                           CURLcode&, [](CURLcode&) { return CURLE_OK; }, true),
+                       (
+                           CURLcode&, [](CURLcode&&) { return CURLE_OK; }, false),
+                       (
+                           CURLcode&&, [](CURLcode&&) { return CURLE_OK; }, true),
+                       (
+                           CURLcode&&, [](CURLcode&) { return CURLE_OK; }, false),
+                       (
+                           const CURLcode&, [](const CURLcode&) { return CURLE_OK; }, true),
+                       (const CURLcode&, [](CURLcode&) { return CURLE_OK; }, false)) {
+    STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
+}
 
 } // namespace beman::monadics::tests
