@@ -4,6 +4,22 @@ find_package(Catch2 REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
 include(Catch)
 
+add_library(beman.monadics.tests.helpers INTERFACE)
+target_include_directories(
+    beman.monadics.tests.helpers
+    INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include
+)
+target_sources(
+    beman.monadics.tests.helpers
+    PUBLIC
+        FILE_SET HEADERS
+            BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+            FILES
+                include/helpers/keeps_return_value_category.hpp
+                include/helpers/move_only.hpp
+                include/helpers/move_tracker.hpp
+)
+
 set(test_global_target "beman.monadics.tests")
 add_custom_target(${test_global_target})
 
@@ -42,7 +58,10 @@ foreach(test_dir ${tests})
         )
         target_link_libraries(
             ${test_target}
-            PRIVATE beman::monadics Catch2::Catch2WithMain
+            PRIVATE
+                beman::monadics
+                Catch2::Catch2WithMain
+                beman.monadics.tests.helpers
         )
         target_include_directories(
             ${test_target}
