@@ -41,6 +41,11 @@ struct and_then_t {
 
 inline constexpr and_then_t and_then{};
 
+template <typename Box, typename Fn>
+concept and_thenable = requires(Box&& box, Fn&& fn) {
+    { std::forward<Box>(box) | and_then(std::forward<Fn>(fn)) };
+};
+
 } // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_AND_THEN_HPP

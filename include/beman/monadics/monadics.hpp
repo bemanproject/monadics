@@ -12,6 +12,7 @@
 namespace beman::monadics {
 
 using detail::and_then;
+using detail::and_thenable;
 using detail::box_traits;
 using detail::get_box_traits;
 using detail::or_else;
