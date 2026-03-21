@@ -19,6 +19,7 @@ using detail::or_else;
 using detail::or_elseable;
 using detail::transform;
 using detail::transform_error;
+using detail::transform_errorable;
 using detail::transformable;
 
 } // namespace beman::monadics

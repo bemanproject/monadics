@@ -41,6 +41,10 @@ struct transform_error_t {
 
 inline constexpr transform_error_t transform_error{};
 
+template <typename Box, typename Fn>
+concept transform_errorable =
+    requires(Box&& box, Fn&& fn) { std::forward<Box>(box) | transform_error(std::forward<Fn>(fn)); };
+
 } // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_TRANSFORM_ERROR_HPP
