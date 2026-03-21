@@ -8,6 +8,8 @@
 #include <beman/monadics/detail/invoke_with_error.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
+#include <utility>
+
 namespace beman::monadics::detail {
 
 struct or_else_t {
@@ -37,6 +39,9 @@ struct or_else_t {
 };
 
 inline constexpr or_else_t or_else{};
+
+template <typename Box, typename Fn>
+concept or_elseable = requires(Box&& box, Fn&& fn) { std::forward<Box>(box) | or_else(std::forward<Fn>(fn)); };
 
 } // namespace beman::monadics::detail
 
