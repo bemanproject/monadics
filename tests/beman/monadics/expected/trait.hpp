@@ -47,13 +47,13 @@ class [[nodiscard("expected value should be handled")]] expected {
 
     [[nodiscard]] constexpr decltype(auto) value() & noexcept {
         if constexpr (!IsVoid) {
-            return value_;
+            return static_cast<value_type&>(value_);
         }
     }
 
     [[nodiscard]] constexpr decltype(auto) value() const& noexcept {
         if constexpr (!IsVoid) {
-            return value_;
+            return static_cast<const value_type&>(value_);
         }
     }
 
@@ -69,13 +69,13 @@ class [[nodiscard("expected value should be handled")]] expected {
         }
     }
 
-    [[nodiscard]] constexpr decltype(auto) error() & noexcept { return error_; }
+    [[nodiscard]] constexpr error_type& error() & noexcept { return error_; }
 
-    [[nodiscard]] constexpr decltype(auto) error() const& noexcept { return error_; }
+    [[nodiscard]] constexpr const error_type& error() const& noexcept { return error_; }
 
-    [[nodiscard]] constexpr decltype(auto) error() && noexcept { return std::move(error_); }
+    [[nodiscard]] constexpr error_type&& error() && noexcept { return std::move(error_); }
 
-    [[nodiscard]] constexpr decltype(auto) error() const&& noexcept { return std::move(error_); }
+    [[nodiscard]] constexpr const error_type&& error() const&& noexcept { return std::move(error_); }
 
     [[nodiscard]] friend constexpr bool operator==(const expected& lhs, const expected& rhs) noexcept {
         if (lhs.has_value_ != rhs.has_value_) {
