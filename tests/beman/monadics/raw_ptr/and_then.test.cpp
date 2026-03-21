@@ -4,7 +4,7 @@
 
 #include "beman/monadics/detail/and_then.hpp"
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
 
@@ -18,11 +18,6 @@ struct Boo {
 };
 
 } // namespace
-
-// auto handler = curl_init();
-
-// handler | and_then(curl_set_option, ....);
-// | and_then(curl_set_option, ....);
 
 TEST_CASE("with-value") {
     constexpr int value = []() {
@@ -62,6 +57,35 @@ TEST_CASE("self") {
     }();
 
     STATIC_REQUIRE(value == 5);
+}
+
+// raw_ptr::value() takes the pointer by value and returns *ptr as T&, so the
+// box's own value category is irrelevant: moving a T* just copies the pointer word.
+TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
+                       "",
+                       ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
+                       (
+                           int*&, [](int&) { return (int*)nullptr; }, true),
+                       (
+                           int*&&, [](int&) { return (int*)nullptr; }, true),
+                       (
+                           int*&, [](int&&) { return (int*)nullptr; }, false),
+                       (int*&&, [](int&&) { return (int*)nullptr; }, false)) {
+    STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
+}
+
+TEST_CASE("pointee-is-mutable-through-lvalue-ref") {
+    constexpr auto result = [] {
+        int  val = 10;
+        int* r   = &val | and_then([](int& v) {
+            v *= 2;
+            return &v;
+        });
+        return std::pair{val, *r};
+    }();
+
+    STATIC_REQUIRE(result.first == 20);
+    STATIC_REQUIRE(result.second == 20);
 }
 
 } // namespace beman::monadics::tests
