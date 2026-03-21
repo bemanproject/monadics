@@ -4,6 +4,8 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 
+#include <helpers/keeps_return_value_category.hpp>
+
 namespace beman::monadics::detail::tests {
 
 namespace {
@@ -73,21 +75,8 @@ TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraits) {
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsValue, MemberValue) {
     using Box    = TestType;
     using Traits = box_traits<Box>;
-
-    constexpr auto fn = get_value_fn<Box, Traits>();
-
-    STATIC_REQUIRE(requires(Box b) {
-        { fn(b) } -> std::same_as<int&>;
-    });
-    STATIC_REQUIRE(requires(const Box& b) {
-        { fn(b) } -> std::same_as<const int&>;
-    });
-    STATIC_REQUIRE(requires {
-        { fn(Box{}) } -> std::same_as<int&&>;
-    });
-    STATIC_REQUIRE(requires(const Box b) {
-        { fn(std::move(b)) } -> std::same_as<const int&&>;
-    });
+    using Fn     = decltype(get_value_fn<Box, Traits>());
+    STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 
 } // namespace beman::monadics::detail::tests

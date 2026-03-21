@@ -4,6 +4,8 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 
+#include <helpers/move_tracker.hpp>
+
 namespace beman::monadics::detail::tests {
 
 namespace {
@@ -22,15 +24,6 @@ struct box_traits<TraitsMakeError> {
 
 struct TypeConstructibleWithError {
     int err{};
-};
-
-struct MoveTracker {
-    int copies{};
-    int moves{};
-
-    constexpr MoveTracker() = default;
-    constexpr MoveTracker(const MoveTracker& o) : copies(o.copies + 1), moves(o.moves) {}
-    constexpr MoveTracker(MoveTracker&& o) noexcept : copies(o.copies), moves(o.moves + 1) {}
 };
 
 struct TraitsAndTypeConstructibleWithError {
@@ -79,7 +72,7 @@ TEMPLATE_TEST_CASE_SIG("get",
 namespace {
 
 struct MakeErrorTrackerBox {
-    MoveTracker err{};
+    helpers::MoveTracker err{};
 };
 
 template <>
@@ -94,8 +87,8 @@ TEST_CASE("lvalue-arg-is-copied-not-moved") {
     using Traits = box_traits<Box>;
 
     constexpr auto result = [] {
-        constexpr auto fn = get_make_error_fn<Box, Traits, MoveTracker>();
-        MoveTracker    t;
+        constexpr auto       fn = get_make_error_fn<Box, Traits, helpers::MoveTracker>();
+        helpers::MoveTracker t;
         return fn(t);
     }();
 
@@ -105,8 +98,8 @@ TEST_CASE("lvalue-arg-is-copied-not-moved") {
 
 TEST_CASE("rvalue-arg-is-moved-not-copied") {
     constexpr auto result = [] {
-        auto        fn = get_make_error_fn<MakeErrorTrackerBox, box_traits<MakeErrorTrackerBox>, MoveTracker>();
-        MoveTracker t;
+        auto fn = get_make_error_fn<MakeErrorTrackerBox, box_traits<MakeErrorTrackerBox>, helpers::MoveTracker>();
+        helpers::MoveTracker t;
         return fn(std::move(t));
     }();
 

@@ -36,7 +36,10 @@ foreach(test_name ${tests})
     target_sources(${test_target} PRIVATE "${test_name}.test.cpp")
     target_link_libraries(
         ${test_target}
-        PRIVATE beman::monadics Catch2::Catch2WithMain
+        PRIVATE
+            beman::monadics
+            beman.monadics.tests.helpers
+            Catch2::Catch2WithMain
     )
 
     catch_discover_tests(${test_target}

@@ -3,7 +3,8 @@
 #include <beman/monadics/detail/get_make_fn.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
-#include <catch2/catch_test_macros.hpp>
+
+#include <helpers/move_tracker.hpp>
 
 namespace beman::monadics::detail::tests {
 
@@ -92,19 +93,10 @@ TEST_CASE("pointer-lvalue") {
     STATIC_REQUIRE(fn(x) == &x);
 }
 
-struct MoveTracker {
-    int copies{};
-    int moves{};
-
-    constexpr MoveTracker() = default;
-    constexpr MoveTracker(const MoveTracker& o) noexcept : copies(o.copies + 1), moves(o.moves) {}
-    constexpr MoveTracker(MoveTracker&& o) noexcept : copies(o.copies), moves(o.moves + 1) {}
-};
-
 namespace {
 
 struct MakeTrackerBox {
-    MoveTracker val{};
+    helpers::MoveTracker val{};
 };
 
 template <>
@@ -116,8 +108,8 @@ struct box_traits<MakeTrackerBox> {
 
 TEST_CASE("lvalue-arg-is-copied-not-moved") {
     constexpr auto result = [] {
-        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, MoveTracker>();
-        MoveTracker    t;
+        constexpr auto       fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
+        helpers::MoveTracker t;
         return fn(t);
     }();
 
@@ -127,8 +119,8 @@ TEST_CASE("lvalue-arg-is-copied-not-moved") {
 
 TEST_CASE("rvalue-arg-is-moved-not-copied") {
     constexpr auto result = [] {
-        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, MoveTracker>();
-        MoveTracker    t;
+        constexpr auto       fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
+        helpers::MoveTracker t;
         return fn(std::move(t));
     }();
 
