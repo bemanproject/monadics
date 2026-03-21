@@ -18,6 +18,7 @@ using detail::get_box_traits;
 using detail::or_else;
 using detail::transform;
 using detail::transform_error;
+using detail::transformable;
 
 } // namespace beman::monadics
 

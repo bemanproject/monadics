@@ -57,6 +57,11 @@ struct transform_t {
 
 inline constexpr transform_t transform{};
 
+template <typename Box, typename Fn>
+concept transformable = requires(std::remove_reference_t<Box> box, std::remove_reference_t<Fn> fn) {
+    std::forward<Box>(box) | transform(std::forward<Fn>(fn));
+};
+
 } // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
