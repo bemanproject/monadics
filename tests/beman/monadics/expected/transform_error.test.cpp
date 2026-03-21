@@ -4,7 +4,7 @@
 
 #include "beman/monadics/detail/transform_error.hpp"
 
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
 
@@ -44,6 +44,23 @@ TEST_CASE("non-void-value") {
         STATIC_REQUIRE(result.has_value() == false);
         STATIC_REQUIRE(result.error() == 20.0);
     }
+}
+
+TEMPLATE_TEST_CASE_SIG("keep-value-category",
+                       "",
+                       ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
+                       (
+                           stdx::expected<int, double>&, [](double&) { return 0.0; }, true),
+                       (
+                           stdx::expected<int, double>&, [](double&&) { return 0.0; }, false),
+                       (
+                           stdx::expected<int, double>&&, [](double&&) { return 0.0; }, true),
+                       (
+                           stdx::expected<int, double>&&, [](double&) { return 0.0; }, false),
+                       (
+                           const stdx::expected<int, double>&, [](const double&) { return 0.0; }, true),
+                       (const stdx::expected<int, double>&, [](double&) { return 0.0; }, false)) {
+    STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
 }
 
 } // namespace beman::monadics::tests
