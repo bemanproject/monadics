@@ -90,21 +90,22 @@ beman_add_fetchcontent_test(
     "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics"
     ${_integration_strict_options}
 )
-beman_add_fetchcontent_test(
-    modules
-    "-DBEMAN_USE_MODULES=ON"
-    "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics_module"
-    "-DBEMAN_INTEGRATION_USE_IMPORT_SOURCE=ON"
-)
-beman_add_fetchcontent_test(
-    compatible.modules
-    "-DBEMAN_USE_MODULES=ON"
-    "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics"
-)
+if(BEMAN_USE_MODULES)
+    beman_add_fetchcontent_test(
+        modules
+        "-DBEMAN_USE_MODULES=ON"
+        "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics_module"
+        "-DBEMAN_INTEGRATION_USE_IMPORT_SOURCE=ON"
+    )
+    beman_add_fetchcontent_test(
+        compatible.modules
+        "-DBEMAN_USE_MODULES=ON"
+        "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics"
+    )
+endif()
 
 # find_package install fixtures (self-contained builds)
 beman_add_find_package_install(headers OFF)
-beman_add_find_package_install(modules ON)
 
 # find_package consumer tests (headers install)
 beman_add_find_package_test(
@@ -130,24 +131,26 @@ beman_add_find_package_test(
     ${_integration_strict_options}
 )
 
-# find_package consumer tests (modules install)
-beman_add_find_package_test(
-    modules
-    modules
-    "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics_module"
-    "-DBEMAN_INTEGRATION_USE_IMPORT_SOURCE=ON"
-    "-DBEMAN_USE_MODULES=ON"
-)
-beman_add_find_package_test(
-    compatible.modules
-    modules
-    "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics"
-    "-DBEMAN_USE_MODULES=ON"
-)
-
-# Mixed: lib A (headers) + lib B (modules) → lib C → executable D.
-# BEMAN_USE_MODULES is forced ON inside the inner project.
 if(BEMAN_USE_MODULES)
+    # Modules install fixture + its consumers
+    beman_add_find_package_install(modules ON)
+
+    beman_add_find_package_test(
+        modules
+        modules
+        "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics_module"
+        "-DBEMAN_INTEGRATION_USE_IMPORT_SOURCE=ON"
+        "-DBEMAN_USE_MODULES=ON"
+    )
+    beman_add_find_package_test(
+        compatible.modules
+        modules
+        "-DBEMAN_INTEGRATION_CONSUMER_TARGET=beman::monadics"
+        "-DBEMAN_USE_MODULES=ON"
+    )
+
+    # Mixed: lib A (headers) + lib B (modules) → lib C → executable D.
+    # BEMAN_USE_MODULES is forced ON inside the inner project.
     add_test(
         NAME beman.monadics.integration.mixed
         COMMAND
