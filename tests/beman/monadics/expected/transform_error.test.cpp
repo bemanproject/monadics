@@ -9,7 +9,7 @@
 namespace beman::monadics::tests {
 
 TEST_CASE("void-value") {
-    auto fn = [](int v) { return v * 2.0; };
+    constexpr auto fn = [](int v) { return v * 2.0; };
 
     SECTION("with-value") {
         constexpr auto result = stdx::expected<void, int>{} | transform_error(fn);
@@ -28,7 +28,7 @@ TEST_CASE("void-value") {
 }
 
 TEST_CASE("non-void-value") {
-    auto fn = [](int v) { return v * 2.0; };
+    constexpr auto fn = [](int v) { return v * 2.0; };
 
     SECTION("with-value") {
         constexpr auto result = stdx::expected<char, int>{} | transform_error(fn);
