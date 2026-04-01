@@ -7,6 +7,7 @@
 #include "beman/monadics/detail/rebox_error.hpp"
 #include "beman/monadics/detail/invoke_with_value.hpp"
 #include "beman/monadics/detail/same_box.hpp"
+#include "beman/monadics/detail/pipe_adaptor.hpp"
 
 #include <utility>
 
@@ -21,32 +22,26 @@ template <typename Box, typename Fn>
 concept and_thenable_impl =
     and_thenable_return<decltype(invoke_with_value(std::declval<Fn>(), std::declval<Box>())), Box>;
 
-struct and_then_t {
-    template <typename Fn>
-    struct action {
-        Fn fn;
+class and_then_t {
+    inline static constexpr access_key<and_then_t> key{};
 
-        template <is_box Box, same_unqualified_as<action> A, typename Traits = get_box_traits<Box>>
-        [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
-            requires and_thenable_impl<decltype(box), decltype(std::forward<A>(a).fn)>
-        {
-            if (Traits::has_value(box)) {
-                return invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box));
-            }
+    template <is_box Box, std::derived_from<and_then_t> Op>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
+        requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+    {
+        using Traits = get_box_traits<Box>;
 
-            using NewBox = decltype(invoke_with_value(std::forward<A>(a).fn, std::forward<Box>(box)));
-
-            return rebox_error<NewBox>(std::forward<Box>(box));
+        if (Traits::has_value(box)) {
+            return invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box));
         }
-    };
 
-    template <typename Fn>
-    [[nodiscard]] constexpr decltype(auto) operator()(Fn&& fn) const noexcept {
-        return action<decltype(fn)>{std::forward<Fn>(fn)};
+        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+
+        return rebox_error<NewBox>(std::forward<Box>(box));
     }
 };
 
-inline constexpr and_then_t and_then{};
+inline constexpr pipe_adaptor<and_then_t> and_then{};
 
 template <typename Box, typename Fn>
 concept and_thenable = requires(Box&& box, Fn&& fn) {
