@@ -22,6 +22,7 @@ set(tests
     meta_extract_value_type
     meta_rebind_error
     meta_rebind_value
+    pipe_adaptor
     rebox_error
     rebox_value
     same_box

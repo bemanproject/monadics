@@ -5,6 +5,7 @@ target_sources(
     PUBLIC
         FILE_SET HEADERS
             FILES
+                detail/access_key.hpp
                 detail/and_then.hpp
                 detail/as_pointer.hpp
                 detail/box_traits.hpp
@@ -26,6 +27,7 @@ target_sources(
                 detail/meta_rebind_error.hpp
                 detail/meta_rebind_value.hpp
                 detail/or_else.hpp
+                detail/pipe_adaptor.hpp
                 detail/rebox_value.hpp
                 detail/rebox_error.hpp
                 detail/same_box.hpp
