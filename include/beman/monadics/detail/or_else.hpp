@@ -4,8 +4,9 @@
 #define BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 
 #include <beman/monadics/detail/get_box_traits.hpp>
-#include <beman/monadics/detail/rebox_value.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
+#include <beman/monadics/detail/pipe_adaptor.hpp>
+#include <beman/monadics/detail/rebox_value.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
 #include <utility>
@@ -22,31 +23,24 @@ template <typename Box, typename Fn>
 concept or_elseable_impl =
     or_elseable_return<decltype(invoke_with_error(std::declval<Fn>(), std::declval<Box>())), Box>;
 
-struct or_else_t {
-    template <typename Fn>
-    struct action {
-        Fn fn;
+class or_else_t {
+    inline static constexpr access_key<or_else_t> key{};
 
-        template <is_box Box, same_unqualified_as<action> A, typename Traits = get_box_traits<Box>>
-        [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, A&& a) noexcept
-            requires or_elseable_impl<decltype(box), decltype(std::forward<A>(a).fn)>
-        {
-            using NewBox = decltype(invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box)));
-            if (!Traits::has_value(box)) {
-                return invoke_with_error(std::forward<A>(a).fn, std::forward<Box>(box));
-            }
-
-            return rebox_value<NewBox>(std::forward<Box>(box));
+    template <is_box Box, std::derived_from<or_else_t> Op>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
+        requires or_elseable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+    {
+        using Traits = get_box_traits<Box>;
+        using NewBox = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        if (!Traits::has_value(box)) {
+            return invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box));
         }
-    };
 
-    template <typename Fn>
-    [[nodiscard]] constexpr decltype(auto) operator()(Fn&& fn) const noexcept {
-        return action<decltype(fn)>{std::forward<Fn>(fn)};
+        return rebox_value<NewBox>(std::forward<Box>(box));
     }
 };
 
-inline constexpr or_else_t or_else{};
+inline constexpr pipe_adaptor<or_else_t> or_else{};
 
 template <typename Box, typename Fn>
 concept or_elseable = requires(Box&& box, Fn&& fn) { std::forward<Box>(box) | or_else(std::forward<Fn>(fn)); };
