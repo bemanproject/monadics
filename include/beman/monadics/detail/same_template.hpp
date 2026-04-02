@@ -13,8 +13,8 @@ template <typename T, typename U>
 concept same_template_impl = requires {
     requires decomposable<T, 1>;
     requires decomposable<U, 1>;
-    []<template <typename...> class C, typename... Ts, typename... Us>(C<Ts...>*, C<Us...>*) {}(as_pointer<T>,
-                                                                                                as_pointer<U>);
+    []<template <typename...> class C, typename... Ts, typename... Us>(C<Ts...>*, C<Us...>*) {
+    }(as_pointer<T>, as_pointer<U>);
 };
 
 template <typename T, typename U>

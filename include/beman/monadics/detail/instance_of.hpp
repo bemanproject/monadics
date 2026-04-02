@@ -12,7 +12,8 @@ namespace beman::monadics::detail {
 template <typename T, template <typename...> class U>
 concept instance_of = requires {
     requires decomposable<T, 1>;
-    []<typename... Ts>(U<Ts...>*) {}(as_pointer<T>);
+    []<typename... Ts>(U<Ts...>*) {
+    }(as_pointer<T>);
 };
 
 } // namespace beman::monadics::detail

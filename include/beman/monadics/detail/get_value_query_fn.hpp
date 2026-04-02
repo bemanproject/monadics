@@ -12,11 +12,15 @@ namespace beman::monadics::detail {
 template <typename Box, typename Traits>
 [[nodiscard]] consteval decltype(auto) get_value_query_fn() noexcept {
     if constexpr (requires { Traits::has_value(std::declval<Box>()); }) {
-        return [](const auto& box) { return Traits::has_value(box); };
+        return [](const auto& box) {
+            return Traits::has_value(box);
+        };
     } else if constexpr (requires {
                              { std::declval<Box>().has_value() } noexcept -> std::same_as<bool>;
                          }) {
-        return [](const auto& box) { return box.has_value(); };
+        return [](const auto& box) {
+            return box.has_value();
+        };
     }
 }
 

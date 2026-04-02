@@ -30,7 +30,9 @@ TEST_CASE("box-trait-for") {
     }();
     STATIC_REQUIRE(hasValue);
 
-    constexpr auto noValue = []() { return Traits::has_value(static_cast<int*>(nullptr)); }();
+    constexpr auto noValue = []() {
+        return Traits::has_value(static_cast<int*>(nullptr));
+    }();
     STATIC_REQUIRE(noValue == false);
 
     STATIC_REQUIRE(Traits::error() == nullptr);
