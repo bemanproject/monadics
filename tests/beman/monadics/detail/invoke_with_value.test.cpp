@@ -4,8 +4,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <variant>
 #include <utility>
+#include <variant>
 
 template <typename T, typename E>
 struct Box : std::variant<std::conditional_t<std::is_void_v<T>, std::monostate, T>, E> {};
