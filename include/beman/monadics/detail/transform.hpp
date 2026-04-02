@@ -20,9 +20,10 @@ class transform_t {
     template <is_box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires requires {
-            requires same_box<Box,
-                              typename Traits::template rebind<decltype(invoke_with_value(
-                                  std::forward<Op>(op).callable(key), std::forward<Box>(box)))>>;
+            requires same_box<
+                Box,
+                typename Traits::template rebind<decltype(invoke_with_value(std::forward<Op>(op).callable(key),
+                                                                            std::forward<Box>(box)))>>;
         }
     {
         using NewValue = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
