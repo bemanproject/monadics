@@ -83,28 +83,35 @@ TEMPLATE_TEST_CASE_SIG(
     (
         stdx::expected<int, double>&,
         [](double&) { return stdx::expected<int, double>{}; },
-        true),
+        true
+    ),
     (
         stdx::expected<int, double>&,
         [](double&) { return stdx::expected<void, double>{}; },
-        false),
+        false
+    ),
     (
         stdx::expected<int, double>&,
         [](double&&) { return stdx::expected<int, double>{}; },
-        false),
+        false
+    ),
     (
         stdx::expected<int, double>&&,
         [](double&&) { return stdx::expected<int, double>{}; },
-        true),
+        true
+    ),
     (
         stdx::expected<int, double>&&,
         [](double&) { return stdx::expected<int, double>{}; },
-        false),
+        false
+    ),
     (
         const stdx::expected<int, double>&,
         [](const double&) { return stdx::expected<int, double>{}; },
-        true),
-    (const stdx::expected<int, double>&, [](double&) { return stdx::expected<int, double>{}; }, false)) {
+        true
+    ),
+    (const stdx::expected<int, double>&, [](double&) { return stdx::expected<int, double>{}; }, false)
+) {
     STATIC_REQUIRE(or_elseable<Box, decltype(Fn)> == Expected);
 }
 

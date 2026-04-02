@@ -10,8 +10,9 @@
 namespace beman::monadics::detail::tests {
 
 TEMPLATE_TEST_CASE("get", "", std::optional<int>, std::vector<int>) {
-    STATIC_REQUIRE(std::same_as<decltype(meta_extract_value_type<TestType>()),
-                                std::type_identity<typename TestType::value_type> >);
+    STATIC_REQUIRE(
+        std::same_as<decltype(meta_extract_value_type<TestType>()), std::type_identity<typename TestType::value_type> >
+    );
 }
 
 template <typename T>

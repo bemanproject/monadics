@@ -27,23 +27,28 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        (
                            std::optional<int>&,
                            [](int&) { return 0; },
-                           true),
+                           true
+                       ),
                        (
                            std::optional<int>&,
                            [](int&&) { return 0; },
-                           false),
+                           false
+                       ),
                        (
                            std::optional<int>&&,
                            [](int&&) { return 0; },
-                           true),
+                           true
+                       ),
                        (
                            std::optional<int>&&,
                            [](int&) { return 0; },
-                           false),
+                           false
+                       ),
                        (
                            const std::optional<int>&,
                            [](const int&) { return 0; },
-                           true),
+                           true
+                       ),
                        (const std::optional<int>&, [](int&) { return 0; }, false)) {
     STATIC_REQUIRE(transformable<Box, decltype(Fn)> == Expected);
 }

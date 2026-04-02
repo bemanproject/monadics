@@ -16,7 +16,8 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
                        (
                            int*&,
                            [](int&&) { return 0; },
-                           false),
+                           false
+                       ),
                        (int*&&, [](int&&) { return 0; }, false)) {
     STATIC_REQUIRE(transformable<Box, decltype(Fn)> == Expected);
 }

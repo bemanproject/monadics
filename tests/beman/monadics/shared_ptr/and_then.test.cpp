@@ -42,15 +42,18 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
                        (
                            std::shared_ptr<int>&,
                            [](int&) { return std::shared_ptr<int>{}; },
-                           true),
+                           true
+                       ),
                        (
                            std::shared_ptr<int>&&,
                            [](int&) { return std::shared_ptr<int>{}; },
-                           true),
+                           true
+                       ),
                        (
                            std::shared_ptr<int>&,
                            [](int&&) { return std::shared_ptr<int>{}; },
-                           false),
+                           false
+                       ),
                        (std::shared_ptr<int>&&, [](int&&) { return std::shared_ptr<int>{}; }, false)) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }

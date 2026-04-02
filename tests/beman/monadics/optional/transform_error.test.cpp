@@ -8,7 +8,8 @@ namespace beman::monadics::tests {
 
 TEST_CASE("not-supported") {
     STATIC_REQUIRE_FALSE(
-        transform_errorable<std::optional<int>, decltype([](std::nullopt_t) { return std::nullopt; })>);
+        transform_errorable<std::optional<int>, decltype([](std::nullopt_t) { return std::nullopt; })>
+    );
 }
 
 } // namespace beman::monadics::tests

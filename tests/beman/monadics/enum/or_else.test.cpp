@@ -16,23 +16,28 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        (
                            CURLcode&,
                            [](CURLcode&) { return CURLE_OK; },
-                           true),
+                           true
+                       ),
                        (
                            CURLcode&,
                            [](CURLcode&&) { return CURLE_OK; },
-                           false),
+                           false
+                       ),
                        (
                            CURLcode&&,
                            [](CURLcode&&) { return CURLE_OK; },
-                           true),
+                           true
+                       ),
                        (
                            CURLcode&&,
                            [](CURLcode&) { return CURLE_OK; },
-                           false),
+                           false
+                       ),
                        (
                            const CURLcode&,
                            [](const CURLcode&) { return CURLE_OK; },
-                           true),
+                           true
+                       ),
                        (const CURLcode&, [](CURLcode&) { return CURLE_OK; }, false)) {
     STATIC_REQUIRE(or_elseable<Box, decltype(Fn)> == Expected);
 }

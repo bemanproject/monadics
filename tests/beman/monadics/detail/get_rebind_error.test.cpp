@@ -79,7 +79,8 @@ TEMPLATE_TEST_CASE_SIG("get",
                        (TypeAndTraitsWithRebindError<int, int>, TypeAndTraitsWithRebindError<int, double>)) {
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(
-        std::same_as<typename get_rebind_error_t<Box, Traits, int>::template rebind_error<double>, Expected>);
+        std::same_as<typename get_rebind_error_t<Box, Traits, int>::template rebind_error<double>, Expected>
+    );
 }
 
 } // namespace beman::monadics::detail::tests

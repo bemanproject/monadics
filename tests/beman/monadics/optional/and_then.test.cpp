@@ -41,28 +41,35 @@ TEMPLATE_TEST_CASE_SIG(
     (
         std::optional<int>&,
         [](int&) { return std::optional<int>{}; },
-        true),
+        true
+    ),
     (
         std::optional<int>&,
         [](int&&) { return std::optional<int>{}; },
-        false),
+        false
+    ),
     (
         std::optional<int>&&,
         [](int&&) { return std::optional<int>{}; },
-        true),
+        true
+    ),
     (
         std::optional<int>&&,
         [](int&) { return std::optional<int>{}; },
-        false),
+        false
+    ),
     (
         const std::optional<int>&,
         [](const int&) { return std::optional<int>{}; },
-        true),
+        true
+    ),
     (
         const std::optional<int>&,
         [](int&) { return std::optional<int>{}; },
-        false),
-    (std::optional<helpers::MoveOnly>&, [](helpers::MoveOnly) { return std::optional<helpers::MoveOnly>{}; }, false)) {
+        false
+    ),
+    (std::optional<helpers::MoveOnly>&, [](helpers::MoveOnly) { return std::optional<helpers::MoveOnly>{}; }, false)
+) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }
 

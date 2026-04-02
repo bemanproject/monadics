@@ -16,8 +16,9 @@ namespace beman::monadics::detail::tests {
 
 TEMPLATE_TEST_CASE("preserves-value-type", "", (myexpected<int, double>), (myexpected<double, float>)) {
     using rebinder = typename decltype(get_meta_rebind_error<TestType>())::type;
-    STATIC_REQUIRE(std::same_as<typename rebinder::template rebind_error<float>,
-                                myexpected<typename TestType::value_type, float>>);
+    STATIC_REQUIRE(
+        std::same_as<typename rebinder::template rebind_error<float>, myexpected<typename TestType::value_type, float>>
+    );
 }
 
 template <typename T>

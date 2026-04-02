@@ -35,8 +35,8 @@ class transform_t {
                 invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box));
                 return NewBoxTraits::make();
             } else {
-                return NewBoxTraits::make(
-                    invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+                return NewBoxTraits::make(invoke_with_value(std::forward<Op>(op).callable(key),
+                                                            std::forward<Box>(box)));
             }
         }
 

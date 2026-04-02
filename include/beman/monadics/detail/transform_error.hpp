@@ -32,8 +32,8 @@ class transform_error_t {
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (!Traits::has_value(box)) {
-            return NewBoxTraits::make_error(
-                invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+            return NewBoxTraits::make_error(invoke_with_error(std::forward<Op>(op).callable(key),
+                                                              std::forward<Box>(box)));
         }
 
         return rebox_value<NewBox>(std::forward<Box>(box));

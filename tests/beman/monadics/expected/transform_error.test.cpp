@@ -56,23 +56,28 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        (
                            stdx::expected<int, double>&,
                            [](double&) { return 0.0; },
-                           true),
+                           true
+                       ),
                        (
                            stdx::expected<int, double>&,
                            [](double&&) { return 0.0; },
-                           false),
+                           false
+                       ),
                        (
                            stdx::expected<int, double>&&,
                            [](double&&) { return 0.0; },
-                           true),
+                           true
+                       ),
                        (
                            stdx::expected<int, double>&&,
                            [](double&) { return 0.0; },
-                           false),
+                           false
+                       ),
                        (
                            const stdx::expected<int, double>&,
                            [](const double&) { return 0.0; },
-                           true),
+                           true
+                       ),
                        (const stdx::expected<int, double>&, [](double&) { return 0.0; }, false)) {
     STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
 }
