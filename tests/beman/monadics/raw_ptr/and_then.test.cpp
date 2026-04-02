@@ -13,6 +13,7 @@ namespace {
 struct Foo {
     int value{};
 };
+
 struct Boo {
     Foo* foo{nullptr};
 };

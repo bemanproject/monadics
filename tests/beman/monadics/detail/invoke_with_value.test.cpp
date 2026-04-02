@@ -24,6 +24,7 @@ struct box_traits<Box<T, E>> {
     using rebind_error = Box<T, F>;
 
     static constexpr bool has_value(const Box<T, E>& b) noexcept { return b.index() == 0; }
+
     static constexpr decltype(auto) value(auto&& b) {
         if constexpr (std::is_void_v<T>) {
             return;
@@ -31,9 +32,11 @@ struct box_traits<Box<T, E>> {
             return std::get<0>(std::forward<decltype(b)>(b));
         }
     }
+
     static constexpr decltype(auto) error(auto&& b) { return std::get<1>(std::forward<decltype(b)>(b)); }
 
     static constexpr Box<T, E> make(auto... v) { return {std::move(v)...}; }
+
     static constexpr Box<T, E> make_error(E e) { return {std::move(e)}; }
 };
 

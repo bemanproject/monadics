@@ -27,10 +27,13 @@ struct box_traits<Box<T, E>> {
     using rebind_error = Box<T, F>;
 
     static constexpr bool has_value(const auto& b) noexcept { return b.has_val; }
+
     static constexpr decltype(auto) value(auto&& b) { return std::move(b.val); }
+
     static constexpr decltype(auto) error(auto&& b) { return std::move(b.err); }
 
     static constexpr Box<T, E> make(T v) { return {true, std::move(v), {}}; }
+
     static constexpr Box<T, E> make_error(E e) { return {false, {}, std::move(e)}; }
 };
 

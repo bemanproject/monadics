@@ -24,6 +24,7 @@ TEST_CASE("not-callable-for-non-decomposable") {
     STATIC_REQUIRE_FALSE(extractable<int>);
 
     struct Foo {};
+
     STATIC_REQUIRE_FALSE(extractable<Foo>);
 }
 

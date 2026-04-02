@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #ifndef BEMAN_MONADICS_DETAIL_INSTANCE_OF_HPP

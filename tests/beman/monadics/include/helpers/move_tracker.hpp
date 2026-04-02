@@ -10,7 +10,9 @@ struct MoveTracker {
     int moves{};
 
     constexpr MoveTracker() = default;
+
     constexpr MoveTracker(const MoveTracker& o) noexcept : copies(o.copies + 1), moves(o.moves) {}
+
     constexpr MoveTracker(MoveTracker&& o) noexcept : copies(o.copies), moves(o.moves + 1) {}
 };
 

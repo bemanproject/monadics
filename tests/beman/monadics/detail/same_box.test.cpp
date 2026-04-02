@@ -27,7 +27,9 @@ struct box_traits<Box<T, E>> {
     using rebind_error = Box<T, F>;
 
     static constexpr bool has_value(const Box<T, E>& b) noexcept { return b.index() == 0; }
+
     static constexpr decltype(auto) value(auto&& b) { return std::get<0>(std::forward<decltype(b)>(b)); }
+
     static constexpr decltype(auto) error(auto&& b) { return std::get<1>(std::forward<decltype(b)>(b)); }
 };
 
@@ -40,7 +42,7 @@ struct box_traits<std::optional<T>> {
 
 namespace beman::monadics::detail::tests {
 
-TEMPLATE_TEST_CASE("identical", "", (Box<int, double>), (std::optional<int>)) {
+TEMPLATE_TEST_CASE("identical", "", (Box<int, double>), std::optional<int>) {
     STATIC_REQUIRE(same_box<TestType, TestType>);
 }
 

@@ -37,7 +37,9 @@ struct box_traits<TraitsAndTypeConstructibleWithError> {
 
 struct NonTypeConstructibleWithError {
     struct tag {};
+
     NonTypeConstructibleWithError() = delete;
+
     explicit NonTypeConstructibleWithError(struct tag) {}
 };
 

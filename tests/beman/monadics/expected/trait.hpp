@@ -13,6 +13,7 @@ template <typename T, typename E>
     requires(!std::is_void_v<E>)
 class [[nodiscard("expected value should be handled")]] expected {
     struct Void {};
+
     static constexpr bool IsVoid = std::is_void_v<T>;
     using Value = std::conditional_t<IsVoid, Void, T>;
 
@@ -96,6 +97,7 @@ class [[nodiscard("expected value should be handled")]] expected {
         Value value_;
         E error_;
     };
+
     bool has_value_{false};
 };
 

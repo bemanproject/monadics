@@ -47,6 +47,7 @@ struct NonTypeConstructibleWithValue {
     struct tag {};
 
     NonTypeConstructibleWithValue() = delete;
+
     explicit NonTypeConstructibleWithValue(tag) {}
 };
 

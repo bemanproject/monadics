@@ -13,6 +13,7 @@ struct box_traits {};
 
 struct MemberHasValue {
     bool valid{};
+
     constexpr bool has_value() const noexcept { return valid; }
 };
 

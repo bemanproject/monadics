@@ -14,7 +14,7 @@ template <typename T>
 struct pipe_adaptor {
     template <typename Fn>
     [[nodiscard]] constexpr decltype(auto)
-    operator()(Fn&& fn) const noexcept(std::is_nothrow_constructible_v<std::decay_t<Fn>, Fn>) {
+        operator()(Fn&& fn) const noexcept(std::is_nothrow_constructible_v<std::decay_t<Fn>, Fn>) {
         using Callable = std::decay_t<Fn>;
 
         struct closure : public T {

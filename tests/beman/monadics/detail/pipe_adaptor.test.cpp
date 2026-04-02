@@ -28,6 +28,7 @@ TEST_CASE("with-value") {
 TEST_CASE("lvalue-callable-is-copied") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
+
         constexpr int operator()(int v) const { return v; }
     };
 
@@ -43,6 +44,7 @@ TEST_CASE("lvalue-callable-is-copied") {
 TEST_CASE("vvalue-callable-is-copied") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
+
         constexpr int operator()(int v) const { return v; }
     };
 

@@ -26,6 +26,7 @@ TEST_CASE("requires-minimum-1-template-args") {
     STATIC_REQUIRE_FALSE(rebindable<int>);
 
     struct Foo {};
+
     STATIC_REQUIRE_FALSE(rebindable<Foo>);
 }
 
