@@ -8,7 +8,7 @@ namespace beman::monadics::tests {
 
 TEST_CASE("box-trait-for") {
     using Expected = stdx::expected<void, int>;
-    using Traits   = get_box_traits<Expected>;
+    using Traits = get_box_traits<Expected>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, void>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, int>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<double>, stdx::expected<double, int>>);
@@ -21,7 +21,7 @@ TEST_CASE("box-trait-for") {
 
 TEST_CASE("box-trait-for-non-void-value") {
     using Expected = stdx::expected<char, int>;
-    using Traits   = get_box_traits<Expected>;
+    using Traits = get_box_traits<Expected>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, char>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, int>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<double>, stdx::expected<double, int>>);

@@ -25,8 +25,8 @@ class transform_t {
                                   std::forward<Op>(op).callable(key), std::forward<Box>(box)))>>;
         }
     {
-        using NewValue     = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
-        using NewBox       = typename Traits::template rebind<NewValue>;
+        using NewValue = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewBox = typename Traits::template rebind<NewValue>;
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (Traits::has_value(box)) {

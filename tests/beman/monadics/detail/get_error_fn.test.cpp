@@ -88,8 +88,8 @@ TEMPLATE_TEST_CASE("get",
                    MemberAndTraitsWithoutErrorChannel,
                    TraitsErrorWithErrorChannel,
                    TraitsErrorWithoutErrorChannel) {
-    using Box         = TestType;
-    using Traits      = box_traits<Box>;
+    using Box = TestType;
+    using Traits = box_traits<Box>;
     constexpr auto fn = get_error_fn<Box, Traits>();
     if constexpr (std::invocable<decltype(fn)>) {
         STATIC_REQUIRE(fn() == 1);
@@ -99,9 +99,9 @@ TEMPLATE_TEST_CASE("get",
 }
 
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsErrorWithErrorChannel, MemberError) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn     = decltype(get_error_fn<Box, Traits>());
+    using Fn = decltype(get_error_fn<Box, Traits>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 

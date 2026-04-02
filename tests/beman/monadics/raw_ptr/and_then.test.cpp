@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
 TEST_CASE("pointee-is-mutable-through-lvalue-ref") {
     constexpr auto result = [] {
         int  val = 10;
-        int* r   = &val | and_then([](int& v) {
+        int* r = &val | and_then([](int& v) {
             v *= 2;
             return &v;
         });

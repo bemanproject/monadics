@@ -67,15 +67,15 @@ TEMPLATE_TEST_CASE_SIG("concept",
 }
 
 TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraits) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(get_value_fn<Box, Traits>()(Box{}) == 42);
 }
 
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsValue, MemberValue) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn     = decltype(get_value_fn<Box, Traits>());
+    using Fn = decltype(get_value_fn<Box, Traits>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 

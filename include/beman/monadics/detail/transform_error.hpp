@@ -26,9 +26,9 @@ class transform_error_t {
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires transform_errorable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {
-        using Traits       = get_box_traits<Box>;
-        using NewError     = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
-        using NewBox       = typename Traits::template rebind_error<NewError>;
+        using Traits = get_box_traits<Box>;
+        using NewError = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewBox = typename Traits::template rebind_error<NewError>;
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (!Traits::has_value(box)) {

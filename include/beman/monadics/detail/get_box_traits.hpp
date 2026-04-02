@@ -33,7 +33,7 @@ concept is_box = has_value_type<Box, Traits>
 
 template <typename Box, typename Traits>
 struct traits {
-    using box_type   = Box;
+    using box_type = Box;
     using value_type = get_value_type_t<Box, Traits>;
     using error_type = get_error_type_t<Box, Traits>;
 
@@ -44,10 +44,10 @@ struct traits {
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
     static constexpr auto has_value = get_value_query_fn<Box, Traits>();
-    static constexpr auto value     = get_value_fn<Box, Traits>();
-    static constexpr auto error     = get_error_fn<Box, Traits>();
+    static constexpr auto value = get_value_fn<Box, Traits>();
+    static constexpr auto error = get_error_fn<Box, Traits>();
 
-    static constexpr auto make       = get_make_fn<Box, Traits, value_type>();
+    static constexpr auto make = get_make_fn<Box, Traits, value_type>();
     static constexpr auto make_error = get_make_error_fn<Box, Traits, error_type>();
 };
 

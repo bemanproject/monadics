@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE_SIG("get",
                        (TraitsMakeError, int, -1),
                        (TypeConstructibleWithError, int, -1),
                        (TraitsAndTypeConstructibleWithError, int, 1)) {
-    using Traits      = box_traits<Box>;
+    using Traits = box_traits<Box>;
     constexpr auto fn = get_make_error_fn<Box, Traits, E>();
     REQUIRE(fn(-1).err == Expected);
 }
@@ -83,7 +83,7 @@ struct box_traits<MakeErrorTrackerBox> {
 } // namespace
 
 TEST_CASE("lvalue-arg-is-copied-not-moved") {
-    using Box    = MakeErrorTrackerBox;
+    using Box = MakeErrorTrackerBox;
     using Traits = box_traits<Box>;
 
     constexpr auto result = [] {

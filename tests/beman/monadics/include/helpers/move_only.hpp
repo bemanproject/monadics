@@ -8,9 +8,9 @@ namespace beman::monadics::helpers {
 struct MoveOnly {
     int x = 0;
     explicit MoveOnly(int v) noexcept : x(v) {}
-    MoveOnly(const MoveOnly&)                = delete;
-    MoveOnly& operator=(const MoveOnly&)     = delete;
-    MoveOnly(MoveOnly&&) noexcept            = default;
+    MoveOnly(const MoveOnly&) = delete;
+    MoveOnly& operator=(const MoveOnly&) = delete;
+    MoveOnly(MoveOnly&&) noexcept = default;
     MoveOnly& operator=(MoveOnly&&) noexcept = default;
 };
 

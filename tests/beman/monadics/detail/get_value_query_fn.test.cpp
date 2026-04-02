@@ -70,14 +70,14 @@ TEMPLATE_TEST_CASE_SIG("concept",
 }
 
 TEMPLATE_TEST_CASE("get", "", MemberHasValue, TraitsHasValue, MemberAndTraits) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{}) == false);
     STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{true}) == true);
 }
 
 TEST_CASE("traits-over-member-function") {
-    using Box    = MemberAndTraits;
+    using Box = MemberAndTraits;
     using Traits = box_traits<Box>;
 
     STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{.valid = true, .value_flag = false}) == true);

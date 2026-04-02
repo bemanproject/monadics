@@ -14,7 +14,7 @@ namespace beman::monadics::detail {
 template <typename NewBox, typename Box>
     requires same_box<NewBox, Box>
 [[nodiscard]] constexpr decltype(auto) rebox_value(Box&& box) noexcept {
-    using BoxTraits    = get_box_traits<Box>;
+    using BoxTraits = get_box_traits<Box>;
     using NewBoxTraits = get_box_traits<NewBox>;
 
     if constexpr (std::is_void_v<typename NewBoxTraits::value_type>) {

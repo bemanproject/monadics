@@ -76,7 +76,7 @@ TEMPLATE_TEST_CASE_SIG("fn",
                        (BoxWithVoidValue, void, 0), // 0 unused; void branch dispatched below
                        (TypeConstructibleWithValue, int, 42),
                        (TypeAndTraitsConstruibleWithValue, int, -42)) {
-    using Traits      = box_traits<Box>;
+    using Traits = box_traits<Box>;
     constexpr auto fn = get_make_fn<Box, Traits, T>();
     if constexpr (std::is_void_v<T>) {
         [[maybe_unused]] Box b = fn();
@@ -86,10 +86,10 @@ TEMPLATE_TEST_CASE_SIG("fn",
 }
 
 TEST_CASE("pointer-lvalue") {
-    using Box         = int*;
-    using Traits      = box_traits<Box>;
+    using Box = int*;
+    using Traits = box_traits<Box>;
     constexpr auto fn = get_make_fn<Box, Traits, int>();
-    constexpr int  x  = 42;
+    constexpr int  x = 42;
     STATIC_REQUIRE(fn(x) == &x);
 }
 

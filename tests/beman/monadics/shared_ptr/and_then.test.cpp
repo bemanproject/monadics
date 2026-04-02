@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
 }
 
 TEST_CASE("pointee-is-mutable-through-lvalue-ref") {
-    auto sp     = std::make_shared<int>(5);
+    auto sp = std::make_shared<int>(5);
     auto result = sp | and_then([](int& v) {
                       v *= 3;
                       return std::make_shared<int>(v);

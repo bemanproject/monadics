@@ -14,7 +14,7 @@ template <typename T, typename E>
 class [[nodiscard("expected value should be handled")]] expected {
     struct Void {};
     static constexpr bool IsVoid = std::is_void_v<T>;
-    using Value                  = std::conditional_t<IsVoid, Void, T>;
+    using Value = std::conditional_t<IsVoid, Void, T>;
 
   public:
     using value_type = T;
@@ -41,7 +41,7 @@ class [[nodiscard("expected value should be handled")]] expected {
     constexpr expected(U&& u) : error_(std::forward<U>(u)), has_value_(false) {}
 
     constexpr expected(const expected&) = default;
-    constexpr expected(expected&&)      = default;
+    constexpr expected(expected&&) = default;
 
     [[nodiscard]] constexpr bool has_value() const noexcept { return has_value_; }
 

@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
 }
 
 TEMPLATE_TEST_CASE("get", "", TraitsErrorType, BoxErrorType, TraitsErrorFn, BothErrorType) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(std::same_as<get_error_type_t<Box, Traits>, int>);
 }

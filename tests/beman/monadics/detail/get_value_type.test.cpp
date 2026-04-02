@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
 }
 
 TEMPLATE_TEST_CASE("get", "", std::optional<int>, TraitsValueType, ExtractValueType<int>, BothValueType) {
-    using Box    = TestType;
+    using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(std::same_as<get_value_type_t<Box, Traits>, int>);
 }
