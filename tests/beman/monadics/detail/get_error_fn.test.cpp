@@ -16,9 +16,9 @@ struct box_traits {};
 struct MemberError {
     int ec{1};
 
-    constexpr int&        error() & { return ec; }
-    constexpr int&&       error() && { return std::move(ec); }
-    constexpr const int&  error() const& { return ec; }
+    constexpr int& error() & { return ec; }
+    constexpr int&& error() && { return std::move(ec); }
+    constexpr const int& error() const& { return ec; }
     constexpr const int&& error() const&& { return std::move(ec); }
 };
 
@@ -32,9 +32,9 @@ struct box_traits<TraitsErrorWithoutErrorChannel> {
 struct TraitsErrorWithErrorChannel {
     int ec{1};
 
-    constexpr int&        errorCode() & { return ec; }
-    constexpr int&&       errorCode() && { return std::move(ec); }
-    constexpr const int&  errorCode() const& { return ec; }
+    constexpr int& errorCode() & { return ec; }
+    constexpr int&& errorCode() && { return std::move(ec); }
+    constexpr const int& errorCode() const& { return ec; }
     constexpr const int&& errorCode() const&& { return std::move(ec); }
 };
 

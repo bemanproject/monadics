@@ -24,9 +24,9 @@ struct pipe_adaptor {
             constexpr explicit closure(Fn&& f) noexcept(std::is_nothrow_constructible_v<std::decay_t<Fn>, Fn>)
                 : callable_(std::forward<Fn>(f)) {}
 
-            constexpr Callable&        callable(access_key<T>) & noexcept { return callable_; }
-            constexpr const Callable&  callable(access_key<T>) const& noexcept { return callable_; }
-            constexpr Callable&&       callable(access_key<T>) && noexcept { return std::move(callable_); }
+            constexpr Callable& callable(access_key<T>) & noexcept { return callable_; }
+            constexpr const Callable& callable(access_key<T>) const& noexcept { return callable_; }
+            constexpr Callable&& callable(access_key<T>) && noexcept { return std::move(callable_); }
             constexpr const Callable&& callable(access_key<T>) const&& noexcept { return std::move(callable_); }
 
           private:

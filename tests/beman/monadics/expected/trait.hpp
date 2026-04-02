@@ -94,7 +94,7 @@ class [[nodiscard("expected value should be handled")]] expected {
   private:
     union {
         Value value_;
-        E     error_;
+        E error_;
     };
     bool has_value_{false};
 };

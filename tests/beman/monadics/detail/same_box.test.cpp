@@ -26,7 +26,7 @@ struct box_traits<Box<T, E>> {
     template <typename F>
     using rebind_error = Box<T, F>;
 
-    static constexpr bool           has_value(const Box<T, E>& b) noexcept { return b.index() == 0; }
+    static constexpr bool has_value(const Box<T, E>& b) noexcept { return b.index() == 0; }
     static constexpr decltype(auto) value(auto&& b) { return std::get<0>(std::forward<decltype(b)>(b)); }
     static constexpr decltype(auto) error(auto&& b) { return std::get<1>(std::forward<decltype(b)>(b)); }
 };

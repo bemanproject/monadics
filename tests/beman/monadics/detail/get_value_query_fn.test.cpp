@@ -12,7 +12,7 @@ template <typename T>
 struct box_traits {};
 
 struct MemberHasValue {
-    bool           valid{};
+    bool valid{};
     constexpr bool has_value() const noexcept { return valid; }
 };
 

@@ -89,7 +89,7 @@ TEST_CASE("pointer-lvalue") {
     using Box = int*;
     using Traits = box_traits<Box>;
     constexpr auto fn = get_make_fn<Box, Traits, int>();
-    constexpr int  x = 42;
+    constexpr int x = 42;
     STATIC_REQUIRE(fn(x) == &x);
 }
 
@@ -108,7 +108,7 @@ struct box_traits<MakeTrackerBox> {
 
 TEST_CASE("lvalue-arg-is-copied-not-moved") {
     constexpr auto result = [] {
-        constexpr auto       fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
+        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
         helpers::MoveTracker t;
         return fn(t);
     }();
@@ -119,7 +119,7 @@ TEST_CASE("lvalue-arg-is-copied-not-moved") {
 
 TEST_CASE("rvalue-arg-is-moved-not-copied") {
     constexpr auto result = [] {
-        constexpr auto       fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
+        constexpr auto fn = get_make_fn<MakeTrackerBox, box_traits<MakeTrackerBox>, helpers::MoveTracker>();
         helpers::MoveTracker t;
         return fn(std::move(t));
     }();

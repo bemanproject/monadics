@@ -16,18 +16,18 @@ struct box_traits {};
 struct MemberValue {
     int ec{42};
 
-    constexpr int&        value() & { return ec; }
-    constexpr int&&       value() && { return std::move(ec); }
-    constexpr const int&  value() const& { return ec; }
+    constexpr int& value() & { return ec; }
+    constexpr int&& value() && { return std::move(ec); }
+    constexpr const int& value() const& { return ec; }
     constexpr const int&& value() const&& { return std::move(ec); }
 };
 
 struct TraitsValue {
     int ec{42};
 
-    constexpr int&        valueCode() & { return ec; }
-    constexpr int&&       valueCode() && { return std::move(ec); }
-    constexpr const int&  valueCode() const& { return ec; }
+    constexpr int& valueCode() & { return ec; }
+    constexpr int&& valueCode() && { return std::move(ec); }
+    constexpr const int& valueCode() const& { return ec; }
     constexpr const int&& valueCode() const&& { return std::move(ec); }
 };
 

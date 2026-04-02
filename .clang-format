@@ -26,11 +26,11 @@ AlignConsecutiveBitFields:
   AlignCompound:   false
   PadOperators:    false
 AlignConsecutiveDeclarations:
-  Enabled:         true
-  AcrossEmptyLines: false
-  AcrossComments:  false
-  AlignCompound:   false
-  PadOperators:    true
+  Enabled:         false
+  # AcrossEmptyLines: false
+  # AcrossComments:  false
+  # AlignCompound:   false
+  # PadOperators:    true
 AlignConsecutiveMacros:
   Enabled:         false
   AcrossEmptyLines: false

@@ -9,8 +9,8 @@
 template <typename T, typename E>
 struct Box {
     bool has_val;
-    T    val{};
-    E    err{};
+    T val{};
+    E err{};
 };
 
 namespace beman::monadics::detail {
@@ -26,7 +26,7 @@ struct box_traits<Box<T, E>> {
     template <typename F>
     using rebind_error = Box<T, F>;
 
-    static constexpr bool           has_value(const auto& b) noexcept { return b.has_val; }
+    static constexpr bool has_value(const auto& b) noexcept { return b.has_val; }
     static constexpr decltype(auto) value(auto&& b) { return std::move(b.val); }
     static constexpr decltype(auto) error(auto&& b) { return std::move(b.err); }
 

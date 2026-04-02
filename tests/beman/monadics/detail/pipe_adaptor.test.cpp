@@ -28,7 +28,7 @@ TEST_CASE("with-value") {
 TEST_CASE("lvalue-callable-is-copied") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
-        constexpr int        operator()(int v) const { return v; }
+        constexpr int operator()(int v) const { return v; }
     };
 
     constexpr auto closure = [] {
@@ -43,7 +43,7 @@ TEST_CASE("lvalue-callable-is-copied") {
 TEST_CASE("vvalue-callable-is-copied") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
-        constexpr int        operator()(int v) const { return v; }
+        constexpr int operator()(int v) const { return v; }
     };
 
     constexpr auto closure = [] {
@@ -63,7 +63,7 @@ TEST_CASE("fn-stored-by-value-no-dangling") {
     };
 
     constexpr auto result = [] {
-        Fn   fn{.add = 15};
+        Fn fn{.add = 15};
         auto closure = test_op(fn);
         return 10 | std::move(closure);
     }();

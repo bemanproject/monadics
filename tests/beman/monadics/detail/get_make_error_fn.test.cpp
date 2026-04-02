@@ -87,7 +87,7 @@ TEST_CASE("lvalue-arg-is-copied-not-moved") {
     using Traits = box_traits<Box>;
 
     constexpr auto result = [] {
-        constexpr auto       fn = get_make_error_fn<Box, Traits, helpers::MoveTracker>();
+        constexpr auto fn = get_make_error_fn<Box, Traits, helpers::MoveTracker>();
         helpers::MoveTracker t;
         return fn(t);
     }();

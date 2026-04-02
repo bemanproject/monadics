@@ -10,7 +10,7 @@ namespace beman::monadics::tests {
 
 TEST_CASE("with-null-then-else-then") {
     constexpr int value = []() {
-        int  value{10};
+        int value{10};
         int* p = nullptr;
 
         auto result = p
@@ -32,7 +32,7 @@ TEST_CASE("with-null-then-else-then") {
 
 TEST_CASE("with-value-else-then-else-then") {
     constexpr int value = []() {
-        int  value{10};
+        int value{10};
         int* p = &value;
 
         auto result = p

@@ -10,7 +10,7 @@ namespace beman::monadics::tests {
 
 TEST_CASE("with-nullptr") {
     constexpr int value = []() {
-        int  value{10};
+        int value{10};
         int* p = nullptr;
 
         auto result = p | or_else([&value]() { return &value; });
