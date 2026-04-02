@@ -21,6 +21,8 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(Traits::make_error(Traits::error()) == std::optional<int>{});
 }
 
-TEST_CASE("has-error-channel") { STATIC_REQUIRE_FALSE(has_error_channel<std::optional<int>>); }
+TEST_CASE("has-error-channel") {
+    STATIC_REQUIRE_FALSE(has_error_channel<std::optional<int>>);
+}
 
 } // namespace beman::monadics::tests

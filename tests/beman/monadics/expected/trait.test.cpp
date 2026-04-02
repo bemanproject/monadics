@@ -32,6 +32,8 @@ TEST_CASE("box-trait-for-non-void-value") {
     STATIC_REQUIRE(Traits::make_error(1) == Expected{1});
 }
 
-TEST_CASE("has-error-channel") { STATIC_REQUIRE(has_error_channel<stdx::expected<int, double>>); }
+TEST_CASE("has-error-channel") {
+    STATIC_REQUIRE(has_error_channel<stdx::expected<int, double>>);
+}
 
 } // namespace beman::monadics::tests

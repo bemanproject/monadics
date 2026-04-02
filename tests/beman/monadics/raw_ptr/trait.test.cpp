@@ -45,6 +45,8 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(liftValue == 10);
 }
 
-TEST_CASE("has-error-channel") { STATIC_REQUIRE_FALSE(has_error_channel<int*>); }
+TEST_CASE("has-error-channel") {
+    STATIC_REQUIRE_FALSE(has_error_channel<int*>);
+}
 
 } // namespace beman::monadics::tests

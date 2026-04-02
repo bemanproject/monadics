@@ -49,7 +49,9 @@ TEST_CASE("rebind-value-type") {
     STATIC_REQUIRE(same_box<std::optional<float>, std::optional<int>>);
 }
 
-TEST_CASE("rebinding-error-type") { STATIC_REQUIRE(same_box<Box<int, float>, Box<int, double>>); }
+TEST_CASE("rebinding-error-type") {
+    STATIC_REQUIRE(same_box<Box<int, float>, Box<int, double>>);
+}
 
 TEST_CASE("non-box") {
     STATIC_REQUIRE_FALSE(same_box<int, int>);

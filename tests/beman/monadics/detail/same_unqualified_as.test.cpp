@@ -6,7 +6,9 @@
 
 namespace beman::monadics::detail::tests {
 
-TEMPLATE_TEST_CASE("identical-types", "", int, double) { STATIC_REQUIRE(same_unqualified_as<TestType, TestType>); }
+TEMPLATE_TEST_CASE("identical-types", "", int, double) {
+    STATIC_REQUIRE(same_unqualified_as<TestType, TestType>);
+}
 
 TEMPLATE_TEST_CASE("strip-const", "", int, double) {
     STATIC_REQUIRE(same_unqualified_as<const TestType, TestType>);

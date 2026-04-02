@@ -36,6 +36,8 @@ TEST_CASE("makeable-value") {
     // STATIC_REQUIRE(std::same_as<decltype(std::declval<int>()), int&>);
 }
 
-TEST_CASE("has-error-channel") { STATIC_REQUIRE_FALSE(has_error_channel<std::shared_ptr<int>>); }
+TEST_CASE("has-error-channel") {
+    STATIC_REQUIRE_FALSE(has_error_channel<std::shared_ptr<int>>);
+}
 
 } // namespace beman::monadics::tests
