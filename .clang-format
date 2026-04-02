@@ -42,7 +42,7 @@ AlignConsecutiveShortCaseStatements:
   AcrossEmptyLines: false
   AcrossComments:  false
   AlignCaseColons: false
-AlignEscapedNewlines: Left
+AlignEscapedNewlines: LeftWithLastLine
 # AlignOperands:   Align
 AlignTrailingComments:
   Kind:            Always
