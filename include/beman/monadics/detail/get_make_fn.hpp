@@ -10,7 +10,7 @@
 
 namespace beman::monadics::detail {
 
-template <typename Box, typename Traits, typename T>
+template<typename Box, typename Traits, typename T>
 [[nodiscard]] consteval decltype(auto) get_make_fn() noexcept {
     if constexpr (requires { Traits::make(std::declval<T>()); }) {
         return [](auto&& v) -> decltype(auto) {
@@ -31,7 +31,7 @@ template <typename Box, typename Traits, typename T>
     }
 }
 
-template <typename Box, typename Traits, typename T>
+template<typename Box, typename Traits, typename T>
 concept has_make_fn = requires {
     { get_make_fn<Box, Traits, T>() } -> deduced;
 } || on_error<"provide Traits::make(T) or a Box{T} constructor">;

@@ -15,7 +15,7 @@ TEMPLATE_TEST_CASE("get", "", std::optional<int>, std::vector<int>) {
     );
 }
 
-template <typename T>
+template<typename T>
 concept extractable = requires {
     { meta_extract_value_type<T>() };
 };

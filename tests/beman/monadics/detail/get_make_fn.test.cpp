@@ -10,14 +10,14 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct TraitsMakeBox {
     int val{};
 };
 
-template <>
+template<>
 struct box_traits<TraitsMakeBox> {
     static constexpr TraitsMakeBox make(int v) noexcept { return {v}; }
 };
@@ -32,12 +32,12 @@ struct TypeAndTraitsConstruibleWithValue {
     int val{};
 };
 
-template <>
+template<>
 struct box_traits<TypeAndTraitsConstruibleWithValue> {
     static constexpr TypeAndTraitsConstruibleWithValue make(int v) noexcept { return {-v}; }
 };
 
-template <>
+template<>
 struct box_traits<int*> {
     static constexpr const int* make(const int& v) noexcept { return &v; }
 };
@@ -100,7 +100,7 @@ struct MakeTrackerBox {
     helpers::MoveTracker val{};
 };
 
-template <>
+template<>
 struct box_traits<MakeTrackerBox> {
     static constexpr decltype(auto) make(auto&& v) { return MakeTrackerBox{std::forward<decltype(v)>(v)}; }
 };

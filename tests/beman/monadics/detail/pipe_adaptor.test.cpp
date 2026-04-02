@@ -11,7 +11,7 @@ namespace beman::monadics::detail::tests {
 struct test_op_t {
     inline static constexpr access_key<test_op_t> key{};
 
-    template <typename Box, std::derived_from<test_op_t> Op>
+    template<typename Box, std::derived_from<test_op_t> Op>
     [[nodiscard]] friend constexpr auto operator|(Box&& box, Op&& op) {
         return std::forward<Op>(op).callable(key)(std::forward<Box>(box));
     }

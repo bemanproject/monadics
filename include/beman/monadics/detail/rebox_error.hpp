@@ -10,7 +10,7 @@
 
 namespace beman::monadics::detail {
 
-template <typename NewBox, typename Box>
+template<typename NewBox, typename Box>
     requires same_box<NewBox, Box>
 [[nodiscard]] constexpr decltype(auto) rebox_error(Box&& box) noexcept {
     using BoxTraits = get_box_traits<Box>;

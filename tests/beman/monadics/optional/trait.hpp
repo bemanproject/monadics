@@ -7,7 +7,7 @@
 
 #include <optional>
 
-template <typename T>
+template<typename T>
 struct beman::monadics::box_traits<std::optional<T>> {
     [[nodiscard]] static constexpr auto error() noexcept { return std::nullopt; }
 };

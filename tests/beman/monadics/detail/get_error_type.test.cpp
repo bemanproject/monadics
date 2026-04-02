@@ -10,12 +10,12 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct TraitsErrorType {};
 
-template <>
+template<>
 struct box_traits<TraitsErrorType> {
     using error_type = int;
 };
@@ -26,7 +26,7 @@ struct BoxErrorType {
 
 struct TraitsErrorFn {};
 
-template <>
+template<>
 struct box_traits<TraitsErrorFn> {
     static constexpr int error() noexcept { return -1; }
 };
@@ -35,7 +35,7 @@ struct BothErrorType {
     using error_type = double;
 };
 
-template <>
+template<>
 struct box_traits<BothErrorType> {
     using error_type = int;
 };

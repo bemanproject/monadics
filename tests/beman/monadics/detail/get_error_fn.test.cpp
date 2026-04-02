@@ -10,7 +10,7 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct MemberError {
@@ -27,7 +27,7 @@ struct MemberError {
 
 struct TraitsErrorWithoutErrorChannel {};
 
-template <>
+template<>
 struct box_traits<TraitsErrorWithoutErrorChannel> {
     static constexpr int error() noexcept { return 1; }
 };
@@ -44,7 +44,7 @@ struct TraitsErrorWithErrorChannel {
     constexpr const int&& errorCode() const&& { return std::move(ec); }
 };
 
-template <>
+template<>
 struct box_traits<TraitsErrorWithErrorChannel> {
     static constexpr decltype(auto) error(auto&& b) noexcept { return std::forward<decltype(b)>(b).errorCode(); }
 };
@@ -53,7 +53,7 @@ struct MemberAndTraitsWithoutErrorChannel {
     int error() noexcept { return 2; }
 };
 
-template <>
+template<>
 struct box_traits<MemberAndTraitsWithoutErrorChannel> {
     static constexpr int error() noexcept { return 1; }
 };
@@ -64,7 +64,7 @@ struct MemberAndTraitsWithErrorChannel {
     int code{1};
 };
 
-template <>
+template<>
 struct box_traits<MemberAndTraitsWithErrorChannel> {
     static constexpr int error(auto&& box) noexcept { return box.code; }
 };

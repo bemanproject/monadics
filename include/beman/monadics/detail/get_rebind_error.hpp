@@ -14,13 +14,13 @@ namespace beman::monadics::detail {
 // Sentinel used when a box has no real error channel: maps any E back to Box
 // itself. has_error_channel detects this by checking whether rebind_error<int>
 // and rebind_error<long> produce the same type.
-template <typename Box>
+template<typename Box>
 struct no_rebind_error {
-    template <typename>
+    template<typename>
     using rebind_error = Box;
 };
 
-template <typename Box, typename Traits, typename E>
+template<typename Box, typename Traits, typename E>
 [[nodiscard]] consteval decltype(auto) get_rebind_error() noexcept {
     if constexpr (requires { typename Traits::template rebind_error<E>; }) {
         return std::type_identity<Traits>{};
@@ -34,7 +34,7 @@ template <typename Box, typename Traits, typename E>
     }
 }
 
-template <typename Box, typename Traits, typename E>
+template<typename Box, typename Traits, typename E>
 concept has_rebind_error =
     requires {
         { get_rebind_error<Box, Traits, E>() } -> instance_of<std::type_identity>;
@@ -43,7 +43,7 @@ concept has_rebind_error =
         "provide Traits::template rebind_error<E>, Box::template rebind_error<E>, or a deducible template parameter"
     >;
 
-template <typename Box, typename Traits, typename E>
+template<typename Box, typename Traits, typename E>
     requires has_rebind_error<Box, Traits, E>
 using get_rebind_error_t = typename decltype(get_rebind_error<Box, Traits, E>())::type;
 

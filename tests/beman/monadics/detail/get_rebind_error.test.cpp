@@ -8,45 +8,45 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct TypeAndTraitsWithRebindError {
-    template <typename E1>
+    template<typename E1>
     using rebind_error = TypeAndTraitsWithRebindError<T, E1>;
 };
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct TypeWithRebind {
-    template <typename E1>
+    template<typename E1>
     using rebind_error = TypeWithRebind<T, E1>;
 };
 
-template <typename V, typename E>
+template<typename V, typename E>
 struct ReboundByTraits {};
 
 struct TraitsWithRebindError {};
 
-template <>
+template<>
 struct box_traits<TraitsWithRebindError> {
-    template <typename E>
+    template<typename E>
     using rebind_error = TraitsWithRebindError;
 };
 
 struct TypeWithoutErrorChannel {};
 
-template <>
+template<>
 struct box_traits<TypeWithoutErrorChannel> {
     static constexpr int error() noexcept { return -1; }
 };
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct MetaRebindError {};
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct box_traits<TypeAndTraitsWithRebindError<T, E>> {
-    template <typename E1>
+    template<typename E1>
     using rebind_error = TypeAndTraitsWithRebindError<T, E1>;
 };
 

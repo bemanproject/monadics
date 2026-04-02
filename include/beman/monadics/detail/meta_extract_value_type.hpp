@@ -9,9 +9,9 @@
 
 namespace beman::monadics::detail {
 
-template <decomposable<1> Box>
+template<decomposable<1> Box>
 [[nodiscard]] consteval auto meta_extract_value_type() noexcept {
-    return []<template <typename...> typename T, typename V, typename... Args>(T<V, Args...>*) {
+    return []<template<typename...> typename T, typename V, typename... Args>(T<V, Args...>*) {
         return std::type_identity<V>{};
     }(as_pointer<Box>);
 };

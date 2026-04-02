@@ -5,7 +5,7 @@
 
 namespace beman::monadics::detail {
 
-template <class T>
+template<class T>
 class access_key {
     friend T;
     access_key() = default;

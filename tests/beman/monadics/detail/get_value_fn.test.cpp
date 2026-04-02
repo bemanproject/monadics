@@ -10,7 +10,7 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct MemberValue {
@@ -37,7 +37,7 @@ struct TraitsValue {
     constexpr const int&& valueCode() const&& { return std::move(ec); }
 };
 
-template <>
+template<>
 struct box_traits<TraitsValue> {
     static constexpr decltype(auto) value(auto&& b) noexcept { return std::forward<decltype(b)>(b).valueCode(); }
 };
@@ -47,7 +47,7 @@ struct MemberAndTraits {
     constexpr int value() const noexcept { return 0; }
 };
 
-template <>
+template<>
 struct box_traits<MemberAndTraits> {
     static constexpr int value(const auto&) noexcept { return 42; }
 };

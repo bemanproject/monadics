@@ -10,24 +10,24 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct TraitsValueType {};
 
-template <>
+template<>
 struct box_traits<TraitsValueType> {
     using value_type = int;
 };
 
-template <typename T>
+template<typename T>
 struct ExtractValueType {};
 
 struct BothValueType {
     using value_type = double;
 };
 
-template <>
+template<>
 struct box_traits<BothValueType> {
     using value_type = int;
 };

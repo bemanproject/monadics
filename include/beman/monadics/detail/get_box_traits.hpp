@@ -20,7 +20,7 @@ namespace beman::monadics::detail {
 
 namespace _get_box_traits {
 
-template <typename Box, typename Traits>
+template<typename Box, typename Traits>
 concept is_box = has_value_type<Box, Traits>
               && has_error_type<Box, Traits>
               && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
@@ -31,16 +31,16 @@ concept is_box = has_value_type<Box, Traits>
               && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
               && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
 
-template <typename Box, typename Traits>
+template<typename Box, typename Traits>
 struct traits {
     using box_type = Box;
     using value_type = get_value_type_t<Box, Traits>;
     using error_type = get_error_type_t<Box, Traits>;
 
-    template <typename T>
+    template<typename T>
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
-    template <typename E>
+    template<typename E>
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
     static constexpr auto has_value = get_value_query_fn<Box, Traits>();
@@ -53,14 +53,14 @@ struct traits {
 
 } // namespace _get_box_traits
 
-template <typename Box>
+template<typename Box>
 concept is_box = _get_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
                                          box_traits<std::remove_cvref_t<Box>>>;
 
-template <is_box T>
+template<is_box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
-template <typename Box>
+template<typename Box>
 concept has_error_channel = requires {
     { get_box_traits<Box>::error(std::declval<Box>()) };
 };

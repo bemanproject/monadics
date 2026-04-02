@@ -8,10 +8,10 @@
 
 namespace beman::monadics::detail {
 
-template <typename T>
+template<typename T>
 concept False = false;
 
-template <std::size_t N>
+template<std::size_t N>
 struct msg {
     char data[N];
 
@@ -22,13 +22,13 @@ struct msg {
     }
 };
 
-template <std::size_t N>
+template<std::size_t N>
 msg(const char (&str)[N]) -> msg<N>;
 
-template <msg>
+template<msg>
 concept on_error = false;
 
-template <typename T>
+template<typename T>
 concept deduced = !std::is_void_v<T>;
 
 } // namespace beman::monadics::detail

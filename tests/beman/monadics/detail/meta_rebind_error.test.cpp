@@ -6,7 +6,7 @@
 
 #include <optional>
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct myexpected {
     using value_type = T;
     using error_type = E;
@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE("preserves-value-type", "", (myexpected<int, double>), (myexp
     );
 }
 
-template <typename T>
+template<typename T>
 concept rebind_error_extractable = requires { get_meta_rebind_error<T>(); };
 
 TEST_CASE("requires-minimum-2-template-args") {

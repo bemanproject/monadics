@@ -9,15 +9,15 @@
 
 namespace beman::monadics::detail {
 
-template <template <typename...> class Box, typename T, typename... Args>
+template<template<typename...> class Box, typename T, typename... Args>
 struct meta_rebind_error {
-    template <typename E>
+    template<typename E>
     using rebind_error = Box<T, E, Args...>;
 };
 
-template <decomposable<2> Box>
+template<decomposable<2> Box>
 [[nodiscard]] consteval auto get_meta_rebind_error() noexcept {
-    return []<template <typename...> typename T, typename V, typename E, typename... Args>(T<V, E, Args...>*) {
+    return []<template<typename...> typename T, typename V, typename E, typename... Args>(T<V, E, Args...>*) {
         return std::type_identity<meta_rebind_error<T, V, Args...>>{};
     }(as_pointer<Box>);
 };

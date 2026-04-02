@@ -23,7 +23,7 @@ TEST_CASE("box-trait-for") {
     REQUIRE(Traits::value(std::make_shared<int>(10)) == 10);
 }
 
-template <typename Traits>
+template<typename Traits>
 concept transformable = requires() {
     // { Traits::make(typename Traits::value_type{})  };
     { Traits::make(std::declval<typename Traits::value_type>()) };

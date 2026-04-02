@@ -8,22 +8,22 @@
 #include <utility>
 #include <variant>
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct Box : std::variant<T, E> {
     using std::variant<T, E>::variant;
 };
 
 namespace beman::monadics::detail {
 
-template <typename T, typename E>
+template<typename T, typename E>
 struct box_traits<Box<T, E>> {
     using value_type = T;
     using error_type = E;
 
-    template <typename U>
+    template<typename U>
     using rebind = Box<U, E>;
 
-    template <typename F>
+    template<typename F>
     using rebind_error = Box<T, F>;
 
     static constexpr bool has_value(const Box<T, E>& b) noexcept { return b.index() == 0; }
@@ -39,7 +39,7 @@ struct box_traits<Box<T, E>> {
     }
 };
 
-template <typename T>
+template<typename T>
 struct box_traits<std::optional<T>> {
     static constexpr decltype(auto) error() { return std::nullopt; }
 };

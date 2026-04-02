@@ -9,7 +9,7 @@
 
 namespace stdx {
 
-template <typename T, typename E>
+template<typename T, typename E>
     requires(!std::is_void_v<E>)
 class [[nodiscard("expected value should be handled")]] expected {
     struct Void {};
@@ -21,23 +21,23 @@ class [[nodiscard("expected value should be handled")]] expected {
     using value_type = T;
     using error_type = E;
 
-    template <typename Value>
+    template<typename Value>
     using rebind = expected<Value, error_type>;
 
-    template <typename Error>
+    template<typename Error>
     using rebind_error = expected<value_type, Error>;
 
     constexpr expected()
         requires std::default_initializable<Value>
         : value_{}, has_value_(true) {}
 
-    template <typename U = value_type>
+    template<typename U = value_type>
         requires std::same_as<std::remove_cvref_t<U>, value_type>
     constexpr expected(U&& u)
         requires(!IsVoid)
         : value_(std::forward<U>(u)), has_value_(true) {}
 
-    template <typename U = error_type>
+    template<typename U = error_type>
         requires std::same_as<std::remove_cvref_t<U>, error_type>
     constexpr expected(U&& u) : error_(std::forward<U>(u)), has_value_(false) {}
 
@@ -104,7 +104,7 @@ class [[nodiscard("expected value should be handled")]] expected {
 } // namespace stdx
 
 // do you even need it then?
-template <typename T, typename E>
+template<typename T, typename E>
 struct beman::monadics::box_traits<stdx::expected<T, E>> {};
 
 #endif // BEMAN_MONADICS_EXPECTED_TRAIT_HPP

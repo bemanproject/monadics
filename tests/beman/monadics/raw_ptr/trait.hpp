@@ -7,15 +7,15 @@
 
 #include <type_traits>
 
-template <typename Box>
+template<typename Box>
     requires std::is_pointer_v<Box>
 struct beman::monadics::box_traits<Box> {
     using value_type = std::remove_pointer_t<Box>;
 
-    template <typename V>
+    template<typename V>
     using rebind = V*;
 
-    template <typename>
+    template<typename>
     using rebind_error = Box;
 
     [[nodiscard]] static constexpr bool has_value(const Box box) noexcept { return static_cast<bool>(box); }

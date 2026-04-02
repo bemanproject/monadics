@@ -22,15 +22,15 @@ typedef enum {
 
 }; // extern "C"
 
-template <std::same_as<CURLcode> Box>
+template<std::same_as<CURLcode> Box>
 struct beman::monadics::box_traits<Box> {
     using value_type = void;
     using error_type = CURLcode;
 
-    template <typename V>
+    template<typename V>
     using rebind = Box;
 
-    template <typename>
+    template<typename>
     using rebind_error = Box;
 
     [[nodiscard]] static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }

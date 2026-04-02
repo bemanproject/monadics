@@ -5,7 +5,7 @@
 
 namespace beman::monadics::detail {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 } // namespace beman::monadics::detail

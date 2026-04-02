@@ -10,37 +10,37 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct TypeAndTraitsWithoutRebind {};
 
-template <typename T>
+template<typename T>
 struct TypeWithRebind {
-    template <typename U>
+    template<typename U>
     using rebind = TypeWithRebind<U>;
 };
 
 struct TraitsWithRebind {};
 
-template <>
+template<>
 struct box_traits<TraitsWithRebind> {
-    template <typename T>
+    template<typename T>
     using rebind = TraitsWithRebind;
 };
 
-template <typename T, typename U = void>
+template<typename T, typename U = void>
 struct ExtractValueType {};
 
-template <typename T>
+template<typename T>
 struct TypeAndTraitsWithRebind {
-    template <typename U>
+    template<typename U>
     using rebind = std::optional<U>;
 };
 
-template <typename T>
+template<typename T>
 struct box_traits<TypeAndTraitsWithRebind<T>> {
-    template <typename U>
+    template<typename U>
     using rebind = TypeAndTraitsWithRebind<U>;
 };
 

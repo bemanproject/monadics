@@ -9,15 +9,15 @@ namespace beman::monadics::detail {
 
 namespace _decomposable {
 
-template <typename T, std::size_t N>
+template<typename T, std::size_t N>
 struct impl : std::false_type {};
 
-template <template <class...> typename U, typename... Args, std::size_t N>
+template<template<class...> typename U, typename... Args, std::size_t N>
 struct impl<U<Args...>, N> : std::bool_constant<(sizeof...(Args) >= N)> {};
 
 } // namespace _decomposable
 
-template <typename T, std::size_t N>
+template<typename T, std::size_t N>
 concept decomposable = _decomposable::impl<std::remove_cvref_t<T>, N>::value;
 
 } // namespace beman::monadics::detail

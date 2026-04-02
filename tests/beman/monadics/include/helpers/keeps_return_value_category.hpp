@@ -8,7 +8,7 @@
 
 namespace beman::monadics::helpers {
 
-template <typename Fn, typename Box, typename T>
+template<typename Fn, typename Box, typename T>
 concept keeps_return_value_category = requires(Fn fn, Box b, const Box cb) {
     { fn(b) } -> std::same_as<T&>;
     { fn(cb) } -> std::same_as<const T&>;

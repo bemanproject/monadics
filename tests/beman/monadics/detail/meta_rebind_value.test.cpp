@@ -19,7 +19,7 @@ TEST_CASE("preserves-extra-args") {
     STATIC_REQUIRE(std::same_as<rebinder::rebind<float>, std::pair<float, double>>);
 }
 
-template <typename T>
+template<typename T>
 concept rebindable = requires { get_meta_rebind<T>(); };
 
 TEST_CASE("requires-minimum-1-template-args") {

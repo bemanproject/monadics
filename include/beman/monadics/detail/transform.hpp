@@ -17,7 +17,7 @@ namespace beman::monadics::detail {
 class transform_t {
     inline static constexpr access_key<transform_t> key{};
 
-    template <is_box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
+    template<is_box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires requires {
             requires same_box<
@@ -47,7 +47,7 @@ class transform_t {
 
 inline constexpr pipe_adaptor<transform_t> transform{};
 
-template <typename Box, typename Fn>
+template<typename Box, typename Fn>
 concept transformable = requires(std::remove_reference_t<Box> box, std::remove_reference_t<Fn> fn) {
     std::forward<Box>(box) | transform(std::forward<Fn>(fn));
 };

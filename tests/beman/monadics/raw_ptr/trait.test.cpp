@@ -6,7 +6,7 @@
 
 namespace beman::monadics::tests {
 
-template <typename T>
+template<typename T>
 concept hm = requires {
     { box_traits<int*>::make(std::declval<T>()) };
 };

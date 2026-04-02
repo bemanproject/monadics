@@ -8,7 +8,7 @@ namespace beman::monadics::detail::tests {
 
 namespace {
 
-template <typename T>
+template<typename T>
 struct box_traits {};
 
 struct MemberHasValue {
@@ -21,7 +21,7 @@ struct TraitsHasValue {
     bool valid{};
 };
 
-template <>
+template<>
 struct box_traits<TraitsHasValue> {
     static constexpr bool has_value(const auto& box) noexcept { return box.valid; }
 };
@@ -33,7 +33,7 @@ struct MemberAndTraits {
     bool has_value() const noexcept { return value_flag; }
 };
 
-template <>
+template<>
 struct box_traits<MemberAndTraits> {
     static constexpr bool has_value(const auto& box) noexcept { return box.valid; }
 };

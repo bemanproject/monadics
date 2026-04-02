@@ -7,7 +7,7 @@
 
 #include <memory>
 
-template <typename T>
+template<typename T>
 struct beman::monadics::box_traits<std::shared_ptr<T>> {
     [[nodiscard]] static constexpr bool has_value(const std::shared_ptr<T>& box) noexcept {
         return static_cast<bool>(box);

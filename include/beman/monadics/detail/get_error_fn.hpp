@@ -9,7 +9,7 @@
 
 namespace beman::monadics::detail {
 
-template <typename Box, typename Traits>
+template<typename Box, typename Traits>
 [[nodiscard]] consteval decltype(auto) get_error_fn() noexcept {
     if constexpr (requires { Traits::error(); }) {
         return []() -> decltype(auto) {
@@ -26,7 +26,7 @@ template <typename Box, typename Traits>
     }
 }
 
-template <typename Box, typename Traits>
+template<typename Box, typename Traits>
 concept has_error_fn = requires {
     { get_error_fn<Box, Traits>() } -> deduced;
 } || on_error<"provide Traits::error(), Traits::error(Box), or Box::error()">;
