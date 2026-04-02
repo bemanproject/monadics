@@ -2,15 +2,11 @@
 
 #include "trait.hpp"
 
-#include "beman/monadics/detail/transform.hpp"
-
 #include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
 
-TEST_CASE("not-supported") {}
-
-TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
+TEMPLATE_TEST_CASE_SIG("invocable",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
