@@ -14,15 +14,25 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           CURLcode&, [](CURLcode&) { return CURLE_OK; }, true),
+                           CURLcode&,
+                           [](CURLcode&) { return CURLE_OK; },
+                           true),
                        (
-                           CURLcode&, [](CURLcode&&) { return CURLE_OK; }, false),
+                           CURLcode&,
+                           [](CURLcode&&) { return CURLE_OK; },
+                           false),
                        (
-                           CURLcode&&, [](CURLcode&&) { return CURLE_OK; }, true),
+                           CURLcode&&,
+                           [](CURLcode&&) { return CURLE_OK; },
+                           true),
                        (
-                           CURLcode&&, [](CURLcode&) { return CURLE_OK; }, false),
+                           CURLcode&&,
+                           [](CURLcode&) { return CURLE_OK; },
+                           false),
                        (
-                           const CURLcode&, [](const CURLcode&) { return CURLE_OK; }, true),
+                           const CURLcode&,
+                           [](const CURLcode&) { return CURLE_OK; },
+                           true),
                        (const CURLcode&, [](CURLcode&) { return CURLE_OK; }, false)) {
     STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
 }

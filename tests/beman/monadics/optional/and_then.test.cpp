@@ -39,17 +39,29 @@ TEMPLATE_TEST_CASE_SIG(
     "",
     ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
     (
-        std::optional<int>&, [](int&) { return std::optional<int>{}; }, true),
+        std::optional<int>&,
+        [](int&) { return std::optional<int>{}; },
+        true),
     (
-        std::optional<int>&, [](int&&) { return std::optional<int>{}; }, false),
+        std::optional<int>&,
+        [](int&&) { return std::optional<int>{}; },
+        false),
     (
-        std::optional<int>&&, [](int&&) { return std::optional<int>{}; }, true),
+        std::optional<int>&&,
+        [](int&&) { return std::optional<int>{}; },
+        true),
     (
-        std::optional<int>&&, [](int&) { return std::optional<int>{}; }, false),
+        std::optional<int>&&,
+        [](int&) { return std::optional<int>{}; },
+        false),
     (
-        const std::optional<int>&, [](const int&) { return std::optional<int>{}; }, true),
+        const std::optional<int>&,
+        [](const int&) { return std::optional<int>{}; },
+        true),
     (
-        const std::optional<int>&, [](int&) { return std::optional<int>{}; }, false),
+        const std::optional<int>&,
+        [](int&) { return std::optional<int>{}; },
+        false),
     (std::optional<helpers::MoveOnly>&, [](helpers::MoveOnly) { return std::optional<helpers::MoveOnly>{}; }, false)) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }

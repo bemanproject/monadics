@@ -25,15 +25,25 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           std::optional<int>&, [](int&) { return 0; }, true),
+                           std::optional<int>&,
+                           [](int&) { return 0; },
+                           true),
                        (
-                           std::optional<int>&, [](int&&) { return 0; }, false),
+                           std::optional<int>&,
+                           [](int&&) { return 0; },
+                           false),
                        (
-                           std::optional<int>&&, [](int&&) { return 0; }, true),
+                           std::optional<int>&&,
+                           [](int&&) { return 0; },
+                           true),
                        (
-                           std::optional<int>&&, [](int&) { return 0; }, false),
+                           std::optional<int>&&,
+                           [](int&) { return 0; },
+                           false),
                        (
-                           const std::optional<int>&, [](const int&) { return 0; }, true),
+                           const std::optional<int>&,
+                           [](const int&) { return 0; },
+                           true),
                        (const std::optional<int>&, [](int&) { return 0; }, false)) {
     STATIC_REQUIRE(transformable<Box, decltype(Fn)> == Expected);
 }

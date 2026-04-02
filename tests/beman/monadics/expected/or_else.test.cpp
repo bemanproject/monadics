@@ -81,17 +81,29 @@ TEMPLATE_TEST_CASE_SIG(
     "",
     ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
     (
-        stdx::expected<int, double>&, [](double&) { return stdx::expected<int, double>{}; }, true),
+        stdx::expected<int, double>&,
+        [](double&) { return stdx::expected<int, double>{}; },
+        true),
     (
-        stdx::expected<int, double>&, [](double&) { return stdx::expected<void, double>{}; }, false),
+        stdx::expected<int, double>&,
+        [](double&) { return stdx::expected<void, double>{}; },
+        false),
     (
-        stdx::expected<int, double>&, [](double&&) { return stdx::expected<int, double>{}; }, false),
+        stdx::expected<int, double>&,
+        [](double&&) { return stdx::expected<int, double>{}; },
+        false),
     (
-        stdx::expected<int, double>&&, [](double&&) { return stdx::expected<int, double>{}; }, true),
+        stdx::expected<int, double>&&,
+        [](double&&) { return stdx::expected<int, double>{}; },
+        true),
     (
-        stdx::expected<int, double>&&, [](double&) { return stdx::expected<int, double>{}; }, false),
+        stdx::expected<int, double>&&,
+        [](double&) { return stdx::expected<int, double>{}; },
+        false),
     (
-        const stdx::expected<int, double>&, [](const double&) { return stdx::expected<int, double>{}; }, true),
+        const stdx::expected<int, double>&,
+        [](const double&) { return stdx::expected<int, double>{}; },
+        true),
     (const stdx::expected<int, double>&, [](double&) { return stdx::expected<int, double>{}; }, false)) {
     STATIC_REQUIRE(or_elseable<Box, decltype(Fn)> == Expected);
 }

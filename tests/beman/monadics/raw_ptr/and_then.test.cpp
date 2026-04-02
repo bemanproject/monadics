@@ -65,11 +65,17 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           int*&, [](int&) { return (int*)nullptr; }, true),
+                           int*&,
+                           [](int&) { return (int*)nullptr; },
+                           true),
                        (
-                           int*&&, [](int&) { return (int*)nullptr; }, true),
+                           int*&&,
+                           [](int&) { return (int*)nullptr; },
+                           true),
                        (
-                           int*&, [](int&&) { return (int*)nullptr; }, false),
+                           int*&,
+                           [](int&&) { return (int*)nullptr; },
+                           false),
                        (int*&&, [](int&&) { return (int*)nullptr; }, false)) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }

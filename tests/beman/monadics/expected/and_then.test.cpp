@@ -81,19 +81,33 @@ TEMPLATE_TEST_CASE_SIG(
     "",
     ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
     (
-        stdx::expected<int, double>&, [](int&) { return stdx::expected<int, double>{10}; }, true),
+        stdx::expected<int, double>&,
+        [](int&) { return stdx::expected<int, double>{10}; },
+        true),
     (
-        stdx::expected<int, double>&, [](int&&) { return stdx::expected<int, double>{10}; }, false),
+        stdx::expected<int, double>&,
+        [](int&&) { return stdx::expected<int, double>{10}; },
+        false),
     (
-        stdx::expected<int, double>&&, [](int&&) { return stdx::expected<int, double>{10}; }, true),
+        stdx::expected<int, double>&&,
+        [](int&&) { return stdx::expected<int, double>{10}; },
+        true),
     (
-        stdx::expected<int, double>&&, [](int&&) { return stdx::expected<int, ChangedError>{10}; }, false),
+        stdx::expected<int, double>&&,
+        [](int&&) { return stdx::expected<int, ChangedError>{10}; },
+        false),
     (
-        stdx::expected<int, double>&&, [](int&&) { return stdx::expected<int, float>{10}; }, false),
+        stdx::expected<int, double>&&,
+        [](int&&) { return stdx::expected<int, float>{10}; },
+        false),
     (
-        stdx::expected<int, double>&&, [](int&) { return stdx::expected<int, double>{10}; }, false),
+        stdx::expected<int, double>&&,
+        [](int&) { return stdx::expected<int, double>{10}; },
+        false),
     (
-        const stdx::expected<int, double>&, [](const int&) { return stdx::expected<int, double>{10}; }, true),
+        const stdx::expected<int, double>&,
+        [](const int&) { return stdx::expected<int, double>{10}; },
+        true),
     (const stdx::expected<int, double>&, [](int&) { return stdx::expected<int, double>{10}; }, false)) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }

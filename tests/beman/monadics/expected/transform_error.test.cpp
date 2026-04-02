@@ -50,15 +50,25 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           stdx::expected<int, double>&, [](double&) { return 0.0; }, true),
+                           stdx::expected<int, double>&,
+                           [](double&) { return 0.0; },
+                           true),
                        (
-                           stdx::expected<int, double>&, [](double&&) { return 0.0; }, false),
+                           stdx::expected<int, double>&,
+                           [](double&&) { return 0.0; },
+                           false),
                        (
-                           stdx::expected<int, double>&&, [](double&&) { return 0.0; }, true),
+                           stdx::expected<int, double>&&,
+                           [](double&&) { return 0.0; },
+                           true),
                        (
-                           stdx::expected<int, double>&&, [](double&) { return 0.0; }, false),
+                           stdx::expected<int, double>&&,
+                           [](double&) { return 0.0; },
+                           false),
                        (
-                           const stdx::expected<int, double>&, [](const double&) { return 0.0; }, true),
+                           const stdx::expected<int, double>&,
+                           [](const double&) { return 0.0; },
+                           true),
                        (const stdx::expected<int, double>&, [](double&) { return 0.0; }, false)) {
     STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
 }

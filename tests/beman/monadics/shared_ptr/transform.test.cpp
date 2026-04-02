@@ -27,11 +27,17 @@ TEMPLATE_TEST_CASE_SIG("value-is-always-lvalue-ref",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           std::shared_ptr<int>&, [](int&) { return 0; }, true),
+                           std::shared_ptr<int>&,
+                           [](int&) { return 0; },
+                           true),
                        (
-                           std::shared_ptr<int>&&, [](int&) { return 0; }, true),
+                           std::shared_ptr<int>&&,
+                           [](int&) { return 0; },
+                           true),
                        (
-                           std::shared_ptr<int>&, [](int&&) { return 0; }, false),
+                           std::shared_ptr<int>&,
+                           [](int&&) { return 0; },
+                           false),
                        (std::shared_ptr<int>&&, [](int&&) { return 0; }, false)) {
     STATIC_REQUIRE(transformable<Box, decltype(Fn)> == Expected);
 }
