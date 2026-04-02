@@ -4,7 +4,6 @@ Language:        Cpp
 # BreakBinaryOperations: OnePerLine
 BreakBinaryOperations: RespectPrecedence
 # BreakBeforeBinaryOperators: true
-BreakBeforeBinaryOperators: NonAssignment
 AlignOperands: AlignAfterOperator
 # AlignOperands: Align
 
@@ -59,6 +58,7 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Inline
 AllowShortLoopsOnASingleLine: false
+AllowShortNamespacesOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
@@ -73,12 +73,12 @@ BraceWrapping:
   AfterClass:      false
   AfterControlStatement: Never
   AfterEnum:       false
-  AfterExternBlock: false
   AfterFunction:   false
   AfterNamespace:  false
   AfterObjCDeclaration: false
   AfterStruct:     false
   AfterUnion:      false
+  AfterExternBlock: false
   BeforeCatch:     false
   BeforeElse:      false
   BeforeLambdaBody: false
@@ -87,12 +87,21 @@ BraceWrapping:
   SplitEmptyFunction: true
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
+BracedInitializerIndentWidth: 2
+BreakAdjacentStringLiterals: false
 BreakAfterAttributes: Never
 BreakAfterJavaFieldAnnotations: false
-BreakArrays:     true
-# BreakBeforeBinaryOperators: None
-BreakBeforeConceptDeclarations: Always
+BreakAfterOpenBracketBracedList: true
+BreakAfterOpenBracketFunction: false
+BreakAfterOpenBracketIf: false
+BreakAfterOpenBracketLoop: false
+BreakAfterOpenBracketSwitch: false
+BreakAfterReturnType: Automatic
+
+BreakArrays: true
+BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom
+BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
