@@ -40,7 +40,8 @@ concept has_rebind_error =
         { get_rebind_error<Box, Traits, E>() } -> instance_of<std::type_identity>;
     }
     || on_error<
-        "provide Traits::template rebind_error<E>, Box::template rebind_error<E>, or a deducible template parameter">;
+        "provide Traits::template rebind_error<E>, Box::template rebind_error<E>, or a deducible template parameter"
+    >;
 
 template <typename Box, typename Traits, typename E>
     requires has_rebind_error<Box, Traits, E>

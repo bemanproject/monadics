@@ -14,9 +14,8 @@ namespace beman::monadics::detail {
 namespace _same_box {
 
 template <typename NewTraits, typename OldTraits>
-using rebind =
-    get_box_traits<typename OldTraits::template rebind<typename NewTraits::value_type>>::template rebind_error<
-        typename NewTraits::error_type>;
+using rebind = get_box_traits<typename OldTraits::template rebind<typename NewTraits::value_type>>::
+    template rebind_error<typename NewTraits::error_type>;
 
 } // namespace _same_box
 

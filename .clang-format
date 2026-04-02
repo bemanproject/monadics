@@ -105,6 +105,7 @@ BreakBeforeCloseBracketBracedList: true
 BreakBeforeCloseBracketFunction: true
 BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: OnlyMultiline
+BreakBeforeTemplateCloser: true
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon

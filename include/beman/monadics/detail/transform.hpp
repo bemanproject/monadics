@@ -23,7 +23,8 @@ class transform_t {
             requires same_box<
                 Box,
                 typename Traits::template rebind<decltype(invoke_with_value(std::forward<Op>(op).callable(key),
-                                                                            std::forward<Box>(box)))>>;
+                                                                            std::forward<Box>(box)))>
+            >;
         }
     {
         using NewValue = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
