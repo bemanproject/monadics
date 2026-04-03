@@ -2,8 +2,6 @@
 
 #include "trait.hpp"
 
-#include "beman/monadics/detail/and_then.hpp"
-
 #include <catch2/catch_template_test_macros.hpp>
 
 namespace beman::monadics::tests {
