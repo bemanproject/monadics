@@ -5,7 +5,7 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
 <!-- markdownlint-disable-next-line line-length -->
-![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/bemanproject/monadics/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/bemanproject/monadics/actions/workflows/pre-commit-check.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/bemanproject/monadics/badge.svg?branch=main)](https://coveralls.io/github/steve-downey/expected?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
+![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/bemanproject/monadics/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/bemanproject/monadics/actions/workflows/pre-commit-check.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/bemanproject/monadics/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/monadics?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
 
 
 <!-- markdownlint-disable-next-line line-length -->
@@ -16,6 +16,12 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
 This library generalizes the monadic vocabulary to any type that models a “box”.
+
+---
+
+## License
+
+`beman.monadics` is distributed under the [Apache License v2.0 with LLVM Exceptions](LICENSE).
 
 ---
 
@@ -50,9 +56,15 @@ The goal is to validate the unifying abstraction first.
 ```cpp
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/monadics.hpp>
 #include <optional>
 #include <cstdlib>
+
+#include <beman/monadics/monadics.hpp>
+
+template <typename T>
+struct beman::monadics::box_traits<std::optional<T>> {
+    [[nodiscard]] static constexpr auto error() noexcept { return std::nullopt; }
+};
 
 int main() {
     namespace bms = beman::monadics;
@@ -132,4 +144,5 @@ int main() {
 | Clang      | 18-17   | C++26-C++20   | libc++            |
 | Clang      | 18-17   | C++20         | libstdc++         |
 | AppleClang | latest  | C++26-C++20   | libc++            |
+| MSVC       | latest  | C++20         | MSVC STL          |
 | MSVC       | latest  | C++23         | MSVC STL          |
