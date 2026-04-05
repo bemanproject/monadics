@@ -32,7 +32,6 @@ target_sources(
                 detail/rebox_error.hpp
                 detail/same_box.hpp
                 detail/same_template.hpp
-                detail/same_unqualified_as.hpp
                 detail/transform.hpp
                 detail/transform_error.hpp
                 detail/utility.hpp

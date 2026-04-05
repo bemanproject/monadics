@@ -26,7 +26,6 @@ set(tests
     rebox_error
     rebox_value
     same_box
-    same_unqualified_as
 )
 
 foreach(test_name ${tests})

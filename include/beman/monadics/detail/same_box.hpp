@@ -4,8 +4,6 @@
 #define BEMAN_MONADICS_DETAIL_SAME_BOX_HPP
 
 #include <beman/monadics/detail/get_box_traits.hpp>
-#include <beman/monadics/detail/same_template.hpp>
-#include <beman/monadics/detail/same_unqualified_as.hpp>
 
 #include <concepts>
 
