@@ -25,7 +25,7 @@ target_sources(
                 detail/invoke_with_error.hpp
                 detail/meta_extract_value_type.hpp
                 detail/meta_rebind_error.hpp
-                detail/meta_rebind_value.hpp
+                detail/meta_rebind.hpp
                 detail/or_else.hpp
                 detail/pipe_adaptor.hpp
                 detail/rebox_value.hpp

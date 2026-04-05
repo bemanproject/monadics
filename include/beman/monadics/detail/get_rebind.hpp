@@ -4,7 +4,7 @@
 #define BEMAN_MONADICS_DETAIL_GET_REBIND_HPP
 
 #include <beman/monadics/detail/instance_of.hpp>
-#include <beman/monadics/detail/meta_rebind_value.hpp>
+#include <beman/monadics/detail/meta_rebind.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
 #include <type_traits>
