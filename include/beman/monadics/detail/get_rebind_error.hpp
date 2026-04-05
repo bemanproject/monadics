@@ -11,9 +11,6 @@
 
 namespace beman::monadics::detail {
 
-// Sentinel used when a box has no real error channel: maps any E back to Box
-// itself. has_error_channel detects this by checking whether rebind_error<int>
-// and rebind_error<long> produce the same type.
 template<typename Box>
 struct no_rebind_error {
     template<typename>
@@ -27,7 +24,6 @@ template<typename Box, typename Traits, typename E>
     } else if constexpr (requires { typename Box::template rebind_error<E>; }) {
         return std::type_identity<Box>{};
     } else if constexpr (requires { Traits::error(); }) {
-        // No parametric error channel — use the sentinel so has_error_channel evaluates to false.
         return std::type_identity<no_rebind_error<Box>>{};
     } else if constexpr (requires { get_meta_rebind_error<Box>(); }) {
         return get_meta_rebind_error<Box>();
