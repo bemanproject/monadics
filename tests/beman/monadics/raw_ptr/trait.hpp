@@ -24,6 +24,9 @@ struct beman::monadics::box_traits<Box> {
 
     [[nodiscard]] static constexpr auto error() noexcept { return nullptr; }
 
+    // Takes an lvalue reference: T* has no ownership, so make cannot
+    // allocate. This means transform (which produces a temporary value)
+    // is intentionally disabled for raw pointers.
     [[nodiscard]] static constexpr Box make(value_type& v) noexcept { return &v; }
 
     [[nodiscard]] static constexpr Box make_error() noexcept { return nullptr; }
