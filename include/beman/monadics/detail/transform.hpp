@@ -24,7 +24,7 @@ concept transform_impl =
 class transform_t {
     inline static constexpr access_key<transform_t> key{};
 
-    template<is_box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
+    template<box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires transform_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {

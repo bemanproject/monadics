@@ -21,9 +21,8 @@ using rebind = get_box_traits<
 } // namespace _same_box
 
 template<typename T, typename U>
-concept same_box = is_box<T>
-                && is_box<U>
-                && std::same_as<std::remove_cvref_t<T>, _same_box::rebind<get_box_traits<T>, get_box_traits<U>>>;
+concept same_box =
+    box<T> && box<U> && std::same_as<std::remove_cvref_t<T>, _same_box::rebind<get_box_traits<T>, get_box_traits<U>>>;
 
 template<typename T, typename U>
 concept same_box_and_value =

@@ -25,7 +25,7 @@ concept and_thenable_impl =
 class and_then_t {
     inline static constexpr access_key<and_then_t> key{};
 
-    template<is_box Box, std::derived_from<and_then_t> Op>
+    template<box Box, std::derived_from<and_then_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {

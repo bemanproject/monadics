@@ -26,7 +26,7 @@ concept or_elseable_impl =
 class or_else_t {
     inline static constexpr access_key<or_else_t> key{};
 
-    template<is_box Box, std::derived_from<or_else_t> Op>
+    template<box Box, std::derived_from<or_else_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires or_elseable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {

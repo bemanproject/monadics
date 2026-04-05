@@ -10,7 +10,7 @@
 
 namespace beman::monadics::detail {
 
-template<typename Fn, is_box Box, typename Traits = get_box_traits<Box>>
+template<typename Fn, box Box, typename Traits = get_box_traits<Box>>
 [[nodiscard]] constexpr decltype(auto) invoke_with_value(Fn&& fn, Box&& box) noexcept
     requires requires {
         { Traits::value(std::forward<Box>(box)) } -> std::same_as<void>;

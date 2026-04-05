@@ -16,6 +16,7 @@ namespace beman::monadics {
 using detail::access_key;
 using detail::and_then;
 using detail::and_thenable;
+using detail::box;
 using detail::box_traits;
 using detail::get_box_traits;
 using detail::has_error_channel;

@@ -21,15 +21,15 @@ namespace beman::monadics::detail {
 namespace _get_box_traits {
 
 template<typename Box, typename Traits>
-concept is_box = has_value_type<Box, Traits>
-              && has_error_type<Box, Traits>
-              && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
-              && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
-              && has_value_query_fn<Box, Traits>
-              && has_value_fn<Box, Traits>
-              && has_error_fn<Box, Traits>
-              && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
-              && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
+concept box = has_value_type<Box, Traits>
+           && has_error_type<Box, Traits>
+           && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
+           && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
+           && has_value_query_fn<Box, Traits>
+           && has_value_fn<Box, Traits>
+           && has_error_fn<Box, Traits>
+           && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
+           && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
 
 template<typename Box, typename Traits>
 struct traits {
@@ -54,10 +54,10 @@ struct traits {
 } // namespace _get_box_traits
 
 template<typename Box>
-concept is_box = _get_box_traits::is_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
-                                         box_traits<std::remove_cvref_t<Box>>>;
+concept box = _get_box_traits::box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
+                                   box_traits<std::remove_cvref_t<Box>>>;
 
-template<is_box T>
+template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 template<typename Box>

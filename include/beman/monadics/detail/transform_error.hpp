@@ -22,7 +22,7 @@ concept transform_errorable_impl =
 class transform_error_t {
     inline static constexpr access_key<transform_error_t> key{};
 
-    template<is_box Box, std::derived_from<transform_error_t> Op>
+    template<box Box, std::derived_from<transform_error_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
         requires transform_errorable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {

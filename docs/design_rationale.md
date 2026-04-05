@@ -198,7 +198,7 @@ for every existing and future box type.
 ```cpp
 #include <beman/monadics/monadics.hpp>
 
-template <beman::monadics::is_box Box>
+template <beman::monadics::box Box>
 constexpr auto value_or(Box&& box, typename beman::monadics::get_box_traits<Box>::value_type fallback) {
     using Traits = beman::monadics::get_box_traits<Box>;
     if (Traits::has_value(box))
@@ -215,8 +215,8 @@ zero changes to the library or to the box types.
 ```cpp
 #include <beman/monadics/monadics.hpp>
 
-template <beman::monadics::is_box Box>
-    requires beman::monadics::is_box<typename beman::monadics::get_box_traits<Box>::value_type>
+template <beman::monadics::box Box>
+    requires beman::monadics::box<typename beman::monadics::get_box_traits<Box>::value_type>
 constexpr auto flatten(Box&& box) {
     using Traits    = beman::monadics::get_box_traits<Box>;
     using InnerBox  = typename Traits::value_type;
@@ -242,7 +242,7 @@ namespace bms = beman::monadics;
 class value_or_t {
     inline static constexpr bms::access_key<value_or_t> key{};
 
-    template <bms::is_box Box, std::derived_from<value_or_t> Op>
+    template <bms::box Box, std::derived_from<value_or_t> Op>
     friend constexpr auto operator|(Box&& box, Op&& op) {
         using Traits = bms::get_box_traits<Box>;
         if (Traits::has_value(box))
