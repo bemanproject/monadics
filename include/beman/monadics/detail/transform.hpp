@@ -14,18 +14,19 @@
 
 namespace beman::monadics::detail {
 
+template<typename Box, typename Fn>
+concept transform_impl =
+    same_box<Box,
+             typename get_box_traits<Box>::template rebind<decltype(invoke_with_value(std::declval<Fn>(),
+                                                                                      std::declval<Box>()))>>
+    || on_error<"transform: fn must return a type compatible with rebind">;
+
 class transform_t {
     inline static constexpr access_key<transform_t> key{};
 
     template<is_box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires requires {
-            requires same_box<
-                Box,
-                typename Traits::template rebind<decltype(invoke_with_value(std::forward<Op>(op).callable(key),
-                                                                            std::forward<Box>(box)))>
-            >;
-        }
+        requires transform_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {
         using NewValue = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
         using NewBox = typename Traits::template rebind<NewValue>;
