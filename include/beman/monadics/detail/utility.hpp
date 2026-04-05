@@ -8,9 +8,6 @@
 
 namespace beman::monadics::detail {
 
-template<typename T>
-concept False = false;
-
 template<std::size_t N>
 struct msg {
     char data[N];
