@@ -103,8 +103,4 @@ class [[nodiscard("expected value should be handled")]] expected {
 
 } // namespace stdx
 
-// do you even need it then?
-template<typename T, typename E>
-struct beman::monadics::box_traits<stdx::expected<T, E>> {};
-
 #endif // BEMAN_MONADICS_EXPECTED_TRAIT_HPP
