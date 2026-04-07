@@ -2,7 +2,7 @@
 
 #include "trait.hpp"
 
-#include "beman/monadics/detail/transform.hpp"
+#include <beman/monadics/detail/transform.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

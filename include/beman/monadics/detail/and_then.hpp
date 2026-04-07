@@ -3,11 +3,11 @@
 #ifndef BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 #define BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 
-#include "beman/monadics/detail/get_box_traits.hpp"
-#include "beman/monadics/detail/invoke_with_value.hpp"
-#include "beman/monadics/detail/pipe_adaptor.hpp"
-#include "beman/monadics/detail/rebox_error.hpp"
-#include "beman/monadics/detail/same_box.hpp"
+#include <beman/monadics/detail/get_box_traits.hpp>
+#include <beman/monadics/detail/invoke_with_value.hpp>
+#include <beman/monadics/detail/pipe_adaptor.hpp>
+#include <beman/monadics/detail/rebox_error.hpp>
+#include <beman/monadics/detail/same_box.hpp>
 
 #include <utility>
 

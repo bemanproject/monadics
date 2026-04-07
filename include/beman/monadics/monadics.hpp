@@ -3,11 +3,11 @@
 #ifndef BEMAN_MONADICS_MONADICS_HPP
 #define BEMAN_MONADICS_MONADICS_HPP
 
-#include "beman/monadics/detail/access_key.hpp"
-#include "beman/monadics/detail/pipe_adaptor.hpp"
+#include <beman/monadics/detail/access_key.hpp>
 #include <beman/monadics/detail/and_then.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/or_else.hpp>
+#include <beman/monadics/detail/pipe_adaptor.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
 

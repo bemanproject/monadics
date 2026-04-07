@@ -3,7 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_PIPE_ADAPTOR_HPP
 #define BEMAN_MONADICS_DETAIL_PIPE_ADAPTOR_HPP
 
-#include "beman/monadics/detail/access_key.hpp"
+#include <beman/monadics/detail/access_key.hpp>
 
 #include <type_traits>
 #include <utility>
