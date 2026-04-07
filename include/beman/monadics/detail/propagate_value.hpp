@@ -12,7 +12,15 @@
 namespace beman::monadics::detail {
 
 template<typename NewBox, typename Box>
-    requires same_box<NewBox, Box>
+concept propagatable_value = same_box<NewBox, Box> && (requires {
+    requires std::is_void_v<typename get_box_traits<NewBox>::value_type>;
+    { get_box_traits<NewBox>::make() };
+} || requires {
+    { get_box_traits<NewBox>::make(get_box_traits<Box>::value(std::declval<Box>())) };
+});
+
+template<typename NewBox, typename Box>
+    requires propagatable_value<NewBox, Box>
 [[nodiscard]] constexpr decltype(auto) propagate_value(Box&& box) {
     using BoxTraits = get_box_traits<Box>;
     using NewBoxTraits = get_box_traits<NewBox>;
