@@ -19,7 +19,7 @@ concept invocable_with_error = requires {
     requires std::invocable<Fn>;
 };
 
-template<typename Fn, typename Box>
+template<typename Fn, box Box>
 [[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box)
     requires invocable_with_error<decltype(fn), decltype(box)>
 {
