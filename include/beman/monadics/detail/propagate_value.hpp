@@ -13,7 +13,7 @@ namespace beman::monadics::detail {
 
 template<typename NewBox, typename Box>
     requires same_box<NewBox, Box>
-[[nodiscard]] constexpr decltype(auto) propagate_value(Box&& box) noexcept {
+[[nodiscard]] constexpr decltype(auto) propagate_value(Box&& box) {
     using BoxTraits = get_box_traits<Box>;
     using NewBoxTraits = get_box_traits<NewBox>;
 

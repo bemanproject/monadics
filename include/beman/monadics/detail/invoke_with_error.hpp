@@ -20,7 +20,7 @@ concept invocable_with_error = requires {
 };
 
 template<typename Fn, typename Box>
-[[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept
+[[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box)
     requires invocable_with_error<decltype(fn), decltype(box)>
 {
     using Traits = get_box_traits<Box>;
