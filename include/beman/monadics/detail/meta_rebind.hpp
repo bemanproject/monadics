@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_DETAIL_META_REBIND_VALUE_HPP
-#define BEMAN_MONADICS_DETAIL_META_REBIND_VALUE_HPP
+#ifndef BEMAN_MONADICS_DETAIL_META_REBIND_HPP
+#define BEMAN_MONADICS_DETAIL_META_REBIND_HPP
 
 #include <beman/monadics/detail/decomposable.hpp>
 
@@ -24,4 +24,4 @@ template<decomposable<1> Box>
 
 } // namespace beman::monadics::detail
 
-#endif // BEMAN_MONADICS_DETAIL_META_REBIND_VALUE_HPP
+#endif // BEMAN_MONADICS_DETAIL_META_REBIND_HPP
