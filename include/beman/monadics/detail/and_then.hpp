@@ -30,12 +30,11 @@ class and_then_t {
         requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
     {
         using Traits = get_box_traits<Box>;
+        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
 
         if (Traits::has_value(box)) {
             return invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box));
         }
-
-        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
 
         return propagate_error<NewBox>(std::forward<Box>(box));
     }
