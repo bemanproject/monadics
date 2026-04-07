@@ -32,6 +32,7 @@ class or_else_t {
     {
         using Traits = get_box_traits<Box>;
         using NewBox = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+
         if (!Traits::has_value(box)) {
             return invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box));
         }
