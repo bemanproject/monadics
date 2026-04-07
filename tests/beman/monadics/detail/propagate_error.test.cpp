@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/rebox_error.hpp>
+#include <beman/monadics/detail/propagate_error.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -45,7 +45,7 @@ namespace beman::monadics::detail::tests {
 TEST_CASE("with-error-channel") {
     constexpr auto result = []() {
         Box<int, float> src{1.0f};
-        return rebox_error<Box<int, double>>(std::move(src));
+        return propagate_error<Box<int, double>>(std::move(src));
     }();
 
     STATIC_REQUIRE(std::get<1>(result) == 1.0);
@@ -54,7 +54,7 @@ TEST_CASE("with-error-channel") {
 TEST_CASE("without-error-channel") {
     constexpr auto result = []() {
         std::optional<int> src{std::nullopt};
-        return rebox_error<std::optional<double>>(std::move(src));
+        return propagate_error<std::optional<double>>(std::move(src));
     }();
 
     STATIC_REQUIRE_FALSE(result.has_value());

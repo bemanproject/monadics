@@ -6,7 +6,7 @@
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/pipe_adaptor.hpp>
-#include <beman/monadics/detail/rebox_error.hpp>
+#include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
 #include <utility>
@@ -37,7 +37,7 @@ class and_then_t {
 
         using NewBox = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
 
-        return rebox_error<NewBox>(std::forward<Box>(box));
+        return propagate_error<NewBox>(std::forward<Box>(box));
     }
 };
 

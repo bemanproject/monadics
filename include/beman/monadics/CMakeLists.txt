@@ -28,8 +28,8 @@ target_sources(
                 detail/meta_rebind.hpp
                 detail/or_else.hpp
                 detail/pipe_adaptor.hpp
-                detail/rebox_value.hpp
-                detail/rebox_error.hpp
+                detail/propagate_value.hpp
+                detail/propagate_error.hpp
                 detail/same_box.hpp
                 detail/same_unqualified_as.hpp
                 detail/transform.hpp

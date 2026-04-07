@@ -23,8 +23,8 @@ set(tests
     meta_rebind_error
     meta_rebind
     pipe_adaptor
-    rebox_error
-    rebox_value
+    propagate_error
+    propagate_value
     same_box
 )
 

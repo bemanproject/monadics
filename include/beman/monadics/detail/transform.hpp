@@ -6,7 +6,7 @@
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/pipe_adaptor.hpp>
-#include <beman/monadics/detail/rebox_error.hpp>
+#include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
 #include <type_traits>
@@ -42,7 +42,7 @@ class transform_t {
             }
         }
 
-        return rebox_error<NewBox>(std::forward<Box>(box));
+        return propagate_error<NewBox>(std::forward<Box>(box));
     }
 };
 

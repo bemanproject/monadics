@@ -36,7 +36,7 @@ class transform_error_t {
                                                               std::forward<Box>(box)));
         }
 
-        return rebox_value<NewBox>(std::forward<Box>(box));
+        return propagate_value<NewBox>(std::forward<Box>(box));
 
         // gcc11/12 internal crash with pipe_adaptor_t
         // return std::forward<Box>(box) | or_else([f = std::forward<Op>(op).callable(key)](auto&& e) {

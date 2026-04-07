@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_DETAIL_REBOX_ERROR_HPP
-#define BEMAN_MONADICS_DETAIL_REBOX_ERROR_HPP
+#ifndef BEMAN_MONADICS_DETAIL_PROPAGATE_ERROR_HPP
+#define BEMAN_MONADICS_DETAIL_PROPAGATE_ERROR_HPP
 
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/same_box.hpp>
@@ -12,7 +12,7 @@ namespace beman::monadics::detail {
 
 template<typename NewBox, typename Box>
     requires same_box<NewBox, Box>
-[[nodiscard]] constexpr decltype(auto) rebox_error(Box&& box) noexcept {
+[[nodiscard]] constexpr decltype(auto) propagate_error(Box&& box) noexcept {
     using BoxTraits = get_box_traits<Box>;
     using NewBoxTraits = get_box_traits<NewBox>;
 
@@ -25,4 +25,4 @@ template<typename NewBox, typename Box>
 
 } // namespace beman::monadics::detail
 
-#endif // BEMAN_MONADICS_DETAIL_REBOX_ERROR_HPP
+#endif // BEMAN_MONADICS_DETAIL_PROPAGATE_ERROR_HPP

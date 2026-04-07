@@ -6,7 +6,7 @@
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
 #include <beman/monadics/detail/pipe_adaptor.hpp>
-#include <beman/monadics/detail/rebox_value.hpp>
+#include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
 #include <utility>
@@ -36,7 +36,7 @@ class or_else_t {
             return invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box));
         }
 
-        return rebox_value<NewBox>(std::forward<Box>(box));
+        return propagate_value<NewBox>(std::forward<Box>(box));
     }
 };
 
