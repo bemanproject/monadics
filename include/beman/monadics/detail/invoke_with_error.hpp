@@ -14,7 +14,10 @@ template<typename Fn, typename Box, typename Traits = get_box_traits<Box>>
 concept invocable_with_error = requires {
     requires has_error_channel<Box>;
     { std::declval<Fn>()(Traits::error(std::declval<Box>())) };
-} || requires { requires std::invocable<Fn>; };
+} || requires {
+    requires !has_error_channel<Box>;
+    requires std::invocable<Fn>;
+};
 
 template<typename Fn, typename Box>
 [[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept
