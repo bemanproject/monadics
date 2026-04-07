@@ -11,13 +11,17 @@
 namespace beman::monadics::detail {
 
 template<typename Fn, typename Box, typename Traits = get_box_traits<Box>>
+concept invocable_with_error = requires {
+    requires has_error_channel<Box>;
+    { std::declval<Fn>()(Traits::error(std::declval<Box>())) };
+} || requires { requires std::invocable<Fn>; };
+
+template<typename Fn, typename Box>
 [[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box) noexcept
-    requires requires {
-        { Traits::error(std::forward<Box>(box)) };
-        { std::forward<Fn>(fn)(Traits::error(std::forward<Box>(box))) };
-    } || requires { requires std::invocable<Fn>; }
+    requires invocable_with_error<decltype(fn), decltype(box)>
 {
-    if constexpr (requires { Traits::error(std::forward<Box>(box)); }) {
+    using Traits = get_box_traits<Box>;
+    if constexpr (has_error_channel<Box>) {
         return std::forward<Fn>(fn)(Traits::error(std::forward<Box>(box)));
     } else {
         return std::forward<Fn>(fn)();
