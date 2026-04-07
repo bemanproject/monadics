@@ -10,6 +10,7 @@
 #include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/or_else.hpp>
 #include <beman/monadics/detail/pipe_adaptor.hpp>
+#include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
@@ -28,6 +29,7 @@ using detail::invoke_with_value;
 using detail::or_else;
 using detail::or_elseable;
 using detail::pipe_adaptor;
+using detail::propagate_error;
 using detail::propagate_value;
 using detail::transform;
 using detail::transform_error;
