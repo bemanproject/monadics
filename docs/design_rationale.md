@@ -218,12 +218,11 @@ zero changes to the library or to the box types.
 template <beman::monadics::box Box>
     requires beman::monadics::box<typename beman::monadics::get_box_traits<Box>::value_type>
 constexpr auto flatten(Box&& box) {
-    using Traits    = beman::monadics::get_box_traits<Box>;
-    using InnerBox  = typename Traits::value_type;
-    using ITraits   = beman::monadics::get_box_traits<InnerBox>;
+    using Traits   = beman::monadics::get_box_traits<Box>;
+    using InnerBox = typename Traits::value_type;
 
     if (!Traits::has_value(box))
-        return ITraits::make_error(Traits::error(std::forward<Box>(box)));
+        return beman::monadics::propagate_error<InnerBox>(std::forward<Box>(box));
     return Traits::value(std::forward<Box>(box));
 }
 ```
