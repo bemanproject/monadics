@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/propagate_value.hpp>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <optional>
 #include <utility>
 #include <variant>
+
+#include <beman/monadics/detail/propagate_value.hpp>
 
 template<typename T, typename E>
 struct Box : std::variant<T, E> {

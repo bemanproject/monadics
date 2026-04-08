@@ -3,6 +3,11 @@
 #ifndef BEMAN_MONADICS_MONADICS_HPP
 #define BEMAN_MONADICS_MONADICS_HPP
 
+#if defined(BEMAN_USE_MODULES) && !defined(BEMAN_MONADICS_MODULE_INTERFACE)
+import beman.monadics;
+#else
+
+#ifndef BEMAN_MONADICS_MODULE_INTERFACE
 #include <beman/monadics/detail/access_key.hpp>
 #include <beman/monadics/detail/and_then.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
@@ -14,6 +19,7 @@
 #include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
+#endif // BEMAN_MONADICS_MODULE_INTERFACE
 
 namespace beman::monadics {
 
@@ -37,5 +43,7 @@ using detail::transform_errorable;
 using detail::transformable;
 
 } // namespace beman::monadics
+
+#endif // defined(BEMAN_USE_MODULES) && !defined(BEMAN_MONADICS_MODULE_INTERFACE)
 
 #endif // BEMAN_MONADICS_MONADICS_HPP

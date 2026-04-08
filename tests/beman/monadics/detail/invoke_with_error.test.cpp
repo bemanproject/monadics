@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/invoke_with_error.hpp>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <utility>
+
+#include <beman/monadics/detail/invoke_with_error.hpp>
 
 template<typename T, typename E>
 struct Box {

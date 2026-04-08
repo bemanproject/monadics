@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/monadics.hpp>
-
 #include <cstdlib>
 #include <optional>
+
+#include <beman/monadics/monadics.hpp>
 
 template<typename T>
 struct beman::monadics::box_traits<std::optional<T>> {

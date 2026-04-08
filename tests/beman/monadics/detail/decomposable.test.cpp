@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/decomposable.hpp>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <optional>
 #include <utility>
 #include <vector>
+
+#include <beman/monadics/detail/decomposable.hpp>
 
 namespace beman::monadics::detail::tests {
 

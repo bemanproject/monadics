@@ -3,9 +3,9 @@
 #ifndef BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
 #define BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
 
-#include <beman/monadics/monadics.hpp>
-
 #include <type_traits>
+
+#include <beman/monadics/monadics.hpp>
 
 template<typename Box>
     requires std::is_pointer_v<Box>

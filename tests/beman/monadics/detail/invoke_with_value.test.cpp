@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/invoke_with_value.hpp>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <utility>
 #include <variant>
+
+#include <beman/monadics/detail/invoke_with_value.hpp>
 
 template<typename T, typename E>
 struct Box : std::variant<std::conditional_t<std::is_void_v<T>, std::monostate, T>, E> {};

@@ -3,9 +3,9 @@
 #ifndef BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
 #define BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
 
-#include <beman/monadics/monadics.hpp>
-
 #include <optional>
+
+#include <beman/monadics/monadics.hpp>
 
 template<typename T>
 struct beman::monadics::box_traits<std::optional<T>> {

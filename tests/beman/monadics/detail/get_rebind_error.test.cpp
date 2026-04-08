@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/get_rebind_error.hpp>
-
 #include <catch2/catch_template_test_macros.hpp>
+
+#include <beman/monadics/detail/get_rebind_error.hpp>
 
 namespace beman::monadics::detail::tests {
 

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/pipe_adaptor.hpp>
-
 #include <catch2/catch_test_macros.hpp>
 
 #include <helpers/move_tracker.hpp>
+
+#include <beman/monadics/detail/pipe_adaptor.hpp>
 
 namespace beman::monadics::detail::tests {
 
