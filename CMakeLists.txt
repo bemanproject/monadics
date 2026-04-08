@@ -27,26 +27,13 @@ option(
 # for find of beman-install-library
 include(infra/cmake/beman-install-library.cmake)
 
-add_library(beman.monadics INTERFACE)
-add_library(beman::monadics ALIAS beman.monadics)
+add_subdirectory(src/beman/monadics)
 
-target_sources(
-    beman.monadics
-    PUBLIC FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
-)
-
-set_target_properties(
-    beman.monadics
-    PROPERTIES VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
-)
-
-add_subdirectory(include/beman/monadics)
-
-beman_install_library(beman.monadics TARGETS beman.monadics)
+beman_install_library(beman.monadics TARGETS beman.monadics beman.monadics_headers)
 
 if(BEMAN_MONADICS_BUILD_TESTS)
     enable_testing()
-    add_subdirectory(tests/beman/monadics)
+    add_subdirectory(tests)
 endif()
 
 if(BEMAN_MONADICS_BUILD_EXAMPLES)
