@@ -13,7 +13,7 @@ struct test_op_t {
 
     template<typename Box, std::derived_from<test_op_t> Op>
     [[nodiscard]] friend constexpr auto operator|(Box&& box, Op&& op) {
-        return std::forward<Op>(op).callable(key)(std::forward<Box>(box));
+        return std::forward<Op>(op).identity(key)(std::forward<Box>(box));
     }
 };
 
@@ -37,8 +37,8 @@ TEST_CASE("lvalue-callable-is-copied") {
         return test_op(fn);
     }();
 
-    STATIC_REQUIRE(closure.callable(test_op_t::key).tracker.copies == 1);
-    STATIC_REQUIRE(closure.callable(test_op_t::key).tracker.moves == 0);
+    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.copies == 1);
+    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.moves == 0);
 }
 
 TEST_CASE("vvalue-callable-is-copied") {
@@ -53,8 +53,8 @@ TEST_CASE("vvalue-callable-is-copied") {
         return test_op(std::move(fn));
     }();
 
-    STATIC_REQUIRE(closure.callable(test_op_t::key).tracker.copies == 0);
-    STATIC_REQUIRE(closure.callable(test_op_t::key).tracker.moves == 1);
+    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.copies == 0);
+    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.moves == 1);
 }
 
 TEST_CASE("fn-stored-by-value-no-dangling") {

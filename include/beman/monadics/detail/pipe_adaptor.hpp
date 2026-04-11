@@ -22,15 +22,15 @@ struct pipe_adaptor {
 
             // msvc bug does not allow to use Callable in noexcept
             constexpr explicit closure(Fn&& f) noexcept(std::is_nothrow_constructible_v<std::decay_t<Fn>, Fn>)
-                : callable_(std::forward<Fn>(f)) {}
+                : identity_(std::forward<Fn>(f)) {}
 
-            constexpr Callable& callable(access_key<T>) & noexcept { return callable_; }
-            constexpr const Callable& callable(access_key<T>) const& noexcept { return callable_; }
-            constexpr Callable&& callable(access_key<T>) && noexcept { return std::move(callable_); }
-            constexpr const Callable&& callable(access_key<T>) const&& noexcept { return std::move(callable_); }
+            constexpr Callable& identity(access_key<T>) & noexcept { return identity_; }
+            constexpr const Callable& identity(access_key<T>) const& noexcept { return identity_; }
+            constexpr Callable&& identity(access_key<T>) && noexcept { return std::move(identity_); }
+            constexpr const Callable&& identity(access_key<T>) const&& noexcept { return std::move(identity_); }
 
           private:
-            Callable callable_;
+            Callable identity_;
         };
 
         return closure{std::forward<Fn>(fn)};

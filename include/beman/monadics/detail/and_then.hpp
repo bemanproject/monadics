@@ -27,13 +27,13 @@ class and_then_t {
 
     template<box Box, std::derived_from<and_then_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+        requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
     {
         using Traits = get_box_traits<Box>;
-        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
 
         if (Traits::has_value(box)) {
-            return invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box));
+            return invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box));
         }
 
         return propagate_error<NewBox>(std::forward<Box>(box));

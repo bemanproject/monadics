@@ -246,7 +246,7 @@ class value_or_t {
         using Traits = bms::get_box_traits<Box>;
         if (Traits::has_value(box))
             return Traits::value(std::forward<Box>(box));
-        return std::forward<Op>(op).callable(key);
+        return std::forward<Op>(op).identity(key);
     }
 };
 
@@ -263,15 +263,17 @@ static_assert(v == 42);
 `pipe_adaptor<value_or_t>` is the callable object users invoke (e.g. `value_or(42)`). Calling
 it produces a `closure` that derives from `value_or_t` and stores the argument. The `friend
 operator|` is found via the derived type and retrieves the stored argument via
-`op.callable(key)`, where `key` is an `access_key<value_or_t>` that only `value_or_t` can
-construct — preventing external code from bypassing the access protocol.
+`op.identity(key)` — named after the identity function `id(x) = x`, because the accessor
+simply returns whatever was stored unchanged, whether that is a callable or a plain value.
+`key` is an `access_key<value_or_t>` that only `value_or_t` can construct, preventing
+external code from bypassing the access protocol.
 
-> **Note — why `access_key` instead of `op.callable({})`?**
+> **Note — why `access_key` instead of `op.identity({})`?**
 > On GCC and Clang the key can be replaced by a default-constructed sentinel:
-> `return std::forward<Op>(op).callable({});`.
-> This works because `closure::callable` is only accessible from within `value_or_t` anyway
+> `return std::forward<Op>(op).identity({});`.
+> This works because `closure::identity` is only accessible from within `value_or_t` anyway
 > (the `friend operator|` is a member of `value_or_t`). However, MSVC incorrectly accepts
-> `op.callable({})` from outside the class in some contexts, breaking the access restriction.
+> `op.identity({})` from outside the class in some contexts, breaking the access restriction.
 > `access_key<value_or_t>` is used to work around this MSVC bug: its constructor is private
 > and only `value_or_t` can name the type, so the access protocol is enforced on all three
 > compilers.

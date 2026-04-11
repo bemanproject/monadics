@@ -26,18 +26,18 @@ class transform_t {
 
     template<box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires transform_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+        requires transform_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
     {
-        using NewValue = decltype(invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewValue = decltype(invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
         using NewBox = typename Traits::template rebind<NewValue>;
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (Traits::has_value(box)) {
             if constexpr (std::is_void_v<NewValue>) {
-                invoke_with_value(std::forward<Op>(op).callable(key), std::forward<Box>(box));
+                invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box));
                 return NewBoxTraits::make();
             } else {
-                return NewBoxTraits::make(invoke_with_value(std::forward<Op>(op).callable(key),
+                return NewBoxTraits::make(invoke_with_value(std::forward<Op>(op).identity(key),
                                                             std::forward<Box>(box)));
             }
         }

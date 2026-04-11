@@ -28,13 +28,13 @@ class or_else_t {
 
     template<box Box, std::derived_from<or_else_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires or_elseable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+        requires or_elseable_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
     {
         using Traits = get_box_traits<Box>;
-        using NewBox = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewBox = decltype(invoke_with_error(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
 
         if (!Traits::has_value(box)) {
-            return invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box));
+            return invoke_with_error(std::forward<Op>(op).identity(key), std::forward<Box>(box));
         }
 
         return propagate_value<NewBox>(std::forward<Box>(box));

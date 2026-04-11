@@ -24,22 +24,22 @@ class transform_error_t {
 
     template<box Box, std::derived_from<transform_error_t> Op>
     [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires transform_errorable_impl<decltype(box), decltype(std::forward<Op>(op).callable(key))>
+        requires transform_errorable_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
     {
         using Traits = get_box_traits<Box>;
-        using NewError = decltype(invoke_with_error(std::forward<Op>(op).callable(key), std::forward<Box>(box)));
+        using NewError = decltype(invoke_with_error(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
         using NewBox = typename Traits::template rebind_error<NewError>;
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (!Traits::has_value(box)) {
-            return NewBoxTraits::make_error(invoke_with_error(std::forward<Op>(op).callable(key),
+            return NewBoxTraits::make_error(invoke_with_error(std::forward<Op>(op).identity(key),
                                                               std::forward<Box>(box)));
         }
 
         return propagate_value<NewBox>(std::forward<Box>(box));
 
         // gcc11/12 internal crash with pipe_adaptor_t
-        // return std::forward<Box>(box) | or_else([f = std::forward<Op>(op).callable(key)](auto&& e) {
+        // return std::forward<Box>(box) | or_else([f = std::forward<Op>(op).identity(key)](auto&& e) {
         //            return NewBoxTraits::make_error(f(std::forward<decltype(e)>(e)));
         //        });
     }
