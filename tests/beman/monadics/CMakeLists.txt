@@ -30,7 +30,7 @@ set(tests
     raw_ptr
     shared_ptr
     enum
-    expected
+    result
 )
 
 foreach(test_dir ${tests})
