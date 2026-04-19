@@ -21,7 +21,8 @@ namespace beman::monadics::detail {
 namespace _get_box_traits {
 
 template<typename Box, typename Traits>
-concept box = has_value_type<Box, Traits>
+concept box = has_box_traits<Box>
+           && has_value_type<Box, Traits>
            && has_error_type<Box, Traits>
            && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
            && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>

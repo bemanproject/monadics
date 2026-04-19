@@ -99,4 +99,7 @@ class [[nodiscard("Result value should be handled")]] Result {
     bool has_value_{false};
 };
 
+template<typename T, typename E>
+struct beman::monadics::box_traits<Result<T, E>> {};
+
 #endif // BEMAN_MONADICS_RESULT_TRAIT_HPP

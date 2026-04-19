@@ -6,6 +6,7 @@ add_dependencies(${test_global_target} ${test_dir_target})
 
 set(tests
     as_pointer
+    box_traits
     decomposable
     get_error_fn
     get_error_type

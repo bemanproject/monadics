@@ -20,21 +20,32 @@ header for the box type being demonstrated.
 
 ## Opting In a Type
 
-A type becomes a box once the library can resolve its `box_traits<T>`. For well-structured
-types this requires no specialization at all; for others, only the missing pieces need to be
-provided.
+Opting a type into the box abstraction is explicit: you must specialize
+`beman::monadics::box_traits<T>`, even if the type already exposes a fully compatible interface.
+This prevents types from being silently treated as boxes with incorrect behaviour.
 
-### Case 1: Auto-deduction (no specialization needed)
+An empty specialization is the minimum required opt-in. Once opted in, any members the type
+already exposes are deduced automatically; you only need to supply what is missing.
+
+### Case 1: Empty opt-in (well-structured types)
 
 If the type already exposes a compatible interface — member `has_value()`, `value()`, `error()`,
-nested `value_type` / `error_type`, and `rebind` / `rebind_error` — no specialization is needed.
-The library deduces everything automatically.
+nested `value_type` / `error_type`, and `rebind` / `rebind_error` — an empty specialization is
+all that is needed. The library deduces everything else automatically.
 
-`std::expected` is the canonical example. All four operations are immediately available:
+`std::expected` is the canonical example. Opt in with an empty specialization and all four
+operations become available:
 
 ```cpp
+#include <beman/monadics/monadics.hpp>
 #include <expected>
 #include <string>
+
+template <typename T, typename E>
+struct beman::monadics::box_traits<std::expected<T, E>> {};
+```
+
+```cpp
 using E = std::expected<int, std::string>;
 
 auto result =

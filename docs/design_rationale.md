@@ -127,14 +127,24 @@ Most real types already expose part of this interface. The library runs a deduct
 for each capability: it checks the explicit specialization first, then the box type's own
 members, then the template parameters. You only need to supply what it cannot find on its own.
 
-### When everything is deducible — no specialization needed
+### When everything is deducible — empty opt-in
+
+Opting a type into the box abstraction is always explicit: a `box_traits<T>` specialization is
+required even if the type already exposes a fully compatible interface. This prevents types from
+being silently treated as boxes with incorrect behaviour — for example, a type that satisfies
+almost everything but lacks `make_error` would otherwise be accepted and produce wrong results.
 
 `std::expected<T, E>` already has `has_value()`, `value()`, `error()`, nested `value_type`
 and `error_type`, and two template parameters that the library uses for rebind deduction.
-The default `box_traits<T>` is an empty struct, so no specialization is required — the
-deduction cascade reads everything directly from the type's own members.
+An empty specialization is the minimal opt-in; the deduction cascade then reads everything
+directly from the type's own members:
 
-All four operations work immediately without any `box_traits` specialization.
+```cpp
+template <typename T, typename E>
+struct beman::monadics::box_traits<std::expected<T, E>> {};
+```
+
+All four operations are available immediately after this opt-in.
 
 ### When a few pieces are missing — minimal specialization
 
