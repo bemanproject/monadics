@@ -33,23 +33,8 @@ set(tests
     result
 )
 
-if(CMAKE_CXX_STANDARD GREATER_EQUAL 23)
-    include(CheckCXXSourceCompiles)
-    check_cxx_source_compiles(
-        [[
-    #include <expected>
-
-    int main()
-    {
-      const std::expected<int, int> result;
-      return result.value();
-    }
-  ]]
-        HAVE_STD_EXPECTED
-    )
-    if(HAVE_STD_EXPECTED)
-        list(APPEND tests expected)
-    endif()
+if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
+    list(APPEND tests expected)
 endif()
 
 foreach(test_dir ${tests})

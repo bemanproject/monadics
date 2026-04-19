@@ -4,6 +4,10 @@ add_custom_target(${examples_global_target})
 
 set(examples optional)
 
+if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
+    list(APPEND examples expected)
+endif()
+
 foreach(example ${examples})
     set(example_target "${examples_global_target}.${example}")
 

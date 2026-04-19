@@ -44,6 +44,25 @@ add_subdirectory(include/beman/monadics)
 
 beman_install_library(beman.monadics TARGETS beman.monadics)
 
+if(
+    (BEMAN_MONADICS_BUILD_TESTS OR BEMAN_MONADICS_BUILD_EXAMPLES)
+    AND (CMAKE_CXX_STANDARD GREATER_EQUAL 23)
+)
+    include(CheckCXXSourceCompiles)
+    check_cxx_source_compiles(
+        [[
+    #include <expected>
+
+    int main()
+    {
+      const std::expected<int, int> result;
+      return result.value();
+    }
+    ]]
+        BEMAN_MONADICS_HAVE_STD_EXPECTED
+    )
+endif()
+
 if(BEMAN_MONADICS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests/beman/monadics)
