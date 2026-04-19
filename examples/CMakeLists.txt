@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+set(examples_global_target "beman.monadics.examples")
+add_custom_target(${examples_global_target})
 
 set(examples optional)
 
 foreach(example ${examples})
-    add_executable(beman.monadics.examples.${example})
-    target_sources(beman.monadics.examples.${example} PRIVATE ${example}.cpp)
-    target_link_libraries(
-        beman.monadics.examples.${example}
-        PRIVATE beman::monadics
-    )
+    set(example_target "${examples_global_target}.${example}")
+
+    add_executable(${example_target})
+    target_sources(${example_target} PRIVATE ${example}.cpp)
+    target_link_libraries(${example_target} PRIVATE beman::monadics)
 endforeach()
