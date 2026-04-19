@@ -12,16 +12,14 @@ TEST_CASE("void-value") {
     };
 
     SECTION("with-value") {
-        constexpr auto result = stdx::expected<void, int>{} | transform_error(fn);
-
-        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+        constexpr auto result = std::expected<void, int>{} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
         STATIC_REQUIRE(result.has_value());
     }
 
     SECTION("without-value") {
-        constexpr auto result = stdx::expected<void, int>{10} | transform_error(fn);
-
-        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+        constexpr auto result = std::expected<void, int>{std::unexpected{10}} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
         STATIC_REQUIRE(result.has_value() == false);
         STATIC_REQUIRE(result.error() == 20.0);
     }
@@ -33,18 +31,37 @@ TEST_CASE("non-void-value") {
     };
 
     SECTION("with-value") {
-        constexpr auto result = stdx::expected<char, int>{} | transform_error(fn);
-
-        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<char, double>>);
+        constexpr auto result = std::expected<char, int>{'a'} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<char, double>>);
         STATIC_REQUIRE(result.has_value());
+        STATIC_REQUIRE(result.value() == 'a');
     }
 
     SECTION("without-value") {
-        constexpr auto result = stdx::expected<char, int>{10} | transform_error(fn);
-
-        STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<char, double>>);
+        constexpr auto result = std::expected<char, int>{std::unexpected{10}} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<char, double>>);
         STATIC_REQUIRE(result.has_value() == false);
         STATIC_REQUIRE(result.error() == 20.0);
+    }
+}
+
+TEST_CASE("same-type-value-and-error") {
+    constexpr auto fn = [](int e) {
+        return e * 2;
+    };
+
+    SECTION("with-value") {
+        constexpr auto result = std::expected<int, int>{5} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<int, int>>);
+        STATIC_REQUIRE(result.has_value());
+        STATIC_REQUIRE(result.value() == 5);
+    }
+
+    SECTION("without-value") {
+        constexpr auto result = std::expected<int, int>{std::unexpected{5}} | transform_error(fn);
+        STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<int, int>>);
+        STATIC_REQUIRE(result.has_value() == false);
+        STATIC_REQUIRE(result.error() == 10);
     }
 }
 
@@ -52,31 +69,31 @@ TEMPLATE_TEST_CASE_SIG("keep-value-category",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (
-                           stdx::expected<int, double>&,
+                           std::expected<int, double>&,
                            [](double&) { return 0.0; },
                            true
                        ),
                        (
-                           stdx::expected<int, double>&,
+                           std::expected<int, double>&,
                            [](double&&) { return 0.0; },
                            false
                        ),
                        (
-                           stdx::expected<int, double>&&,
+                           std::expected<int, double>&&,
                            [](double&&) { return 0.0; },
                            true
                        ),
                        (
-                           stdx::expected<int, double>&&,
+                           std::expected<int, double>&&,
                            [](double&) { return 0.0; },
                            false
                        ),
                        (
-                           const stdx::expected<int, double>&,
+                           const std::expected<int, double>&,
                            [](const double&) { return 0.0; },
                            true
                        ),
-                       (const stdx::expected<int, double>&, [](double&) { return 0.0; }, false)) {
+                       (const std::expected<int, double>&, [](double&) { return 0.0; }, false)) {
     STATIC_REQUIRE(transform_errorable<Box, decltype(Fn)> == Expected);
 }
 

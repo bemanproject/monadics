@@ -6,72 +6,81 @@
 
 namespace beman::monadics::tests {
 
-TEST_CASE("void-value-return-same-error") {
+TEST_CASE("void-value-return-same-error-has-value") {
     constexpr auto result =
-        stdx::expected<void, int>{} | or_else([](auto e) { return stdx::expected<void, int>(e * 2); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, int>>);
+        std::expected<void, int>{} | or_else([](auto e) { return std::expected<void, int>{std::unexpected{e * 2}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, int>>);
     STATIC_REQUIRE(result.has_value());
 }
 
-TEST_CASE("void-value-return-another-error") {
-    constexpr auto result =
-        stdx::expected<void, int>{} | or_else([](auto e) { return stdx::expected<void, double>(e * 2.0); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
-    STATIC_REQUIRE(result.has_value() == true);
+TEST_CASE("void-value-return-another-error-has-value") {
+    constexpr auto result = std::expected<void, int>{}
+                          | or_else([](auto e) { return std::expected<void, double>{std::unexpected{e * 2.0}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
+    STATIC_REQUIRE(result.has_value());
 }
 
-TEST_CASE("void-value-return-same-error-2") {
-    constexpr auto result =
-        stdx::expected<void, int>{20} | or_else([](auto e) { return stdx::expected<void, int>(e * 2); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, int>>);
+TEST_CASE("void-value-return-same-error-has-error") {
+    constexpr auto result = std::expected<void, int>{std::unexpected{20}}
+                          | or_else([](auto e) { return std::expected<void, int>{std::unexpected{e * 2}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, int>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 40);
 }
 
-TEST_CASE("void-value-return-another-error-2") {
-    constexpr auto result =
-        stdx::expected<void, int>{1} | or_else([](auto e) { return stdx::expected<void, double>(e * 2.0); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+TEST_CASE("void-value-return-another-error-has-error") {
+    constexpr auto result = std::expected<void, int>{std::unexpected{1}}
+                          | or_else([](auto e) { return std::expected<void, double>{std::unexpected{e * 2.0}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 2.0);
 }
 
-TEST_CASE("value-return-same-error") {
-    constexpr auto result =
-        stdx::expected<int, double>{} | or_else([](auto e) { return stdx::expected<int, double>(e + 1); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<int, double>>);
+TEST_CASE("value-return-same-error-has-value") {
+    constexpr auto result = std::expected<int, double>{}
+                          | or_else([](auto e) { return std::expected<int, double>{std::unexpected{e + 1}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<int, double>>);
     STATIC_REQUIRE(result.has_value());
 }
 
-TEST_CASE("value-return-another-error") {
-    constexpr auto result =
-        stdx::expected<int, double>{} | or_else([](auto e) { return stdx::expected<int, float>(float(e)); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<int, float>>);
-    STATIC_REQUIRE(result.has_value() == true);
+TEST_CASE("value-return-another-error-has-value") {
+    constexpr auto result = std::expected<int, double>{}
+                          | or_else([](auto e) { return std::expected<int, float>{std::unexpected{float(e)}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<int, float>>);
+    STATIC_REQUIRE(result.has_value());
 }
 
-TEST_CASE("value-return-same-error-2") {
-    constexpr auto result =
-        stdx::expected<int, double>{2.0} | or_else([](auto e) { return stdx::expected<int, double>(e + 1); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<int, double>>);
+TEST_CASE("value-return-same-error-has-error") {
+    constexpr auto result = std::expected<int, double>{std::unexpected{2.0}}
+                          | or_else([](auto e) { return std::expected<int, double>{std::unexpected{e + 1}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<int, double>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 3.0);
 }
 
-TEST_CASE("value-return-another-error-2") {
-    constexpr auto result = stdx::expected<double, char>{'c'}
-                          | or_else([](auto e) { return stdx::expected<double, int>(static_cast<int>(e)); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<double, int>>);
+TEST_CASE("value-return-another-error-has-error") {
+    constexpr auto result = std::expected<double, char>{std::unexpected{'c'}} | or_else([](auto e) {
+                                return std::expected<double, int>{std::unexpected{static_cast<int>(e)}};
+                            });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<double, int>>);
     STATIC_REQUIRE(result.has_value() == false);
-    STATIC_REQUIRE(result.error() == static_cast<char>('c'));
+    STATIC_REQUIRE(result.error() == static_cast<int>('c'));
+}
+
+TEST_CASE("same-type-value-and-error-propagates-value") {
+    using E = std::expected<int, int>;
+    constexpr auto result = E{5} | or_else([](int e) { return E{std::unexpected{e * 2}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const E>);
+    STATIC_REQUIRE(result.has_value());
+    STATIC_REQUIRE(result.value() == 5);
+}
+
+TEST_CASE("same-type-value-and-error-propagates-error") {
+    using E = std::expected<int, int>;
+    constexpr auto result = E{std::unexpected{5}} | or_else([](int e) { return E{std::unexpected{e * 2}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const E>);
+    STATIC_REQUIRE(result.has_value() == false);
+    STATIC_REQUIRE(result.error() == 10);
 }
 
 TEMPLATE_TEST_CASE_SIG(
@@ -79,36 +88,36 @@ TEMPLATE_TEST_CASE_SIG(
     "",
     ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
     (
-        stdx::expected<int, double>&,
-        [](double&) { return stdx::expected<int, double>{}; },
+        std::expected<int, double>&,
+        [](double&) { return std::expected<int, double>{}; },
         true
     ),
     (
-        stdx::expected<int, double>&,
-        [](double&) { return stdx::expected<void, double>{}; },
+        std::expected<int, double>&,
+        [](double&) { return std::expected<void, double>{}; },
         false
     ),
     (
-        stdx::expected<int, double>&,
-        [](double&&) { return stdx::expected<int, double>{}; },
+        std::expected<int, double>&,
+        [](double&&) { return std::expected<int, double>{}; },
         false
     ),
     (
-        stdx::expected<int, double>&&,
-        [](double&&) { return stdx::expected<int, double>{}; },
+        std::expected<int, double>&&,
+        [](double&&) { return std::expected<int, double>{}; },
         true
     ),
     (
-        stdx::expected<int, double>&&,
-        [](double&) { return stdx::expected<int, double>{}; },
+        std::expected<int, double>&&,
+        [](double&) { return std::expected<int, double>{}; },
         false
     ),
     (
-        const stdx::expected<int, double>&,
-        [](const double&) { return stdx::expected<int, double>{}; },
+        const std::expected<int, double>&,
+        [](const double&) { return std::expected<int, double>{}; },
         true
     ),
-    (const stdx::expected<int, double>&, [](double&) { return stdx::expected<int, double>{}; }, false)
+    (const std::expected<int, double>&, [](double&) { return std::expected<int, double>{}; }, false)
 ) {
     STATIC_REQUIRE(or_elseable<Box, decltype(Fn)> == Expected);
 }

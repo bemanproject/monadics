@@ -7,69 +7,81 @@
 namespace beman::monadics::tests {
 
 TEST_CASE("with-void-value-return-non-void-with-value") {
-    constexpr auto result = stdx::expected<void, int>{} | and_then([]() { return stdx::expected<double, int>(2.0); });
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<double, int>>);
+    constexpr auto result = std::expected<void, int>{} | and_then([]() { return std::expected<double, int>{2.0}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<double, int>>);
     STATIC_REQUIRE(result.has_value());
     STATIC_REQUIRE(result.value() == 2.0);
 }
 
 TEST_CASE("with-void-value-return-non-void-with-error") {
-    constexpr auto result = stdx::expected<void, int>{} | and_then([]() { return stdx::expected<double, int>(2); });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<double, int>>);
+    constexpr auto result =
+        std::expected<void, int>{} | and_then([]() { return std::expected<double, int>{std::unexpected{2}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<double, int>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 2);
 }
 
 TEST_CASE("with-void-value-return-void-with-value") {
-    constexpr auto result = stdx::expected<void, int>{} | and_then([]() -> stdx::expected<void, int> { return {}; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, int>>);
+    constexpr auto result = std::expected<void, int>{} | and_then([]() -> std::expected<void, int> { return {}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, int>>);
     STATIC_REQUIRE(result.has_value());
 }
 
 TEST_CASE("with-void-value-return-void-with-error") {
-    constexpr auto result = stdx::expected<void, int>{} | and_then([]() -> stdx::expected<void, int> { return {5}; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, int>>);
+    constexpr auto result =
+        std::expected<void, int>{} | and_then([]() -> std::expected<void, int> { return {std::unexpected{5}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, int>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 5);
 }
 
 TEST_CASE("with-value-return-non-void-with-value") {
     constexpr auto result =
-        stdx::expected<int, double>{10}
-        | and_then([](auto) -> stdx::expected<std::string_view, double> { return std::string_view{"some"}; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<std::string_view, double>>);
+        std::expected<int, double>{10}
+        | and_then([](auto) -> std::expected<std::string_view, double> { return std::string_view{"some"}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<std::string_view, double>>);
     STATIC_REQUIRE(result.has_value());
     STATIC_REQUIRE(result.value() == "some");
 }
 
 TEST_CASE("with-value-return-non-void-with-error") {
-    constexpr auto result = stdx::expected<int, double>{10}
-                          | and_then([](auto&& v) -> stdx::expected<std::string_view, double> { return v * 2.0; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<std::string_view, double>>);
+    constexpr auto result =
+        std::expected<int, double>{10}
+        | and_then([](auto&& v) -> std::expected<std::string_view, double> { return {std::unexpected{v * 2.0}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<std::string_view, double>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 20.0);
 }
 
 TEST_CASE("with-value-return-void-with-value") {
     constexpr auto result =
-        stdx::expected<int, double>{10} | and_then([](auto) -> stdx::expected<void, double> { return {}; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+        std::expected<int, double>{10} | and_then([](auto) -> std::expected<void, double> { return {}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
     STATIC_REQUIRE(result.has_value());
 }
 
 TEST_CASE("with-value-return-void-with-error") {
-    constexpr auto result =
-        stdx::expected<int, double>{10} | and_then([](int&&) -> stdx::expected<void, double> { return {5.0}; });
-
-    STATIC_REQUIRE(std::same_as<decltype(result), const stdx::expected<void, double>>);
+    constexpr auto result = std::expected<int, double>{10}
+                          | and_then([](int&&) -> std::expected<void, double> { return {std::unexpected{5.0}}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const std::expected<void, double>>);
     STATIC_REQUIRE(result.has_value() == false);
     STATIC_REQUIRE(result.error() == 5.0);
+}
+
+TEST_CASE("same-type-value-and-error-propagates-value") {
+    using E = std::expected<int, int>;
+    constexpr auto result = E{5} | and_then([](int v) { return E{v * 2}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const E>);
+    STATIC_REQUIRE(result.has_value());
+    STATIC_REQUIRE(result.value() == 10);
+}
+
+TEST_CASE("same-type-value-and-error-propagates-error") {
+    using E = std::expected<int, int>;
+    constexpr auto result = E{std::unexpected{5}} | and_then([](int v) { return E{v * 2}; });
+    STATIC_REQUIRE(std::same_as<decltype(result), const E>);
+    STATIC_REQUIRE(result.has_value() == false);
+    STATIC_REQUIRE(result.error() == 5);
 }
 
 struct ChangedError {};
@@ -79,41 +91,41 @@ TEMPLATE_TEST_CASE_SIG(
     "",
     ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
     (
-        stdx::expected<int, double>&,
-        [](int&) { return stdx::expected<int, double>{10}; },
+        std::expected<int, double>&,
+        [](int&) { return std::expected<int, double>{10}; },
         true
     ),
     (
-        stdx::expected<int, double>&,
-        [](int&&) { return stdx::expected<int, double>{10}; },
+        std::expected<int, double>&,
+        [](int&&) { return std::expected<int, double>{10}; },
         false
     ),
     (
-        stdx::expected<int, double>&&,
-        [](int&&) { return stdx::expected<int, double>{10}; },
+        std::expected<int, double>&&,
+        [](int&&) { return std::expected<int, double>{10}; },
         true
     ),
     (
-        stdx::expected<int, double>&&,
-        [](int&&) { return stdx::expected<int, ChangedError>{10}; },
+        std::expected<int, double>&&,
+        [](int&&) { return std::expected<int, ChangedError>{10}; },
         false
     ),
     (
-        stdx::expected<int, double>&&,
-        [](int&&) { return stdx::expected<int, float>{10}; },
+        std::expected<int, double>&&,
+        [](int&&) { return std::expected<int, float>{10}; },
         false
     ),
     (
-        stdx::expected<int, double>&&,
-        [](int&) { return stdx::expected<int, double>{10}; },
+        std::expected<int, double>&&,
+        [](int&) { return std::expected<int, double>{10}; },
         false
     ),
     (
-        const stdx::expected<int, double>&,
-        [](const int&) { return stdx::expected<int, double>{10}; },
+        const std::expected<int, double>&,
+        [](const int&) { return std::expected<int, double>{10}; },
         true
     ),
-    (const stdx::expected<int, double>&, [](int&) { return stdx::expected<int, double>{10}; }, false)
+    (const std::expected<int, double>&, [](int&) { return std::expected<int, double>{10}; }, false)
 ) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
 }
