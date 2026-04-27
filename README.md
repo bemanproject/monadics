@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 <!-- markdownlint-disable-next-line line-length -->
 ![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg) ![Continuous Integration Tests](https://github.com/bemanproject/monadics/actions/workflows/ci_tests.yml/badge.svg) ![Lint Check (pre-commit)](https://github.com/bemanproject/monadics/actions/workflows/pre-commit-check.yml/badge.svg) [![Coverage](https://coveralls.io/repos/github/bemanproject/monadics/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/monadics?branch=main) ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
 
-`beman.monadics` is a minimal C++ library conforming to [The Beman Standard](https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md).
+`beman.monadics` is a Beman library that generalizes the monadic vocabulary to any type that models a "box".
 
 **Implements**: Monadics operations as free functions
 
@@ -150,8 +150,10 @@ You can disable building tests by setting CMake option `BEMAN_MONADICS_BUILD_TES
 | GCC        | 15-13   | C++26-C++20   | libstdc++         |
 | GCC        | 12-11   | C++23, C++20  | libstdc++         |
 | Clang      | 22-19   | C++26-C++20   | libstdc++, libc++ |
-| Clang      | 18-17   | C++26-C++20   | libc++            |
-| Clang      | 18-17   | C++20         | libstdc++         |
+| Clang      | 18      | C++26-C++20   | libc++            |
+| Clang      | 18      | C++23-C++20   | libstdc++         |
+| Clang      | 17      | C++26-C++20   | libc++            |
+| Clang      | 17      | C++20         | libstdc++         |
 | AppleClang | latest  | C++26-C++20   | libc++            |
 | MSVC       | latest  | C++23         | MSVC STL          |
 

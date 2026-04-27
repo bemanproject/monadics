@@ -24,8 +24,9 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-# for find of beman-install-library
+# for find of beman_install_library and configure_build_telemetry
 include(infra/cmake/beman-install-library.cmake)
+include(infra/cmake/BuildTelemetryConfig.cmake)
 
 add_library(beman.monadics INTERFACE)
 add_library(beman::monadics ALIAS beman.monadics)
@@ -43,6 +44,7 @@ set_target_properties(
 add_subdirectory(include/beman/monadics)
 
 beman_install_library(beman.monadics TARGETS beman.monadics)
+configure_build_telemetry()
 
 if(
     (BEMAN_MONADICS_BUILD_TESTS OR BEMAN_MONADICS_BUILD_EXAMPLES)
