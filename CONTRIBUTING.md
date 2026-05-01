@@ -65,7 +65,7 @@ the project's dependencies, including Catch2.
 
 Example commands:
 
-```
+```shell
 cmake \
   -B build \
   -S . \
