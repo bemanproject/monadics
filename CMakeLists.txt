@@ -3,8 +3,7 @@
 cmake_minimum_required(VERSION 3.30...4.3)
 
 project(
-    beman.monadics # CMake Project Name, which is also the name of the top-level
-    # targets (e.g., library, executable, etc.).
+    beman.monadics
     DESCRIPTION "Freestanding monadic operations"
     LANGUAGES CXX
     VERSION 0.1.0

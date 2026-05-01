@@ -182,6 +182,17 @@ For details on building beman.monadics without using a CMake preset, refer to th
 
 ### Installation
 
+#### Vcpkg
+
+The preferred way to install monadics is via vcpkg. To do so, after installing vcpkg
+itself, you need to add support for the Beman project's [vcpkg
+registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
+`vcpkg-configuration.json` file (which monadics [provides](vcpkg-configuration.json)).
+
+Then, simply run `vcpkg install beman-monadics`.
+
+#### Manual
+
 To install beman.monadics globally after building with the `gcc-release` preset, you can
 run:
 
