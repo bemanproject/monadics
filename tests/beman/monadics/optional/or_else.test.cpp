@@ -21,7 +21,7 @@ TEST_CASE("without-value") {
 }
 
 TEST_CASE("change-value-type") {
-    STATIC_REQUIRE(or_elseable<std::optional<int>, decltype([] { return std::optional<double>{}; })>);
+    STATIC_REQUIRE(or_elseable<std::optional<int>, decltype([] { return std::optional<double>{}; })> == false);
 }
 
 } // namespace beman::monadics::tests

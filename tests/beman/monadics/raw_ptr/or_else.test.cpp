@@ -31,7 +31,7 @@ TEST_CASE("with-value") {
 }
 
 TEST_CASE("change-value-type") {
-    STATIC_REQUIRE(or_elseable<int*, decltype([] { return static_cast<const double*>(nullptr); })>);
+    STATIC_REQUIRE(or_elseable<int*, decltype([] { return static_cast<const double*>(nullptr); })> == false);
 }
 
 } // namespace beman::monadics::tests

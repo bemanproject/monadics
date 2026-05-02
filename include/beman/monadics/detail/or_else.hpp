@@ -16,8 +16,7 @@ namespace beman::monadics::detail {
 template<typename NewBox, typename OldBox>
 concept or_elseable_return =
     (same_box<NewBox, OldBox> || on_error<"Should return the same type of Box">)
-    && (!has_error_channel<OldBox>
-        || (same_box_and_value<NewBox, OldBox> || on_error<"Should return the Box with same value_type">));
+    && (same_box_and_value<NewBox, OldBox> || on_error<"Should return the Box with same value_type">);
 
 template<typename Box, typename Fn>
 concept or_elseable_impl =
