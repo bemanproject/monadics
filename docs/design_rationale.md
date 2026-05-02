@@ -241,52 +241,46 @@ constexpr auto flatten(Box&& box) {
 
 ### Example: pipe-compatible operations via `operator|`
 
-New operations can also support the `|` pipe syntax by using `pipe_adaptor` and `access_key` —
-the same mechanism used by the library's own operations:
+New operations can support the `|` pipe syntax by defining a closure type that holds the
+argument and exposes `operator|` as a hidden friend — the same pattern used by the library's
+own operations. `callable_adaptor<T>` is the factory object that constructs a `T<Fn>` from
+a user-provided callable:
 
 ```cpp
 #include <beman/monadics/monadics.hpp>
 namespace bms = beman::monadics;
 
+template<typename Fn>
 class value_or_t {
-    inline static constexpr bms::access_key<value_or_t> key{};
+public:
+    constexpr explicit value_or_t(Fn fn) : fn_(std::move(fn)) {}
 
-    template <bms::box Box, std::derived_from<value_or_t> Op>
-    friend constexpr auto operator|(Box&& box, Op&& op) {
+    template<bms::box Box>
+    friend constexpr auto operator|(Box&& box, value_or_t&& op) {
         using Traits = bms::get_box_traits<Box>;
         if (Traits::has_value(box))
             return Traits::value(std::forward<Box>(box));
-        return std::forward<Op>(op).identity(key);
+        return std::move(op.fn_)();
     }
+
+private:
+    Fn fn_;
 };
 
-inline constexpr bms::pipe_adaptor<value_or_t> value_or{};
+inline constexpr bms::callable_adaptor<value_or_t> value_or{};
 ```
 
 ```cpp
 #include <optional>
 
-constexpr auto v = std::optional<int>{} | value_or(42); // 42
+constexpr auto v = std::optional<int>{} | value_or([] { return 42; }); // 42
 static_assert(v == 42);
 ```
 
-`pipe_adaptor<value_or_t>` is the callable object users invoke (e.g. `value_or(42)`). Calling
-it produces a `closure` that derives from `value_or_t` and stores the argument. The `friend
-operator|` is found via the derived type and retrieves the stored argument via
-`op.identity(key)` — named after the identity function `id(x) = x`, because the accessor
-simply returns whatever was stored unchanged, whether that is a callable or a plain value.
-`key` is an `access_key<value_or_t>` that only `value_or_t` can construct, preventing
-external code from bypassing the access protocol.
-
-> **Note — why `access_key` instead of `op.identity({})`?**
-> On GCC and Clang the key can be replaced by a default-constructed sentinel:
-> `return std::forward<Op>(op).identity({});`.
-> This works because `closure::identity` is only accessible from within `value_or_t` anyway
-> (the `friend operator|` is a member of `value_or_t`). However, MSVC incorrectly accepts
-> `op.identity({})` from outside the class in some contexts, breaking the access restriction.
-> `access_key<value_or_t>` is used to work around this MSVC bug: its constructor is private
-> and only `value_or_t` can name the type, so the access protocol is enforced on all three
-> compilers.
+`callable_adaptor<value_or_t>` is the callable object users invoke (e.g. `value_or(fn)`).
+It constructs a `value_or_t<decay_t<Fn>>` storing the argument. The hidden friend `operator|`
+is found via ADL on the closure type — both `Box` and `Fn` are in scope simultaneously, so
+constraints can reference both without any indirection.
 
 This pattern requires no changes to `beman.monadics` and no changes to `std::optional`.
 

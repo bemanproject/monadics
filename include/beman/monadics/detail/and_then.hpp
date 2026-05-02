@@ -3,9 +3,9 @@
 #ifndef BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 #define BEMAN_MONADICS_DETAIL_AND_THEN_HPP
 
+#include <beman/monadics/detail/callable_adaptor.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
-#include <beman/monadics/detail/pipe_adaptor.hpp>
 #include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
@@ -22,25 +22,29 @@ template<typename Box, typename Fn>
 concept and_thenable_impl =
     and_thenable_return<decltype(invoke_with_value(std::declval<Fn>(), std::declval<Box>())), Box>;
 
+template<typename Fn>
 class and_then_t {
-    inline static constexpr access_key<and_then_t> key{};
+  public:
+    constexpr explicit and_then_t(Fn fn) : fn_(std::move(fn)) {}
 
-    template<box Box, std::derived_from<and_then_t> Op>
-    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires and_thenable_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
-    {
+    template<box Box>
+        requires and_thenable_impl<Box, Fn>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, and_then_t&& op) {
         using Traits = get_box_traits<Box>;
-        using NewBox = decltype(invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
+        using NewBox = decltype(invoke_with_value(std::declval<Fn>(), std::declval<Box>()));
 
         if (Traits::has_value(box)) {
-            return invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box));
+            return invoke_with_value(std::move(op.fn_), std::forward<Box>(box));
         }
 
         return propagate_error<NewBox>(std::forward<Box>(box));
     }
+
+  private:
+    Fn fn_;
 };
 
-inline constexpr pipe_adaptor<and_then_t> and_then{};
+inline constexpr callable_adaptor<and_then_t> and_then{};
 
 template<typename Box, typename Fn>
 concept and_thenable = requires(Box&& box, Fn&& fn) {

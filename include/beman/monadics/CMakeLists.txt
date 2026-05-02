@@ -5,10 +5,10 @@ target_sources(
     PUBLIC
         FILE_SET HEADERS
             FILES
-                detail/access_key.hpp
                 detail/and_then.hpp
                 detail/as_pointer.hpp
                 detail/box_traits.hpp
+                detail/callable_adaptor.hpp
                 detail/decomposable.hpp
                 detail/get_box_traits.hpp
                 detail/get_error_fn.hpp
@@ -27,7 +27,6 @@ target_sources(
                 detail/meta_rebind_error.hpp
                 detail/meta_rebind.hpp
                 detail/or_else.hpp
-                detail/pipe_adaptor.hpp
                 detail/propagate_value.hpp
                 detail/propagate_error.hpp
                 detail/same_box.hpp

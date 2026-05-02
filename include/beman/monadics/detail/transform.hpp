@@ -3,9 +3,9 @@
 #ifndef BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 #define BEMAN_MONADICS_DETAIL_TRANSFORM_HPP
 
+#include <beman/monadics/detail/callable_adaptor.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
-#include <beman/monadics/detail/pipe_adaptor.hpp>
 #include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
@@ -21,32 +21,35 @@ concept transform_impl =
                                                                                       std::declval<Box>()))>>
     || on_error<"transform: fn must return a type compatible with rebind">;
 
+template<typename Fn>
 class transform_t {
-    inline static constexpr access_key<transform_t> key{};
+  public:
+    constexpr explicit transform_t(Fn fn) : fn_(std::move(fn)) {}
 
-    template<box Box, std::derived_from<transform_t> Op, typename Traits = get_box_traits<Box>>
-    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires transform_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
-    {
-        using NewValue = decltype(invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
+    template<box Box, typename Traits = get_box_traits<Box>>
+        requires transform_impl<Box, Fn>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, transform_t&& op) {
+        using NewValue = decltype(invoke_with_value(std::declval<Fn>(), std::declval<Box>()));
         using NewBox = typename Traits::template rebind<NewValue>;
         using NewBoxTraits = get_box_traits<NewBox>;
 
         if (Traits::has_value(box)) {
             if constexpr (std::is_void_v<NewValue>) {
-                invoke_with_value(std::forward<Op>(op).identity(key), std::forward<Box>(box));
+                invoke_with_value(std::move(op.fn_), std::forward<Box>(box));
                 return NewBoxTraits::make();
             } else {
-                return NewBoxTraits::make(invoke_with_value(std::forward<Op>(op).identity(key),
-                                                            std::forward<Box>(box)));
+                return NewBoxTraits::make(invoke_with_value(std::move(op.fn_), std::forward<Box>(box)));
             }
         }
 
         return propagate_error<NewBox>(std::forward<Box>(box));
     }
+
+  private:
+    Fn fn_;
 };
 
-inline constexpr pipe_adaptor<transform_t> transform{};
+inline constexpr callable_adaptor<transform_t> transform{};
 
 template<typename Box, typename Fn>
 concept transformable = requires(std::remove_reference_t<Box> box, std::remove_reference_t<Fn> fn) {

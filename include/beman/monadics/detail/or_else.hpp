@@ -3,9 +3,9 @@
 #ifndef BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 #define BEMAN_MONADICS_DETAIL_OR_ELSE_HPP
 
+#include <beman/monadics/detail/callable_adaptor.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
-#include <beman/monadics/detail/pipe_adaptor.hpp>
 #include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/same_box.hpp>
 
@@ -23,28 +23,34 @@ template<typename Box, typename Fn>
 concept or_elseable_impl =
     or_elseable_return<decltype(invoke_with_error(std::declval<Fn>(), std::declval<Box>())), Box>;
 
+template<typename Fn>
 class or_else_t {
-    inline static constexpr access_key<or_else_t> key{};
+  public:
+    constexpr explicit or_else_t(Fn fn) : fn_(std::move(fn)) {}
 
-    template<box Box, std::derived_from<or_else_t> Op>
-    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, Op&& op)
-        requires or_elseable_impl<decltype(box), decltype(std::forward<Op>(op).identity(key))>
-    {
+    template<box Box>
+        requires or_elseable_impl<Box, Fn>
+    [[nodiscard]] friend constexpr decltype(auto) operator|(Box&& box, or_else_t&& op) {
         using Traits = get_box_traits<Box>;
-        using NewBox = decltype(invoke_with_error(std::forward<Op>(op).identity(key), std::forward<Box>(box)));
+        using NewBox = decltype(invoke_with_error(std::declval<Fn>(), std::declval<Box>()));
 
         if (!Traits::has_value(box)) {
-            return invoke_with_error(std::forward<Op>(op).identity(key), std::forward<Box>(box));
+            return invoke_with_error(std::move(op.fn_), std::forward<Box>(box));
         }
 
         return propagate_value<NewBox>(std::forward<Box>(box));
     }
+
+  private:
+    Fn fn_;
 };
 
-inline constexpr pipe_adaptor<or_else_t> or_else{};
+inline constexpr callable_adaptor<or_else_t> or_else{};
 
 template<typename Box, typename Fn>
-concept or_elseable = requires(Box&& box, Fn&& fn) { std::forward<Box>(box) | or_else(std::forward<Fn>(fn)); };
+concept or_elseable = requires(Box&& box, Fn&& fn) {
+    { std::forward<Box>(box) | or_else(std::forward<Fn>(fn)) };
+};
 
 } // namespace beman::monadics::detail
 

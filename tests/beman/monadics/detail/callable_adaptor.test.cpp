@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/detail/pipe_adaptor.hpp>
+#include <beman/monadics/detail/callable_adaptor.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -8,16 +8,19 @@
 
 namespace beman::monadics::detail::tests {
 
+template<typename Fn>
 struct test_op_t {
-    inline static constexpr access_key<test_op_t> key{};
+    constexpr explicit test_op_t(Fn fn) : fn_(std::move(fn)) {}
 
-    template<typename Box, std::derived_from<test_op_t> Op>
-    [[nodiscard]] friend constexpr auto operator|(Box&& box, Op&& op) {
-        return std::forward<Op>(op).identity(key)(std::forward<Box>(box));
+    friend constexpr decltype(auto) operator|(auto&& box, test_op_t&& op) {
+        return std::move(op.fn_)(std::forward<decltype(box)>(box));
     }
+
+  private:
+    Fn fn_;
 };
 
-inline constexpr pipe_adaptor<test_op_t> test_op{};
+inline constexpr callable_adaptor<test_op_t> test_op{};
 
 TEST_CASE("with-value") {
     constexpr auto result = 10 | test_op([](auto&& v) { return v * 2; });
@@ -28,39 +31,34 @@ TEST_CASE("with-value") {
 TEST_CASE("lvalue-callable-is-copied") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
-
-        constexpr int operator()(int v) const { return v; }
+        constexpr int operator()(int) const { return tracker.copies; }
     };
 
-    constexpr auto closure = [] {
+    constexpr auto result = [] {
         tracker_fn fn{};
-        return test_op(fn);
+        return 10 | test_op(fn);
     }();
 
-    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.copies == 1);
-    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.moves == 0);
+    STATIC_REQUIRE(result == 1);
 }
 
-TEST_CASE("vvalue-callable-is-copied") {
+TEST_CASE("rvalue-callable-is-moved") {
     struct tracker_fn {
         helpers::MoveTracker tracker;
-
-        constexpr int operator()(int v) const { return v; }
+        constexpr int operator()(int) const { return tracker.moves; }
     };
 
-    constexpr auto closure = [] {
+    constexpr auto result = [] {
         tracker_fn fn{};
-        return test_op(std::move(fn));
+        return 10 | test_op(std::move(fn));
     }();
 
-    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.copies == 0);
-    STATIC_REQUIRE(closure.identity(test_op_t::key).tracker.moves == 1);
+    STATIC_REQUIRE(result == 2);
 }
 
 TEST_CASE("fn-stored-by-value-no-dangling") {
     struct Fn {
         int add{};
-
         constexpr int operator()(int box) noexcept { return box + this->add; }
     };
 
