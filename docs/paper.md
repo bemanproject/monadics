@@ -164,7 +164,7 @@ The result is that the most well-structured types require minimal specialization
 template <typename T, typename E>
 struct std::box::box_traits<std::expected<T, E>> {
     static std::expected<T, E> make_error(auto&& e) {
-        return std::unexpected{std::forward<decltype(e)>(e)};
+        return {std::unexpect, std::forward<decltype(e)>(e)};
     }
     // everything else deduced
 };

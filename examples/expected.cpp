@@ -7,7 +7,7 @@
 
 template<typename T, typename E>
 struct beman::monadics::box_traits<std::expected<T, E>> {
-    [[nodiscard]] inline static constexpr auto make_error(auto&& e) noexcept {
+    [[nodiscard]] inline static constexpr auto make_error(auto&& e) {
         return std::expected<T, E>{std::unexpected{std::forward<decltype(e)>(e)}};
     }
 };

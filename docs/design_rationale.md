@@ -63,13 +63,13 @@ struct beman::monadics::box_traits<MyBox<T>> {
     using rebind_error = MyBox<U>;
 
     // Reports whether the box holds a value.
-    [[nodiscard]] static bool           has_value(const MyBox<T>&) noexcept;
+    [[nodiscard]] static bool           has_value(const MyBox<T>&);
 
     // Accesses the value; forwards the box's value category.
-    [[nodiscard]] static decltype(auto) value(auto&& box) noexcept;
+    [[nodiscard]] static decltype(auto) value(auto&& box);
 
     // Returns the absence sentinel (a compile-time constant, not read from the box).
-    [[nodiscard]] static sentinel_error_type error() noexcept;
+    [[nodiscard]] static sentinel_error_type error();
 
     // Constructs a box holding a value.
     [[nodiscard]] static MyBox<T> make(value_type v);
@@ -103,13 +103,13 @@ struct beman::monadics::box_traits<MyBox<T, E>> {
     template <typename F> using rebind_error = MyBox<T, F>;
 
     // Reports whether the box holds a value.
-    [[nodiscard]] static bool           has_value(const MyBox<T, E>&) noexcept;
+    [[nodiscard]] static bool           has_value(const MyBox<T, E>&);
 
     // Accesses the value; forwards the box's value category.
-    [[nodiscard]] static decltype(auto) value(auto&& box) noexcept;
+    [[nodiscard]] static decltype(auto) value(auto&& box);
 
     // Accesses the stored error; forwards the box's value category.
-    [[nodiscard]] static decltype(auto) error(auto&& box) noexcept;
+    [[nodiscard]] static decltype(auto) error(auto&& box);
 
     // Constructs a box holding a value.
     [[nodiscard]] static MyBox<T, E> make(value_type v);
@@ -127,26 +127,30 @@ Most real types already expose part of this interface. The library runs a deduct
 for each capability: it checks the explicit specialization first, then the box type's own
 members, then the template parameters. You only need to supply what it cannot find on its own.
 
-### When everything is deducible — empty opt-in
+### When almost everything is deducible - minimal specialization
 
 Opting a type into the box abstraction is always explicit: a `box_traits<T>` specialization is
 required even if the type already exposes a fully compatible interface. This prevents types from
-being silently treated as boxes with incorrect behaviour — for example, a type that satisfies
+being silently treated as boxes with incorrect behaviour. For example, a type that satisfies
 almost everything but lacks `make_error` would otherwise be accepted and produce wrong results.
 
 `std::expected<T, E>` already has `has_value()`, `value()`, `error()`, nested `value_type`
 and `error_type`, and two template parameters that the library uses for rebind deduction.
-An empty specialization is the minimal opt-in; the deduction cascade then reads everything
-directly from the type's own members:
+However, `make_error` cannot be deduced: `std::expected` constructs error states via
+`std::unexpect`-tagged construction, not from the error type directly. One member suffices:
 
 ```cpp
 template <typename T, typename E>
-struct beman::monadics::box_traits<std::expected<T, E>> {};
+struct beman::monadics::box_traits<std::expected<T, E>> {
+    [[nodiscard]] static constexpr auto make_error(auto&& e) {
+        return std::expected<T, E>{std::unexpect, std::forward<decltype(e)>(e)};
+    }
+};
 ```
 
-All four operations are available immediately after this opt-in.
+All four operations are available after this one-member opt-in.
 
-### When a few pieces are missing — minimal specialization
+### When a few pieces are missing - minimal specialization
 
 `std::optional<T>` has `has_value()`, `value()`, and `value_type`, but it has no `error()`
 member and no `error_type`. The absence sentinel `std::nullopt` is a compile-time constant,
@@ -155,7 +159,7 @@ not something stored in the box, so the library cannot derive it. One member is 
 ```cpp
 template <typename T>
 struct beman::monadics::box_traits<std::optional<T>> {
-    [[nodiscard]] static constexpr auto error() noexcept { return std::nullopt; }
+    [[nodiscard]] static constexpr auto error() { return std::nullopt; }
 };
 ```
 
@@ -176,9 +180,9 @@ A traits specialization adds the missing pieces without touching `std::shared_pt
 ```cpp
 template <typename T>
 struct beman::monadics::box_traits<std::shared_ptr<T>> {
-    static bool          has_value(const std::shared_ptr<T>& p) noexcept { return static_cast<bool>(p); }
-    static decltype(auto) value(auto&& p) noexcept { return *std::forward<decltype(p)>(p); }
-    static std::shared_ptr<T> error() noexcept { return nullptr; }
+    static bool          has_value(const std::shared_ptr<T>& p) { return static_cast<bool>(p); }
+    static decltype(auto) value(auto&& p) { return *std::forward<decltype(p)>(p); }
+    static std::shared_ptr<T> error() { return nullptr; }
     static std::shared_ptr<T> make(T v) { return std::make_shared<T>(std::move(v)); }
 };
 ```

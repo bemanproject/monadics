@@ -27,14 +27,17 @@ This prevents types from being silently treated as boxes with incorrect behaviou
 An empty specialization is the minimum required opt-in. Once opted in, any members the type
 already exposes are deduced automatically; you only need to supply what is missing.
 
-### Case 1: Empty opt-in (well-structured types)
+### Case 1: Minimal opt-in (well-structured types)
 
-If the type already exposes a compatible interface — member `has_value()`, `value()`, `error()`,
-nested `value_type` / `error_type`, and `rebind` / `rebind_error` — an empty specialization is
-all that is needed. The library deduces everything else automatically.
+If the type already exposes a compatible interface (`has_value()`, `value()`, `error()`,
+nested `value_type` / `error_type`, and `rebind` / `rebind_error`), only the members the
+deduction cascade cannot find need to be provided.
 
-`std::expected` is the canonical example. Opt in with an empty specialization and all four
-operations become available:
+`std::expected` is the canonical example. It already exposes `has_value()`, `value()`,
+`error()`, `value_type`, `error_type`, and its template parameters provide `rebind` and
+`rebind_error`. However, `make_error` cannot be deduced: `std::expected` constructs error
+states via `std::unexpect`-tagged construction, not from the error type directly. One member
+suffices:
 
 ```cpp
 #include <beman/monadics/monadics.hpp>
@@ -42,7 +45,11 @@ operations become available:
 #include <string>
 
 template <typename T, typename E>
-struct beman::monadics::box_traits<std::expected<T, E>> {};
+struct beman::monadics::box_traits<std::expected<T, E>> {
+    [[nodiscard]] static constexpr auto make_error(auto&& e) {
+        return std::expected<T, E>{std::unexpect, std::forward<decltype(e)>(e)};
+    }
+};
 ```
 
 ```cpp
@@ -70,7 +77,7 @@ no `error_type`. Provide those two things:
 
 template <typename T>
 struct beman::monadics::box_traits<std::optional<T>> {
-    [[nodiscard]] static constexpr auto error() noexcept { return std::nullopt; }
+    [[nodiscard]] static constexpr auto error() { return std::nullopt; }
 };
 ```
 
@@ -101,11 +108,11 @@ auto result =
 
 template <typename T>
 struct beman::monadics::box_traits<std::shared_ptr<T>> {
-    [[nodiscard]] static bool has_value(const std::shared_ptr<T>& p) noexcept {
+    [[nodiscard]] static bool has_value(const std::shared_ptr<T>& p) {
         return static_cast<bool>(p);
     }
 
-    [[nodiscard]] static decltype(auto) value(auto&& p) noexcept {
+    [[nodiscard]] static decltype(auto) value(auto&& p) {
         return *std::forward<decltype(p)>(p);
     }
 
@@ -113,7 +120,7 @@ struct beman::monadics::box_traits<std::shared_ptr<T>> {
         return std::make_shared<T>(std::move(v));
     }
 
-    [[nodiscard]] static std::shared_ptr<T> error() noexcept { return nullptr; }
+    [[nodiscard]] static std::shared_ptr<T> error() { return nullptr; }
 };
 ```
 
@@ -153,13 +160,13 @@ struct beman::monadics::box_traits<Result<T>> {
     template <typename U> using rebind       = Result<U>;
     template <typename E> using rebind_error = Result<T>;
 
-    [[nodiscard]] static bool has_value(const Result<T>& r) noexcept { return r.ok; }
+    [[nodiscard]] static bool has_value(const Result<T>& r) { return r.ok; }
 
-    [[nodiscard]] static decltype(auto) value(auto&& r) noexcept {
+    [[nodiscard]] static decltype(auto) value(auto&& r) {
         return std::forward<decltype(r)>(r).data;
     }
 
-    [[nodiscard]] static int error(const Result<T>& r) noexcept { return r.err; }
+    [[nodiscard]] static int error(const Result<T>& r) { return r.err; }
 
     [[nodiscard]] static Result<T> make(T v)       { return {true,  std::move(v), 0}; }
     [[nodiscard]] static Result<T> make_error(int e) { return {false, {},          e}; }
