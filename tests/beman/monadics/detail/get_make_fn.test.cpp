@@ -24,6 +24,16 @@ struct box_traits<TraitsMakeBox> {
 
 struct BoxWithVoidValue {};
 
+class VoidBoxWithTraitsMake {
+  public:
+    constexpr VoidBoxWithTraitsMake(int) {}
+};
+
+template<>
+struct box_traits<VoidBoxWithTraitsMake> {
+    static constexpr VoidBoxWithTraitsMake make() { return {99}; }
+};
+
 struct TypeConstructibleWithValue {
     int val{};
 };
@@ -59,6 +69,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (TraitsMakeBox, int, true),
                        (int*, int, true),
                        (BoxWithVoidValue, void, true),
+                       (VoidBoxWithTraitsMake, void, true),
                        (TypeConstructibleWithValue, int, true),
                        (TypeAndTraitsConstruibleWithValue, int, true),
                        (NonTypeConstructibleWithValue, int, false)) {
@@ -75,6 +86,7 @@ TEMPLATE_TEST_CASE_SIG("fn",
                        ((typename Box, typename T, int Expected), Box, T, Expected),
                        (TraitsMakeBox, int, 42),
                        (BoxWithVoidValue, void, 0), // 0 unused; void branch dispatched below
+                       (VoidBoxWithTraitsMake, void, 99),
                        (TypeConstructibleWithValue, int, 42),
                        (TypeAndTraitsConstruibleWithValue, int, -42)) {
     using Traits = box_traits<Box>;

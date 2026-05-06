@@ -21,9 +21,15 @@ template<typename Box, typename Traits, typename T>
             return Traits::make(v);
         };
     } else if constexpr (std::is_void_v<T>) {
-        return []() -> decltype(auto) {
-            return Box{};
-        };
+        if constexpr (requires { Traits::make(); }) {
+            return []() -> decltype(auto) {
+                return Traits::make();
+            };
+        } else {
+            return []() -> decltype(auto) {
+                return Box{};
+            };
+        }
     } else if constexpr (std::constructible_from<Box, T>) {
         return [](auto&& v) -> decltype(auto) {
             return Box{std::forward<decltype(v)>(v)};
