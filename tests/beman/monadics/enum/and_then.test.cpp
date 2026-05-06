@@ -20,26 +20,4 @@ TEST_CASE("with-error") {
     STATIC_REQUIRE(result == CURLE_COULDNT_RESOLVE_PROXY);
 }
 
-TEST_CASE("experiment") {
-    /*
-
-    CURL *curl = curl_easy_init();
-
-    curl | and_then(curl_easy_setopt, CURLOPT_URL, "https://example.com")
-         | and_then(curl_easy_setopt, ..., ...)
-         | and_then(curl_easy_perform)
-
-    CURLE_OK | and_then(curl, curl_easy_setopt)
-             | and_then(curl_easy_setopt(curl)
-
-    curl_easy_setopt
-    // constexpr auto result = CURLcode{CURLE_COULDNT_RESOLVE_PROXY}
-        // | and_then([] {
-          // return CURLE_OK;
-        // });
-
-    STATIC_REQUIRE(result == CURLE_COULDNT_RESOLVE_PROXY);
-    */
-}
-
 } // namespace beman::monadics::tests

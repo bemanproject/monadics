@@ -16,8 +16,8 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(Traits::has_value(CURLcode{CURLE_OK}));
     STATIC_REQUIRE(Traits::has_value(CURLcode{CURLE_NOT_BUILT_IN}) == false);
     STATIC_REQUIRE(Traits::error(CURLcode{}) == CURLcode{});
-    // STATIC_REQUIRE(Traits::lift(CURLcode{}) == CURLcode{});
-    // STATIC_REQUIRE(Traits::lift_error(Traits::error()) == std::optional<int>{});
+    STATIC_REQUIRE(Traits::make() == CURLcode{});
+    STATIC_REQUIRE(Traits::make_error(CURLE_NOT_BUILT_IN) == CURLE_NOT_BUILT_IN);
 }
 
 TEST_CASE("has-error-channel") {

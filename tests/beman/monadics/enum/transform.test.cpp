@@ -8,6 +8,16 @@
 
 namespace beman::monadics::tests {
 
-TEST_CASE("hm") {}
+TEST_CASE("with-value") {
+    constexpr auto result = CURLcode{CURLE_OK} | transform([] {});
+
+    STATIC_REQUIRE(result == CURLE_OK);
+}
+
+TEST_CASE("with-error") {
+    constexpr auto result = CURLcode{CURLE_NOT_BUILT_IN} | transform([] {});
+
+    STATIC_REQUIRE(result == CURLE_NOT_BUILT_IN);
+}
 
 } // namespace beman::monadics::tests

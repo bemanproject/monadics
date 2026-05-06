@@ -41,7 +41,7 @@ struct beman::monadics::box_traits<Box> {
         return std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] static constexpr decltype(auto) make(auto&& v) noexcept { return std::forward<decltype(v)>(v); }
+    [[nodiscard]] static constexpr decltype(auto) make() noexcept { return Box{CURLE_OK}; }
 
     [[nodiscard]] static constexpr decltype(auto) make_error(auto&& e) noexcept {
         return std::forward<decltype(e)>(e);
