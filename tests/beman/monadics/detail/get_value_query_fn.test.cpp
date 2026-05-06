@@ -14,7 +14,7 @@ struct box_traits {};
 struct MemberHasValue {
     bool valid{};
 
-    constexpr bool has_value() const noexcept { return valid; }
+    constexpr bool has_value() const { return valid; }
 };
 
 struct TraitsHasValue {
@@ -23,23 +23,19 @@ struct TraitsHasValue {
 
 template<>
 struct box_traits<TraitsHasValue> {
-    static constexpr bool has_value(const auto& box) noexcept { return box.valid; }
+    static constexpr bool has_value(const auto& box) { return box.valid; }
 };
 
 struct MemberAndTraits {
     bool valid{};
     bool value_flag{};
 
-    bool has_value() const noexcept { return value_flag; }
+    bool has_value() const { return value_flag; }
 };
 
 template<>
 struct box_traits<MemberAndTraits> {
-    static constexpr bool has_value(const auto& box) noexcept { return box.valid; }
-};
-
-struct MemberHasValueMissingNoexcept {
-    bool has_value() const { return true; }
+    static constexpr bool has_value(const auto& box) { return box.valid; }
 };
 
 struct MemberHasValueMissingConst {
@@ -47,7 +43,7 @@ struct MemberHasValueMissingConst {
 };
 
 struct MemberHasValueWrongReturnType {
-    constexpr int has_value() const noexcept { return 1; }
+    constexpr int has_value() const { return 1; }
 };
 
 } // namespace
@@ -59,7 +55,6 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (MemberHasValue, true),
                        (TraitsHasValue, true),
                        (MemberAndTraits, true),
-                       (MemberHasValueMissingNoexcept, false),
                        (MemberHasValueMissingConst, false),
                        (MemberHasValueWrongReturnType, false)) {
     using Traits = box_traits<Box>;
