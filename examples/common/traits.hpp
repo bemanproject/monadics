@@ -6,8 +6,12 @@
 #include <beman/monadics/monadics.hpp>
 
 #include <concepts>
-#include <expected>
 #include <optional>
+#include <version>
+
+#if __cpp_lib_expected >= 202211L
+#include <expected>
+#endif
 
 // --- std::optional ---
 
@@ -18,12 +22,14 @@ struct beman::monadics::box_traits<std::optional<T>> {
 
 // --- std::expected ---
 
+#if __cpp_lib_expected >= 202211L
 template<typename T, typename E>
 struct beman::monadics::box_traits<std::expected<T, E>> {
     [[nodiscard]] inline static constexpr auto make_error(auto&& e) noexcept {
         return std::expected<T, E>{std::unexpect, std::forward<decltype(e)>(e)};
     }
 };
+#endif
 
 // --- myopt: a minimal custom box ---
 

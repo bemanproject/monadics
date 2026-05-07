@@ -87,6 +87,7 @@ int main() {
         std::cout << "[optional] empty path: result = " << rt.value() << "\n";
     }
 
+#if __cpp_lib_expected >= 202211L
     // inspect + inspect_error on expected with value
     {
         constexpr auto result = std::expected<int, int>{10}
@@ -119,6 +120,7 @@ int main() {
                       | bms::or_else([](const std::string&) { return std::expected<int, std::string>{-1}; });
         std::cout << "[expected] error path: result = " << rt.value() << "\n";
     }
+#endif
 
     // inspect on myopt: user-defined box type
     {
@@ -175,6 +177,7 @@ int main() {
         std::cout << "[CURLcode] error path: result = " << rt << "\n";
     }
 
+#if __cpp_lib_expected >= 202211L
     // chained: inspect mixed into a real pipeline
     {
         constexpr auto result = std::expected<int, int>{std::unexpected{3}}
@@ -192,6 +195,7 @@ int main() {
             | bms::or_else([](const std::string&) { return std::expected<int, std::string>{0}; });
         std::cout << "[chained] pipeline: result = " << rt.value() << "\n";
     }
+#endif
 
     return EXIT_SUCCESS;
 }

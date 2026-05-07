@@ -132,6 +132,7 @@ int main() {
         static_assert((opt | bms::to<myopt<int>>()).value() == 15);
     }
 
+#if __cpp_lib_expected >= 202211L
     // optional(value) -> expected: value preserved, fallback error unused
     {
         constexpr std::optional opt{15};
@@ -152,6 +153,7 @@ int main() {
         static_assert(!(exp | bms::to<std::optional>()).has_value());
         static_assert(!(exp | bms::to<std::optional<int>>()).has_value());
     }
+#endif
 
     // empty optional -> optional: identity-like, both lack error channel
     {
@@ -160,6 +162,7 @@ int main() {
         static_assert(!(empty | bms::to<std::optional<int>>()).has_value());
     }
 
+#if __cpp_lib_expected >= 202211L
     // empty optional -> expected: fallback error used
     {
         constexpr std::optional<int> empty{};
@@ -173,6 +176,7 @@ int main() {
         static_assert((exp | bms::to<std::expected>()).error() == 10);
         static_assert((exp | bms::to<std::expected<int, int>>()).error() == 10);
     }
+#endif
 
     // CURLcode(error) -> CURLcode: error propagated, void value type
     {
@@ -186,6 +190,7 @@ int main() {
         static_assert(result == CURLE_OK);
     }
 
+#if __cpp_lib_expected >= 202211L
     // expected(value) -> myopt: value preserved, custom box target
     {
         constexpr std::expected<int, int> exp{15};
@@ -213,6 +218,7 @@ int main() {
         static_assert((empty | bms::to<std::expected>(40)).error() == 40);
         static_assert((empty | bms::to<std::expected<int, int>>(40)).error() == 40);
     }
+#endif
 
     constexpr auto r2 = myopt{10} | bms::and_then([](auto v) { return myopt{v}; });
     return r2.value();
