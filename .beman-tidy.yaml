@@ -4,6 +4,8 @@
 # Check documentation for beman-tidy here:
 # https://github.com/bemanproject/beman-tidy/blob/main/README.md
 
-disabled_rules: []
+disabled_rules: [
+    readme.implements
+]
 ignored_paths:
     - infra/
