@@ -1,93 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/monadics/monadics.hpp>
+#include "common/traits.hpp"
 
-#include <concepts>
 #include <cstdlib>
-#include <expected>
-#include <optional>
-
-// --- box_traits specializations for this example ---
-
-template<typename T>
-struct beman::monadics::box_traits<std::optional<T>> {
-    [[nodiscard]] inline static constexpr auto error() noexcept { return std::nullopt; }
-};
-
-template<typename T, typename E>
-struct beman::monadics::box_traits<std::expected<T, E>> {
-    [[nodiscard]] inline static constexpr auto make_error(auto&& e) noexcept {
-        return std::expected<T, E>{std::unexpect, std::forward<decltype(e)>(e)};
-    }
-};
-
-// --- myopt: a minimal custom box ---
-
-struct mynone {};
-
-template<typename T>
-class myopt {
-  public:
-    constexpr myopt(mynone) {}
-
-    template<typename U>
-        requires std::convertible_to<U, T>
-    constexpr myopt(U&& u) : value_(std::forward<U>(u)), has_value_{true} {}
-
-    constexpr T value() const noexcept { return value_; }
-    constexpr bool has_value() const noexcept { return has_value_; }
-
-  private:
-    T value_{};
-    bool has_value_{false};
-};
-
-template<typename T>
-myopt(T) -> myopt<T>;
-
-template<typename T>
-struct beman::monadics::box_traits<myopt<T>> {
-    [[nodiscard]] inline static constexpr auto error() noexcept { return mynone{}; }
-};
-
-// --- CURLcode: a C enum adapted as a box with void value and error channel ---
-
-extern "C" {
-
-typedef enum {
-    CURLE_OK = 0,
-    CURLE_UNSUPPORTED_PROTOCOL,
-    CURLE_FAILED_INIT,
-    CURLE_NOT_BUILT_IN,
-} CURLcode;
-
-}; // extern "C"
-
-template<std::same_as<CURLcode> Box>
-struct beman::monadics::box_traits<Box> {
-    using value_type = void;
-    using error_type = CURLcode;
-
-    template<typename V>
-    using rebind = Box;
-
-    template<typename>
-    using rebind_error = Box;
-
-    [[nodiscard]] static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }
-
-    static constexpr value_type value(Box&&) noexcept {}
-
-    [[nodiscard]] static constexpr decltype(auto) error(auto&& box) noexcept {
-        return std::forward<decltype(box)>(box);
-    }
-
-    [[nodiscard]] static constexpr decltype(auto) make(auto&& v) noexcept { return std::forward<decltype(v)>(v); }
-
-    [[nodiscard]] static constexpr decltype(auto) make_error(auto&& e) noexcept {
-        return std::forward<decltype(e)>(e);
-    }
-};
 
 // --- to ---
 
@@ -217,6 +132,7 @@ int main() {
         static_assert((opt | bms::to<myopt<int>>()).value() == 15);
     }
 
+#if __cpp_lib_expected >= 202211L
     // optional(value) -> expected: value preserved, fallback error unused
     {
         constexpr std::optional opt{15};
@@ -237,6 +153,7 @@ int main() {
         static_assert(!(exp | bms::to<std::optional>()).has_value());
         static_assert(!(exp | bms::to<std::optional<int>>()).has_value());
     }
+#endif
 
     // empty optional -> optional: identity-like, both lack error channel
     {
@@ -245,6 +162,7 @@ int main() {
         static_assert(!(empty | bms::to<std::optional<int>>()).has_value());
     }
 
+#if __cpp_lib_expected >= 202211L
     // empty optional -> expected: fallback error used
     {
         constexpr std::optional<int> empty{};
@@ -258,6 +176,7 @@ int main() {
         static_assert((exp | bms::to<std::expected>()).error() == 10);
         static_assert((exp | bms::to<std::expected<int, int>>()).error() == 10);
     }
+#endif
 
     // CURLcode(error) -> CURLcode: error propagated, void value type
     {
@@ -271,6 +190,7 @@ int main() {
         static_assert(result == CURLE_OK);
     }
 
+#if __cpp_lib_expected >= 202211L
     // expected(value) -> myopt: value preserved, custom box target
     {
         constexpr std::expected<int, int> exp{15};
@@ -298,6 +218,7 @@ int main() {
         static_assert((empty | bms::to<std::expected>(40)).error() == 40);
         static_assert((empty | bms::to<std::expected<int, int>>(40)).error() == 40);
     }
+#endif
 
     constexpr auto r2 = myopt{10} | bms::and_then([](auto v) { return myopt{v}; });
     return r2.value();
