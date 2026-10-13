@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
-#define BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
+#ifndef BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP
+#define BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP
 
 #include <beman/monadics/monadics.hpp>
 
@@ -24,4 +24,4 @@ struct beman::monadics::box_traits<std::shared_ptr<T>> {
     }
 };
 
-#endif // BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
+#endif // BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP
