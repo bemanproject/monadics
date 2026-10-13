@@ -42,13 +42,12 @@ struct box_traits<TraitsValue> {
     static constexpr decltype(auto) value(auto&& b) noexcept { return std::forward<decltype(b)>(b).valueCode(); }
 };
 
-// Member returns 0; traits returns 42 — makes priority test load-bearing.
-struct MemberAndTraits {
+struct MemberAndTraitsDisagree {
     constexpr int value() const noexcept { return 0; }
 };
 
 template<>
-struct box_traits<MemberAndTraits> {
+struct box_traits<MemberAndTraitsDisagree> {
     static constexpr int value(const auto&) noexcept { return 42; }
 };
 
@@ -63,7 +62,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (NoValue, false),
                        (MemberValue, true),
                        (TraitsValue, true),
-                       (MemberAndTraits, true)) {
+                       (MemberAndTraitsDisagree, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
         STATIC_REQUIRE(has_value_fn<Box, Traits>);
@@ -72,7 +71,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
     }
 }
 
-TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraits) {
+TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraitsDisagree) {
     using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(get_value_fn<Box, Traits>()(Box{}) == 42);
