@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
-#define BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
+#ifndef BEMAN_MONADICS_ENUM_TRAIT_HPP
+#define BEMAN_MONADICS_ENUM_TRAIT_HPP
 
 #include <beman/monadics/monadics.hpp>
 
@@ -48,4 +48,4 @@ struct beman::monadics::box_traits<Box> {
     }
 };
 
-#endif // BEMAN_MONADICS_RAW_PTR_TRAIT_HPP
+#endif // BEMAN_MONADICS_ENUM_TRAIT_HPP
