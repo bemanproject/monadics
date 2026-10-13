@@ -162,9 +162,8 @@ struct box_traits<ExpectedLike<T, E>> {
     static ExpectedLike<T, E> make_error(E) { return {}; }
 };
 
-// rebind goes to the wrong template family
 template<typename T, typename E>
-struct BadRebindTraits {
+struct RebindToAnotherFamily {
     using value_type = T;
     using error_type = E;
 
@@ -175,9 +174,8 @@ struct BadRebindTraits {
     using rebind_error = ExpectedLike<T, F>;
 };
 
-// rebind preserves the right shape but hard-codes the wrong error type
 template<typename T, typename E>
-struct WrongErrorRebindTraits {
+struct RebindThatHardCodesTheError {
     using value_type = T;
     using error_type = E;
 
@@ -188,9 +186,8 @@ struct WrongErrorRebindTraits {
     using rebind_error = ExpectedLike<T, F>;
 };
 
-// rebind_error goes to the wrong template family
 template<typename T, typename E>
-struct BadRebindErrorTraits {
+struct RebindErrorToAnotherFamily {
     using value_type = T;
     using error_type = E;
 
@@ -201,9 +198,8 @@ struct BadRebindErrorTraits {
     using rebind_error = OptionalLike<F>; // wrong template family
 };
 
-// rebind_error preserves the right shape but hard-codes the wrong value type
 template<typename T, typename E>
-struct WrongValueRebindErrorTraits {
+struct RebindErrorThatHardCodesTheValue {
     using value_type = T;
     using error_type = E;
 
@@ -311,11 +307,11 @@ TEST_CASE("has_valid_rebind - correct traits") {
 }
 
 TEST_CASE("has_valid_rebind - rebind returns wrong template family") {
-    STATIC_REQUIRE_FALSE(has_valid_rebind<ExpectedIntDouble, BadRebindTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_valid_rebind<ExpectedIntDouble, RebindToAnotherFamily<int, double>>);
 }
 
 TEST_CASE("has_valid_rebind - rebind corrupts error type") {
-    STATIC_REQUIRE_FALSE(has_valid_rebind<ExpectedIntDouble, WrongErrorRebindTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_valid_rebind<ExpectedIntDouble, RebindThatHardCodesTheError<int, double>>);
 }
 
 // ── has_valid_rebind_error ────────────────────────────────────────────────────
@@ -325,11 +321,11 @@ TEST_CASE("has_valid_rebind_error - correct traits") {
 }
 
 TEST_CASE("has_valid_rebind_error - rebind_error returns wrong template family") {
-    STATIC_REQUIRE_FALSE(has_valid_rebind_error<ExpectedIntDouble, BadRebindErrorTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_valid_rebind_error<ExpectedIntDouble, RebindErrorToAnotherFamily<int, double>>);
 }
 
 TEST_CASE("has_valid_rebind_error - rebind_error corrupts value type") {
-    STATIC_REQUIRE_FALSE(has_valid_rebind_error<ExpectedIntDouble, WrongValueRebindErrorTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_valid_rebind_error<ExpectedIntDouble, RebindErrorThatHardCodesTheValue<int, double>>);
 }
 
 // ── has_box_traits ────────────────────────────────────────────────────────────
@@ -343,11 +339,11 @@ TEST_CASE("has_box_traits - empty traits passes") {
 }
 
 TEST_CASE("has_box_traits - bad rebind fails") {
-    STATIC_REQUIRE_FALSE(has_box_traits<ExpectedIntDouble, BadRebindTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_box_traits<ExpectedIntDouble, RebindToAnotherFamily<int, double>>);
 }
 
 TEST_CASE("has_box_traits - bad rebind_error fails") {
-    STATIC_REQUIRE_FALSE(has_box_traits<ExpectedIntDouble, BadRebindErrorTraits<int, double>>);
+    STATIC_REQUIRE_FALSE(has_box_traits<ExpectedIntDouble, RebindErrorToAnotherFamily<int, double>>);
 }
 
 } // namespace beman::monadics::detail::tests
