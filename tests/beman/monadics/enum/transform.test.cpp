@@ -20,4 +20,9 @@ TEST_CASE("with-error") {
     STATIC_REQUIRE(result == CURLE_NOT_BUILT_IN);
 }
 
+TEST_CASE("cannot-change-the-value-type") {
+    STATIC_REQUIRE(transformable<CURLcode&, decltype([] {})>);
+    STATIC_REQUIRE_FALSE(transformable<CURLcode&, decltype([] { return 0; })>);
+}
+
 } // namespace beman::monadics::tests
