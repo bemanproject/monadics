@@ -5,6 +5,8 @@
 
 #include <beman/monadics/monadics.hpp>
 
+#include <concepts>
+
 extern "C" {
 
 typedef enum {
@@ -27,10 +29,10 @@ struct beman::monadics::box_traits<Box> {
     using value_type = void;
     using error_type = CURLcode;
 
-    template<typename V>
+    template<std::same_as<value_type> V>
     using rebind = Box;
 
-    template<typename>
+    template<std::same_as<error_type> E>
     using rebind_error = Box;
 
     [[nodiscard]] static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }

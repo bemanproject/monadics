@@ -10,14 +10,18 @@ TEST_CASE("box-trait-for") {
     using Traits = get_box_traits<CURLcode>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, void>);
     STATIC_REQUIRE(std::same_as<Traits::error_type, CURLcode>);
-    STATIC_REQUIRE(std::same_as<Traits::rebind<int>, CURLcode>);
-    STATIC_REQUIRE(std::same_as<Traits::rebind_error<int>, CURLcode>);
     STATIC_REQUIRE(std::same_as<decltype(Traits::value(CURLcode{})), void>);
     STATIC_REQUIRE(Traits::has_value(CURLcode{CURLE_OK}));
     STATIC_REQUIRE(Traits::has_value(CURLcode{CURLE_NOT_BUILT_IN}) == false);
     STATIC_REQUIRE(Traits::error(CURLcode{}) == CURLcode{});
     STATIC_REQUIRE(Traits::make() == CURLcode{});
     STATIC_REQUIRE(Traits::make_error(CURLE_NOT_BUILT_IN) == CURLE_NOT_BUILT_IN);
+}
+
+TEST_CASE("its-case-types-are-fixed-so-rebinding-is-an-identity") {
+    using Traits = get_box_traits<CURLcode>;
+    STATIC_REQUIRE(std::same_as<Traits::rebind<void>, CURLcode>);
+    STATIC_REQUIRE(std::same_as<Traits::rebind_error<CURLcode>, CURLcode>);
 }
 
 TEST_CASE("has-error-channel") {
