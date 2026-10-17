@@ -62,6 +62,30 @@ struct beman::monadics::detail::box_traits<NamesUnitReadsInt> {
     [[nodiscard]] static constexpr auto make(int) noexcept { return NamesUnitReadsInt{}; }
 };
 
+struct NamesNeverAndSuppliesIt {
+    int e{7};
+};
+
+template<>
+struct beman::monadics::detail::box_traits<NamesNeverAndSuppliesIt> {
+    using value_type = int;
+    using error_type = never;
+
+    template<typename V>
+    using rebind = NamesNeverAndSuppliesIt;
+
+    template<typename E>
+    using rebind_error = NamesNeverAndSuppliesIt;
+
+    [[nodiscard]] static constexpr bool has_value(const NamesNeverAndSuppliesIt&) noexcept { return true; }
+
+    [[nodiscard]] static constexpr int value(const NamesNeverAndSuppliesIt&) noexcept { return 1; }
+
+    [[nodiscard]] static constexpr auto make(int) noexcept { return NamesNeverAndSuppliesIt{}; }
+
+    [[nodiscard]] static constexpr int error(const NamesNeverAndSuppliesIt& b) noexcept { return b.e; }
+};
+
 namespace beman::monadics::detail::tests {
 
 TEST_CASE("a-box-carrying-nothing-on-either-side-must-say-which-state-is-which") {
@@ -74,6 +98,10 @@ TEST_CASE("a-box-carrying-nothing-on-either-side-must-say-which-state-is-which")
 
 TEST_CASE("a-read-must-yield-the-case-type-the-box-names") {
     STATIC_REQUIRE_FALSE(box<NamesUnitReadsInt>);
+}
+
+TEST_CASE("a-side-named-never-must-not-also-be-supplied") {
+    STATIC_REQUIRE_FALSE(box<NamesNeverAndSuppliesIt>);
 }
 
 } // namespace beman::monadics::detail::tests

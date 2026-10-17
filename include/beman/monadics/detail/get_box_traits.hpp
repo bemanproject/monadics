@@ -31,6 +31,20 @@ concept states_are_distinct = !both_cases_carry_nothing<Box, Traits> || requires
     Traits::make_error(unit{});
 } || on_error<"a box whose value and failure both carry nothing must provide Traits::make() or make_error(unit)">;
 
+template<typename Box, typename Traits>
+concept supplies_value_side = requires { Traits::value(std::declval<Box>()); }
+                           || requires { Traits::make(std::declval<get_value_type_t<Box, Traits>>()); };
+
+template<typename Box, typename Traits>
+concept supplies_error_side = requires { Traits::error(std::declval<Box>()); }
+                           || requires { Traits::make_error(std::declval<get_error_type_t<Box, Traits>>()); };
+
+template<typename Box, typename Traits>
+concept never_side_is_not_supplied =
+    ((!std::same_as<get_value_type_t<Box, Traits>, never> || !supplies_value_side<Box, Traits>)
+     && (!std::same_as<get_error_type_t<Box, Traits>, never> || !supplies_error_side<Box, Traits>))
+    || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
+
 template<typename Box, typename Traits, typename Fn, typename Declared>
 concept reads_as = std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
 
@@ -62,7 +76,8 @@ concept assembled_box = has_box_traits<Box>
                      && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
                      && states_are_distinct<Box, Traits>
                      && value_read_agrees<Box, Traits>
-                     && error_read_agrees<Box, Traits>;
+                     && error_read_agrees<Box, Traits>
+                     && never_side_is_not_supplied<Box, Traits>;
 
 template<typename Box, typename Traits>
 struct traits {
