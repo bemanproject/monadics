@@ -3,6 +3,8 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_MAKE_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_MAKE_FN_HPP
 
+#include <beman/monadics/detail/never.hpp>
+#include <beman/monadics/detail/unreachable.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
@@ -12,7 +14,11 @@ namespace beman::monadics::detail {
 
 template<typename Box, typename Traits, typename T>
 [[nodiscard]] consteval decltype(auto) get_make_fn() noexcept {
-    if constexpr (requires { Traits::make(std::declval<T>()); }) {
+    if constexpr (std::same_as<T, never>) {
+        return [](never) -> Box {
+            unreachable();
+        };
+    } else if constexpr (requires { Traits::make(std::declval<T>()); }) {
         return [](auto&& v) -> decltype(auto)
                    requires requires { Traits::make(std::forward<decltype(v)>(v)); }
         {
