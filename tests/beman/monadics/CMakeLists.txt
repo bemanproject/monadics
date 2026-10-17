@@ -25,6 +25,10 @@ add_custom_target(${test_global_target})
 
 add_subdirectory(detail)
 
+if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
+    add_subdirectory(to)
+endif()
+
 set(tests
     optional
     raw_ptr

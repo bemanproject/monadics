@@ -87,4 +87,9 @@ TEST_CASE("is-its-own-family") {
     STATIC_REQUIRE_FALSE(and_thenable<J, decltype([](int v) { return std::optional{v}; })>);
 }
 
+TEST_CASE("crosses-into-a-family-through-to") {
+    STATIC_REQUIRE(std::same_as<decltype(J{4} | to<std::optional<int>>()), std::optional<int>>);
+    STATIC_REQUIRE((J{4} | to<std::optional<int>>()) == std::optional{4});
+}
+
 } // namespace beman::monadics::detail::tests

@@ -70,4 +70,8 @@ TEST_CASE("cannot-claim-a-value-it-has-no-room-for") {
     STATIC_REQUIRE_FALSE(rebindable_to<E, int>);
 }
 
+TEST_CASE("leaves-its-family-through-to") {
+    STATIC_REQUIRE((just_error_t<unit>{unit{}} | to<std::optional<int>>()) == std::nullopt);
+}
+
 } // namespace beman::monadics::detail::tests

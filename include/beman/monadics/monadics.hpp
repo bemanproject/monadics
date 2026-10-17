@@ -16,6 +16,7 @@
 #include <beman/monadics/detail/or_else.hpp>
 #include <beman/monadics/detail/propagate_error.hpp>
 #include <beman/monadics/detail/propagate_value.hpp>
+#include <beman/monadics/detail/to.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
 #include <beman/monadics/detail/unit.hpp>
