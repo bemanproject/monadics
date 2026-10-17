@@ -6,6 +6,10 @@
 
 #include <helpers/keeps_return_value_category.hpp>
 
+#include <beman/monadics/detail/unit.hpp>
+
+#include <concepts>
+
 namespace beman::monadics::detail::tests {
 
 namespace {
@@ -25,14 +29,7 @@ struct MemberError {
     constexpr const int&& error() const&& { return std::move(ec); }
 };
 
-struct TraitsErrorWithoutErrorChannel {};
-
-template<>
-struct box_traits<TraitsErrorWithoutErrorChannel> {
-    static constexpr int error() noexcept { return 1; }
-};
-
-struct TraitsErrorWithErrorChannel {
+struct TraitsError {
     int ec{1};
 
     constexpr int& errorCode() & { return ec; }
@@ -45,70 +42,52 @@ struct TraitsErrorWithErrorChannel {
 };
 
 template<>
-struct box_traits<TraitsErrorWithErrorChannel> {
+struct box_traits<TraitsError> {
     static constexpr decltype(auto) error(auto&& b) noexcept { return std::forward<decltype(b)>(b).errorCode(); }
 };
 
-struct MemberAndTraitsWithoutErrorChannel {
-    int error() noexcept { return 2; }
-};
-
-template<>
-struct box_traits<MemberAndTraitsWithoutErrorChannel> {
-    static constexpr int error() noexcept { return 1; }
-};
-
-struct MemberAndTraitsWithErrorChannel {
+struct MemberAndTraitsDisagree {
     int error() noexcept { return 2; }
 
     int code{1};
 };
 
 template<>
-struct box_traits<MemberAndTraitsWithErrorChannel> {
+struct box_traits<MemberAndTraitsDisagree> {
     static constexpr int error(auto&& box) noexcept { return box.code; }
 };
 
+struct NoError {};
+
 } // namespace
 
-TEMPLATE_TEST_CASE_SIG("concept",
-                       "",
-                       ((typename Box, bool Has), Box, Has),
-                       (int, false),
-                       (MemberError, true),
-                       (TraitsErrorWithoutErrorChannel, true),
-                       (TraitsErrorWithErrorChannel, true),
-                       (MemberAndTraitsWithoutErrorChannel, true),
-                       (MemberAndTraitsWithErrorChannel, true)) {
-    using Traits = box_traits<Box>;
-    if constexpr (Has) {
-        STATIC_REQUIRE(has_error_fn<Box, Traits>);
-    } else {
-        STATIC_REQUIRE_FALSE(has_error_fn<Box, Traits>);
-    }
-}
-
-TEMPLATE_TEST_CASE("get",
-                   "",
-                   MemberError,
-                   MemberAndTraitsWithErrorChannel,
-                   MemberAndTraitsWithoutErrorChannel,
-                   TraitsErrorWithErrorChannel,
-                   TraitsErrorWithoutErrorChannel) {
+TEMPLATE_TEST_CASE("concept", "", MemberError, TraitsError, MemberAndTraitsDisagree) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    constexpr auto fn = get_error_fn<Box, Traits>();
-    if constexpr (std::invocable<decltype(fn)>) {
-        STATIC_REQUIRE(fn() == 1);
-    } else {
-        STATIC_REQUIRE(fn(Box{}) == 1);
-    }
+    STATIC_REQUIRE(has_error_fn<Box, Traits, int>);
 }
 
-TEMPLATE_TEST_CASE("keep-value-category", "", TraitsErrorWithErrorChannel, MemberError) {
+TEST_CASE("a-typed-failure-needs-a-read-it-cannot-be-synthesized") {
+    STATIC_REQUIRE_FALSE(has_error_fn<NoError, box_traits<NoError>, int>);
+    STATIC_REQUIRE(has_error_fn<NoError, box_traits<NoError>, unit>);
+}
+
+TEMPLATE_TEST_CASE("get", "", MemberError, TraitsError, MemberAndTraitsDisagree) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn = decltype(get_error_fn<Box, Traits>());
+    constexpr auto fn = get_error_fn<Box, Traits, int>();
+    STATIC_REQUIRE(fn(Box{}) == 1);
+}
+
+TEST_CASE("a-failure-storing-nothing-reads-as-unit") {
+    constexpr auto fn = get_error_fn<NoError, box_traits<NoError>, unit>();
+    STATIC_REQUIRE(std::same_as<decltype(fn(NoError{})), unit>);
+}
+
+TEMPLATE_TEST_CASE("keep-value-category", "", TraitsError, MemberError) {
+    using Box = TestType;
+    using Traits = box_traits<Box>;
+    using Fn = decltype(get_error_fn<Box, Traits, int>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 

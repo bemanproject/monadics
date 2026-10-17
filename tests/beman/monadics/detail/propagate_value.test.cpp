@@ -41,7 +41,7 @@ struct box_traits<Box<T, E>> {
 
 template<typename T>
 struct box_traits<std::optional<T>> {
-    static constexpr decltype(auto) error() { return std::nullopt; }
+    using error_type = unit;
 };
 
 } // namespace beman::monadics::detail

@@ -9,9 +9,9 @@ namespace beman::monadics::tests {
 TEST_CASE("box-trait-for") {
     using Traits = get_box_traits<std::shared_ptr<int>>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, int>);
-    STATIC_REQUIRE(std::same_as<Traits::error_type, std::nullptr_t>);
+    STATIC_REQUIRE(std::same_as<Traits::error_type, unit>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<double>, std::shared_ptr<double>>);
-    STATIC_REQUIRE(std::same_as<Traits::rebind_error<double>, std::shared_ptr<int>>);
+    STATIC_REQUIRE(std::same_as<Traits::rebind_error<unit>, std::shared_ptr<int>>);
 
     const auto sp1 = Traits::make(10);
     const auto sp2 = std::make_shared<int>(10);

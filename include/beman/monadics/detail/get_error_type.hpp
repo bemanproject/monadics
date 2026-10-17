@@ -16,15 +16,15 @@ template<typename Box, typename Traits>
         return std::type_identity<typename Traits::error_type>{};
     } else if constexpr (requires { typename Box::error_type; }) {
         return std::type_identity<typename Box::error_type>{};
-    } else if constexpr (requires { Traits::error(); }) {
-        return std::type_identity<std::remove_cvref_t<decltype(Traits::error())>>{};
+    } else if constexpr (requires { std::declval<Box>().error(); }) {
+        return std::type_identity<std::remove_cvref_t<decltype(std::declval<Box>().error())>>{};
     }
 }
 
 template<typename Box, typename Traits>
 concept has_error_type = requires {
     { get_error_type<Box, Traits>() } -> instance_of<std::type_identity>;
-} || on_error<"provide Traits::error_type, Box::error_type, or Traits::error()">;
+} || on_error<"provide Traits::error_type or Box::error_type; a failure carrying nothing names unit">;
 
 template<typename Box, typename Traits>
     requires has_error_type<Box, Traits>
