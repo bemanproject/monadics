@@ -42,6 +42,32 @@ struct box_traits<Box<T, E>> {
 
 } // namespace beman::monadics::detail
 
+struct Signal {
+    bool ok;
+};
+
+namespace beman::monadics::detail {
+
+template<>
+struct box_traits<Signal> {
+    using value_type = void;
+    using error_type = unit;
+
+    template<std::same_as<void> V>
+    using rebind = Signal;
+
+    template<std::same_as<unit> E>
+    using rebind_error = Signal;
+
+    static constexpr bool has_value(const Signal& s) noexcept { return s.ok; }
+
+    static constexpr void value(Signal&&) noexcept {}
+
+    static constexpr Signal make() noexcept { return {true}; }
+};
+
+} // namespace beman::monadics::detail
+
 namespace beman::monadics::detail::tests {
 
 TEST_CASE("with-non-void-value") {
@@ -50,6 +76,12 @@ TEST_CASE("with-non-void-value") {
         return invoke_with_value([](int v) { return v * 2; }, std::move(box));
     }();
     STATIC_REQUIRE(result == 14);
+}
+
+TEST_CASE("a-handler-that-wants-an-argument-is-refused-where-the-value-is-void") {
+    STATIC_REQUIRE(box<Signal>);
+    STATIC_REQUIRE_FALSE(invocable_with_value<decltype([](auto&&) { return 0; }), Signal&>);
+    STATIC_REQUIRE(invocable_with_value<decltype([] { return 0; }), Signal&>);
 }
 
 TEST_CASE("with-void-value") {
