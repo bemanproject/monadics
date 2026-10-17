@@ -5,6 +5,7 @@
 
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/unit.hpp>
+#include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
 #include <utility>
@@ -12,8 +13,10 @@
 namespace beman::monadics::detail {
 
 template<typename Fn, typename Box, typename Traits = get_box_traits<Box>>
-concept invocable_with_error = requires { std::declval<Fn>()(Traits::error(std::declval<Box>())); }
-                            || (std::same_as<typename Traits::error_type, unit> && std::invocable<Fn>);
+concept invocable_with_error =
+    requires { std::declval<Fn>()(Traits::error(std::declval<Box>())); }
+    || (std::same_as<typename Traits::error_type, unit> && std::invocable<Fn>)
+    || on_error<"the handler must accept the box's error, or take nothing where the failure carries nothing">;
 
 template<typename Fn, box Box>
 [[nodiscard]] constexpr decltype(auto) invoke_with_error(Fn&& fn, Box&& box)
@@ -26,6 +29,10 @@ template<typename Fn, box Box>
         return std::forward<Fn>(fn)();
     }
 }
+
+template<typename Fn, typename Box>
+    requires invocable_with_error<Fn, Box>
+using invoke_with_error_t = decltype(invoke_with_error(std::declval<Fn>(), std::declval<Box>()));
 
 } // namespace beman::monadics::detail
 
