@@ -30,6 +30,7 @@ target_sources(
                 detail/meta_rebind.hpp
                 detail/just.hpp
                 detail/just_error.hpp
+                detail/make_error.hpp
                 detail/make_value.hpp
                 detail/never.hpp
                 detail/or_else.hpp
