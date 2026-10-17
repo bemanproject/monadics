@@ -33,5 +33,6 @@ target_sources(
                 detail/transform.hpp
                 detail/transform_error.hpp
                 detail/utility.hpp
+                detail/unit.hpp
                 monadics.hpp
 )
