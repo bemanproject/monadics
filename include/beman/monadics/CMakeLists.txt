@@ -9,6 +9,7 @@ target_sources(
                 detail/as_pointer.hpp
                 detail/box_traits.hpp
                 detail/callable_adaptor.hpp
+                detail/carry_value.hpp
                 detail/compose.hpp
                 detail/decomposable.hpp
                 detail/either.hpp
