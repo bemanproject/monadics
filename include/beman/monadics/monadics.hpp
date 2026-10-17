@@ -36,6 +36,7 @@ using detail::just_error;
 using detail::just_error_t;
 using detail::just_t;
 using detail::never;
+using detail::no_case;
 using detail::no_error_case;
 using detail::no_value_case;
 using detail::or_else;

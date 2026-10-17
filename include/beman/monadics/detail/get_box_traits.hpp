@@ -117,13 +117,16 @@ template<typename Box>
 concept no_error_case = box<Box> && std::same_as<typename get_box_traits<Box>::error_type, never>;
 
 template<typename Box>
-concept value_only = no_error_case<Box>;
+concept value_only = no_error_case<Box> && !no_value_case<Box>;
 
 template<typename Box>
-concept error_only = no_value_case<Box>;
+concept error_only = no_value_case<Box> && !no_error_case<Box>;
 
 template<typename Box>
 concept single_case = value_only<Box> || error_only<Box>;
+
+template<typename Box>
+concept no_case = no_value_case<Box> && no_error_case<Box>;
 
 template<typename Box>
 concept has_error_channel = box<Box>

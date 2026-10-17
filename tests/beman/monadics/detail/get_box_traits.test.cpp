@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_box_traits.hpp>
+#include <beman/monadics/detail/just_error.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -102,6 +103,19 @@ TEST_CASE("a-read-must-yield-the-case-type-the-box-names") {
 
 TEST_CASE("a-side-named-never-must-not-also-be-supplied") {
     STATIC_REQUIRE_FALSE(box<NamesNeverAndSuppliesIt>);
+}
+
+TEST_CASE("a-box-with-neither-case-is-neither-value-only-nor-error-only") {
+    using Dead = just_error_t<never>;
+
+    STATIC_REQUIRE(no_case<Dead>);
+    STATIC_REQUIRE_FALSE(value_only<Dead>);
+    STATIC_REQUIRE_FALSE(error_only<Dead>);
+    STATIC_REQUIRE_FALSE(single_case<Dead>);
+
+    STATIC_REQUIRE(no_value_case<just_error_t<int>>);
+    STATIC_REQUIRE_FALSE(no_case<just_error_t<int>>);
+    STATIC_REQUIRE(single_case<just_error_t<int>>);
 }
 
 } // namespace beman::monadics::detail::tests
