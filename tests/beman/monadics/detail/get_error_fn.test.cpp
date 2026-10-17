@@ -59,6 +59,15 @@ struct box_traits<MemberAndTraitsDisagree> {
 
 struct NoError {};
 
+struct RvalueOnlyError {
+    int ec{1};
+};
+
+template<>
+struct box_traits<RvalueOnlyError> {
+    static constexpr int error(RvalueOnlyError&& b) noexcept { return b.ec; }
+};
+
 } // namespace
 
 TEMPLATE_TEST_CASE("concept", "", MemberError, TraitsError, MemberAndTraitsDisagree) {
@@ -77,6 +86,14 @@ TEMPLATE_TEST_CASE("get", "", MemberError, TraitsError, MemberAndTraitsDisagree)
     using Traits = box_traits<Box>;
     constexpr auto fn = get_error_fn<Box, Traits, int>();
     STATIC_REQUIRE(fn(Box{}) == 1);
+}
+
+TEST_CASE("a-read-the-box-cannot-reach-answers-rather-than-fails") {
+    using Traits = box_traits<RvalueOnlyError>;
+    constexpr auto fn = get_error_fn<RvalueOnlyError, Traits, int>();
+
+    STATIC_REQUIRE(fn(RvalueOnlyError{}) == 1);
+    STATIC_REQUIRE_FALSE(std::invocable<decltype(fn), RvalueOnlyError&>);
 }
 
 TEST_CASE("a-failure-storing-nothing-reads-as-unit") {
