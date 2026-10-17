@@ -11,6 +11,7 @@ target_sources(
                 detail/callable_adaptor.hpp
                 detail/compose.hpp
                 detail/decomposable.hpp
+                detail/either.hpp
                 detail/get_box_traits.hpp
                 detail/get_error_fn.hpp
                 detail/get_error_type.hpp

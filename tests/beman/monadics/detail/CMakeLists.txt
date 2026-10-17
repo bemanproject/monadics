@@ -29,6 +29,7 @@ set(tests
     never
     callable_adaptor
     compose
+    either
     propagate_error
     propagate_value
     same_box

@@ -28,6 +28,10 @@ concept on_error = false;
 template<typename T>
 concept deduced = !std::is_void_v<T>;
 
+template<typename T>
+concept object_result =
+    !std::is_reference_v<T> || on_error<"the callable must return by value, not a reference into the box">;
+
 } // namespace beman::monadics::detail
 
 #endif // BEMAN_MONADICS_DETAIL_UTILITY_HPP
