@@ -28,6 +28,12 @@ template<typename Box, typename Traits, typename E>
         {
             return Traits::make_error(std::forward<decltype(e)>(e));
         };
+    } else if constexpr (!std::constructible_from<Box, E> && std::constructible_from<Box, E&>) {
+        return [](auto& e)
+            requires requires { Box{e}; }
+        {
+            return Box{e};
+        };
     } else if constexpr (std::constructible_from<Box, E>) {
         return [](auto&& e)
             requires requires { Box{std::forward<decltype(e)>(e)}; }
