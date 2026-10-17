@@ -3,15 +3,22 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_VALUE_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_VALUE_FN_HPP
 
+#include <beman/monadics/detail/never.hpp>
+#include <beman/monadics/detail/unreachable.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
+#include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {
 
 template<typename Box, typename Traits, typename V>
 [[nodiscard]] consteval decltype(auto) get_value_fn() noexcept {
-    if constexpr (requires { Traits::value(std::declval<Box>()); }) {
+    if constexpr (std::same_as<V, never>) {
+        return [](auto&&) -> never {
+            unreachable();
+        };
+    } else if constexpr (requires { Traits::value(std::declval<Box>()); }) {
         return [](auto&& b) -> decltype(auto)
                    requires requires { Traits::value(std::forward<decltype(b)>(b)); }
         {
