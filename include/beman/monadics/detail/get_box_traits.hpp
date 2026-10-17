@@ -51,6 +51,7 @@ struct traits {
     using error_type = get_error_type_t<Box, Traits>;
 
     template<typename T>
+        requires requires { typename get_rebind_t<Box, Traits, value_type>::template rebind<T>; }
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template<typename E>
