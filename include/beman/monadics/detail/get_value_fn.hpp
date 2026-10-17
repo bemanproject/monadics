@@ -9,7 +9,7 @@
 
 namespace beman::monadics::detail {
 
-template<typename Box, typename Traits>
+template<typename Box, typename Traits, typename V>
 [[nodiscard]] consteval decltype(auto) get_value_fn() noexcept {
     if constexpr (requires { Traits::value(std::declval<Box>()); }) {
         return [](auto&& b) -> decltype(auto) {
@@ -22,9 +22,9 @@ template<typename Box, typename Traits>
     }
 }
 
-template<typename Box, typename Traits>
+template<typename Box, typename Traits, typename V>
 concept has_value_fn = requires {
-    { get_value_fn<Box, Traits>() } -> deduced;
+    { get_value_fn<Box, Traits, V>() } -> deduced;
 } || on_error<"provide Traits::value(Box) or Box::value()">;
 
 } // namespace beman::monadics::detail

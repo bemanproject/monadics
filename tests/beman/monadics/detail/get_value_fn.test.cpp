@@ -65,22 +65,22 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (MemberAndTraitsDisagree, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
-        STATIC_REQUIRE(has_value_fn<Box, Traits>);
+        STATIC_REQUIRE(has_value_fn<Box, Traits, int>);
     } else {
-        STATIC_REQUIRE_FALSE(has_value_fn<Box, Traits>);
+        STATIC_REQUIRE_FALSE(has_value_fn<Box, Traits, int>);
     }
 }
 
 TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraitsDisagree) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    STATIC_REQUIRE(get_value_fn<Box, Traits>()(Box{}) == 42);
+    STATIC_REQUIRE(get_value_fn<Box, Traits, int>()(Box{}) == 42);
 }
 
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsValue, MemberValue) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn = decltype(get_value_fn<Box, Traits>());
+    using Fn = decltype(get_value_fn<Box, Traits, int>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 

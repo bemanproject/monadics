@@ -82,9 +82,9 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (MemberAndTraitsWithErrorChannel, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
-        STATIC_REQUIRE(has_error_fn<Box, Traits>);
+        STATIC_REQUIRE(has_error_fn<Box, Traits, int>);
     } else {
-        STATIC_REQUIRE_FALSE(has_error_fn<Box, Traits>);
+        STATIC_REQUIRE_FALSE(has_error_fn<Box, Traits, int>);
     }
 }
 
@@ -97,7 +97,7 @@ TEMPLATE_TEST_CASE("get",
                    TraitsErrorWithoutErrorChannel) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    constexpr auto fn = get_error_fn<Box, Traits>();
+    constexpr auto fn = get_error_fn<Box, Traits, int>();
     if constexpr (std::invocable<decltype(fn)>) {
         STATIC_REQUIRE(fn() == 1);
     } else {
@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE("get",
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsErrorWithErrorChannel, MemberError) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn = decltype(get_error_fn<Box, Traits>());
+    using Fn = decltype(get_error_fn<Box, Traits, int>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
 }
 
