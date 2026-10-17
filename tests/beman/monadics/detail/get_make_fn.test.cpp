@@ -6,6 +6,8 @@
 
 #include <helpers/move_tracker.hpp>
 
+#include <concepts>
+
 namespace beman::monadics::detail::tests {
 
 namespace {
@@ -79,6 +81,12 @@ TEMPLATE_TEST_CASE_SIG("concept",
     } else {
         STATIC_REQUIRE_FALSE(has_make_fn<Box, Traits, T>);
     }
+}
+
+TEST_CASE("probing-with-a-payload-the-box-cannot-take-is-a-failed-constraint") {
+    constexpr auto fn = get_make_fn<TraitsMakeBox, box_traits<TraitsMakeBox>, int>();
+    STATIC_REQUIRE(std::invocable<decltype(fn), int>);
+    STATIC_REQUIRE_FALSE(std::invocable<decltype(fn), const char*>);
 }
 
 TEMPLATE_TEST_CASE_SIG("fn",
