@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_error_fn.hpp>
+#include <beman/monadics/detail/never.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -99,6 +100,13 @@ TEST_CASE("a-read-the-box-cannot-reach-answers-rather-than-fails") {
 TEST_CASE("a-failure-storing-nothing-reads-as-unit") {
     constexpr auto fn = get_error_fn<NoError, box_traits<NoError>, unit>();
     STATIC_REQUIRE(std::same_as<decltype(fn(NoError{})), unit>);
+}
+
+TEST_CASE("naming-never-stands-in-for-a-case-that-cannot-be-read") {
+    STATIC_REQUIRE(has_error_fn<NoError, box_traits<NoError>, never>);
+
+    constexpr auto fn = get_error_fn<NoError, box_traits<NoError>, never>();
+    STATIC_REQUIRE(std::same_as<std::invoke_result_t<decltype(fn), NoError>, never>);
 }
 
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsError, MemberError) {

@@ -3,7 +3,9 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_ERROR_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_ERROR_FN_HPP
 
+#include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/unit.hpp>
+#include <beman/monadics/detail/unreachable.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
@@ -13,7 +15,11 @@ namespace beman::monadics::detail {
 
 template<typename Box, typename Traits, typename E>
 [[nodiscard]] consteval decltype(auto) get_error_fn() noexcept {
-    if constexpr (requires { Traits::error(std::declval<Box>()); }) {
+    if constexpr (std::same_as<E, never>) {
+        return [](auto&&) -> never {
+            unreachable();
+        };
+    } else if constexpr (requires { Traits::error(std::declval<Box>()); }) {
         return [](auto&& b) -> decltype(auto)
                    requires requires { Traits::error(std::forward<decltype(b)>(b)); }
         {
