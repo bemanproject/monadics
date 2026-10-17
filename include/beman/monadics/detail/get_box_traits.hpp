@@ -111,10 +111,16 @@ template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 template<typename Box>
-concept value_only = box<Box> && std::same_as<typename get_box_traits<Box>::error_type, never>;
+concept no_value_case = box<Box> && std::same_as<typename get_box_traits<Box>::value_type, never>;
 
 template<typename Box>
-concept error_only = box<Box> && std::same_as<typename get_box_traits<Box>::value_type, never>;
+concept no_error_case = box<Box> && std::same_as<typename get_box_traits<Box>::error_type, never>;
+
+template<typename Box>
+concept value_only = no_error_case<Box>;
+
+template<typename Box>
+concept error_only = no_value_case<Box>;
 
 template<typename Box>
 concept single_case = value_only<Box> || error_only<Box>;
