@@ -6,6 +6,8 @@
 
 #include <helpers/move_only.hpp>
 
+#include <functional>
+
 namespace beman::monadics::tests {
 
 TEST_CASE("with-value") {
@@ -69,6 +71,14 @@ TEMPLATE_TEST_CASE_SIG(
     (std::optional<helpers::MoveOnly>&, [](helpers::MoveOnly) { return std::optional<helpers::MoveOnly>{}; }, false)
 ) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
+}
+
+TEST_CASE("rejects-a-callable-that-returns-a-reference") {
+    using Nested = std::optional<std::optional<int>>;
+
+    STATIC_REQUIRE_FALSE(and_thenable<Nested, std::identity>);
+    STATIC_REQUIRE_FALSE(or_elseable<Nested, std::identity>);
+    STATIC_REQUIRE_FALSE(transformable<std::optional<int>&, decltype([](int& v) -> int& { return v; })>);
 }
 
 } // namespace beman::monadics::tests
