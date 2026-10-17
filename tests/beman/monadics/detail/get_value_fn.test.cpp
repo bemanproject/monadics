@@ -53,6 +53,15 @@ struct box_traits<MemberAndTraitsDisagree> {
 
 struct NoValue {};
 
+struct RvalueOnlyValue {
+    int ec{42};
+};
+
+template<>
+struct box_traits<RvalueOnlyValue> {
+    static constexpr int value(RvalueOnlyValue&& b) noexcept { return b.ec; }
+};
+
 } // namespace
 
 TEMPLATE_TEST_CASE_SIG("concept",
@@ -75,6 +84,14 @@ TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraitsDisagree)
     using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(get_value_fn<Box, Traits, int>()(Box{}) == 42);
+}
+
+TEST_CASE("a-read-the-box-cannot-reach-answers-rather-than-fails") {
+    using Traits = box_traits<RvalueOnlyValue>;
+    constexpr auto fn = get_value_fn<RvalueOnlyValue, Traits, int>();
+
+    STATIC_REQUIRE(fn(RvalueOnlyValue{}) == 42);
+    STATIC_REQUIRE_FALSE(std::invocable<decltype(fn), RvalueOnlyValue&>);
 }
 
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsValue, MemberValue) {
