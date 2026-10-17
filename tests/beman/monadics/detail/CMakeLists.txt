@@ -19,6 +19,7 @@ set(tests
     get_value_query_fn
     get_value_type
     instance_of
+    just
     invoke_with_error
     invoke_with_value
     meta_extract_value_type
