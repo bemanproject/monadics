@@ -11,7 +11,7 @@
 
 template<typename T>
 struct beman::monadics::box_traits<std::optional<T>> {
-    [[nodiscard]] inline static constexpr auto error() noexcept { return std::nullopt; }
+    using error_type = unit;
 };
 
 template<typename T, typename E>
@@ -47,7 +47,9 @@ myopt(T) -> myopt<T>;
 
 template<typename T>
 struct beman::monadics::box_traits<myopt<T>> {
-    [[nodiscard]] inline static constexpr auto error() noexcept { return mynone{}; }
+    using error_type = unit;
+
+    [[nodiscard]] inline static constexpr auto make_error(unit) noexcept { return myopt<T>{mynone{}}; }
 };
 
 // --- CURLcode: a C enum adapted as a box with void value and error channel ---
@@ -121,7 +123,7 @@ class to_closure {
             if constexpr (has_error_channel<From> && has_error_channel<To>) {
                 return get_box_traits<From>::error(std::forward<From>(from));
             } else {
-                return get_box_traits<To>::error();
+                return unit{};
             }
         });
     }

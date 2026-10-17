@@ -4,6 +4,8 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 
+#include <beman/monadics/detail/unit.hpp>
+
 #include <concepts>
 
 namespace beman::monadics::detail::tests {
@@ -20,15 +22,19 @@ struct box_traits<TraitsErrorType> {
     using error_type = int;
 };
 
+struct TraitsUnitError {};
+
+template<>
+struct box_traits<TraitsUnitError> {
+    using error_type = unit;
+};
+
 struct BoxErrorType {
     using error_type = int;
 };
 
-struct TraitsErrorFn {};
-
-template<>
-struct box_traits<TraitsErrorFn> {
-    static constexpr int error() noexcept { return -1; }
+struct BoxErrorFn {
+    constexpr int error() const noexcept { return -1; }
 };
 
 struct BothErrorType {
@@ -47,8 +53,9 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        ((typename Box, bool Has), Box, Has),
                        (int, false),
                        (TraitsErrorType, true),
+                       (TraitsUnitError, true),
                        (BoxErrorType, true),
-                       (TraitsErrorFn, true),
+                       (BoxErrorFn, true),
                        (BothErrorType, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
@@ -58,10 +65,15 @@ TEMPLATE_TEST_CASE_SIG("concept",
     }
 }
 
-TEMPLATE_TEST_CASE("get", "", TraitsErrorType, BoxErrorType, TraitsErrorFn, BothErrorType) {
+TEMPLATE_TEST_CASE("get", "", TraitsErrorType, BoxErrorType, BoxErrorFn, BothErrorType) {
     using Box = TestType;
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(std::same_as<get_error_type_t<Box, Traits>, int>);
+}
+
+TEST_CASE("a-failure-carrying-nothing-is-named-not-deduced-from-absence") {
+    STATIC_REQUIRE_FALSE(has_error_type<int, box_traits<int>>);
+    STATIC_REQUIRE(std::same_as<get_error_type_t<TraitsUnitError, box_traits<TraitsUnitError>>, unit>);
 }
 
 } // namespace beman::monadics::detail::tests

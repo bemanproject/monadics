@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
 #define BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
 
+#include <concepts>
 #include <type_traits>
 
 #include <beman/monadics/detail/box_traits.hpp>
@@ -15,6 +16,7 @@
 #include <beman/monadics/detail/get_value_fn.hpp>
 #include <beman/monadics/detail/get_value_query_fn.hpp>
 #include <beman/monadics/detail/get_value_type.hpp>
+#include <beman/monadics/detail/unit.hpp>
 
 namespace beman::monadics::detail {
 
@@ -62,9 +64,7 @@ template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 template<typename Box>
-concept has_error_channel = requires {
-    { get_box_traits<Box>::error(std::declval<Box>()) };
-};
+concept has_error_channel = box<Box> && !std::same_as<typename get_box_traits<Box>::error_type, unit>;
 
 } // namespace beman::monadics::detail
 

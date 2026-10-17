@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_MAKE_ERROR_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_MAKE_ERROR_FN_HPP
 
+#include <beman/monadics/detail/unit.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
@@ -19,6 +20,10 @@ template<typename Box, typename Traits, typename E>
     } else if constexpr (std::constructible_from<Box, E>) {
         return [](auto&& e) {
             return Box{std::forward<decltype(e)>(e)};
+        };
+    } else if constexpr (std::same_as<E, unit> && std::default_initializable<Box>) {
+        return [](unit) {
+            return Box{};
         };
     }
 }
