@@ -28,6 +28,7 @@ set(tests
     propagate_error
     propagate_value
     same_box
+    unreachable
 )
 
 foreach(test_name ${tests})
