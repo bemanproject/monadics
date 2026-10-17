@@ -5,6 +5,7 @@
 
 #include <beman/monadics/detail/and_then.hpp>
 #include <beman/monadics/detail/callable_adaptor.hpp>
+#include <beman/monadics/detail/carry_error.hpp>
 #include <beman/monadics/detail/carry_value.hpp>
 #include <beman/monadics/detail/compose.hpp>
 #include <beman/monadics/detail/either.hpp>
@@ -32,6 +33,7 @@ using detail::and_thenable;
 using detail::box;
 using detail::box_traits;
 using detail::callable_adaptor;
+using detail::carry_error;
 using detail::carry_value;
 using detail::compose;
 using detail::either;

@@ -30,6 +30,7 @@ set(tests
     make_value
     never
     callable_adaptor
+    carry_error
     carry_value
     compose
     either
