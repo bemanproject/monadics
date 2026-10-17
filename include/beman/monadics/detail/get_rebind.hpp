@@ -3,17 +3,31 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_REBIND_HPP
 #define BEMAN_MONADICS_DETAIL_GET_REBIND_HPP
 
+#include <beman/monadics/detail/get_value_type.hpp>
 #include <beman/monadics/detail/instance_of.hpp>
 #include <beman/monadics/detail/meta_rebind.hpp>
+#include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
+#include <concepts>
 #include <type_traits>
 
 namespace beman::monadics::detail {
 
+template<typename Box, typename Traits>
+concept value_is_never = requires { requires std::same_as<get_value_type_t<Box, Traits>, never>; };
+
+template<typename Box>
+struct never_value_only {
+    template<std::same_as<never> T>
+    using rebind = Box;
+};
+
 template<typename Box, typename Traits, typename T>
 [[nodiscard]] consteval decltype(auto) get_rebind() noexcept {
-    if constexpr (requires { typename Traits::template rebind<T>; }) {
+    if constexpr (std::same_as<T, never> && value_is_never<Box, Traits>) {
+        return std::type_identity<never_value_only<Box>>{};
+    } else if constexpr (requires { typename Traits::template rebind<T>; }) {
         return std::type_identity<Traits>{};
     } else if constexpr (requires { typename Box::template rebind<T>; }) {
         return std::type_identity<Box>{};
