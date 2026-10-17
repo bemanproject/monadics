@@ -31,6 +31,24 @@ concept states_are_distinct = !both_cases_carry_nothing<Box, Traits> || requires
     Traits::make_error(unit{});
 } || on_error<"a box whose value and failure both carry nothing must provide Traits::make() or make_error(unit)">;
 
+template<typename Box, typename Traits, typename Fn, typename Declared>
+concept reads_as = std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
+
+template<typename Box, typename Traits>
+concept value_read_agrees = reads_as<Box,
+                                     Traits,
+                                     decltype(get_value_fn<Box, Traits, get_value_type_t<Box, Traits>>()),
+                                     get_value_type_t<Box, Traits>>
+                         || std::is_void_v<get_value_type_t<Box, Traits>>
+                         || on_error<"Traits::value must yield the value_type the box names">;
+
+template<typename Box, typename Traits>
+concept error_read_agrees = reads_as<Box,
+                                     Traits,
+                                     decltype(get_error_fn<Box, Traits, get_error_type_t<Box, Traits>>()),
+                                     get_error_type_t<Box, Traits>>
+                         || on_error<"Traits::error must yield the error_type the box names">;
+
 template<typename Box, typename Traits>
 concept assembled_box = has_box_traits<Box>
                      && has_value_type<Box, Traits>
@@ -42,7 +60,9 @@ concept assembled_box = has_box_traits<Box>
                      && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
                      && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
-                     && states_are_distinct<Box, Traits>;
+                     && states_are_distinct<Box, Traits>
+                     && value_read_agrees<Box, Traits>
+                     && error_read_agrees<Box, Traits>;
 
 template<typename Box, typename Traits>
 struct traits {

@@ -4,6 +4,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
+
 struct NothingOnEitherSide {
     bool ok{true};
 };
@@ -36,6 +38,30 @@ struct beman::monadics::detail::box_traits<SaysWhichStateIsWhich> : both_cases_e
     [[nodiscard]] static constexpr SaysWhichStateIsWhich make_error(unit) noexcept { return {false}; }
 };
 
+struct NamesUnitReadsInt {
+    int e{9};
+};
+
+template<>
+struct beman::monadics::detail::box_traits<NamesUnitReadsInt> {
+    using value_type = int;
+    using error_type = unit;
+
+    template<typename V>
+    using rebind = NamesUnitReadsInt;
+
+    template<std::same_as<unit> E>
+    using rebind_error = NamesUnitReadsInt;
+
+    [[nodiscard]] static constexpr bool has_value(const NamesUnitReadsInt&) noexcept { return false; }
+
+    [[nodiscard]] static constexpr int value(const NamesUnitReadsInt&) noexcept { return 1; }
+
+    [[nodiscard]] static constexpr int error(const NamesUnitReadsInt& b) noexcept { return b.e; }
+
+    [[nodiscard]] static constexpr auto make(int) noexcept { return NamesUnitReadsInt{}; }
+};
+
 namespace beman::monadics::detail::tests {
 
 TEST_CASE("a-box-carrying-nothing-on-either-side-must-say-which-state-is-which") {
@@ -44,6 +70,10 @@ TEST_CASE("a-box-carrying-nothing-on-either-side-must-say-which-state-is-which")
 
     STATIC_REQUIRE(get_box_traits<SaysWhichStateIsWhich>::make().ok);
     STATIC_REQUIRE_FALSE(get_box_traits<SaysWhichStateIsWhich>::make_error(unit{}).ok);
+}
+
+TEST_CASE("a-read-must-yield-the-case-type-the-box-names") {
+    STATIC_REQUIRE_FALSE(box<NamesUnitReadsInt>);
 }
 
 } // namespace beman::monadics::detail::tests
