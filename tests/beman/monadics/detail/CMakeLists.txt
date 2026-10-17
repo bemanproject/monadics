@@ -24,6 +24,7 @@ set(tests
     meta_extract_value_type
     meta_rebind_error
     meta_rebind
+    never
     callable_adaptor
     propagate_error
     propagate_value
