@@ -5,15 +5,17 @@
 
 #include <beman/monadics/detail/instance_of.hpp>
 #include <beman/monadics/detail/meta_rebind_error.hpp>
+#include <beman/monadics/detail/unit.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
+#include <concepts>
 #include <type_traits>
 
 namespace beman::monadics::detail {
 
 template<typename Box>
-struct no_rebind_error {
-    template<typename>
+struct unit_error_only {
+    template<std::same_as<unit> E>
     using rebind_error = Box;
 };
 
@@ -23,10 +25,10 @@ template<typename Box, typename Traits, typename E>
         return std::type_identity<Traits>{};
     } else if constexpr (requires { typename Box::template rebind_error<E>; }) {
         return std::type_identity<Box>{};
-    } else if constexpr (requires { Traits::error(); }) {
-        return std::type_identity<no_rebind_error<Box>>{};
     } else if constexpr (requires { get_meta_rebind_error<Box>(); }) {
         return get_meta_rebind_error<Box>();
+    } else if constexpr (std::same_as<E, unit>) {
+        return std::type_identity<unit_error_only<Box>>{};
     }
 }
 

@@ -11,15 +11,15 @@ namespace beman::monadics::tests {
 TEST_CASE("box-trait-for") {
     using Traits = get_box_traits<std::optional<int>>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, int>);
-    STATIC_REQUIRE(std::same_as<Traits::error_type, std::nullopt_t>);
+    STATIC_REQUIRE(std::same_as<Traits::error_type, unit>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<float>, std::optional<float>>);
-    STATIC_REQUIRE(std::same_as<Traits::rebind_error<float>, std::optional<int>>);
+    STATIC_REQUIRE(std::same_as<Traits::rebind_error<unit>, std::optional<int>>);
     STATIC_REQUIRE(Traits::value(std::optional{5}) == 5);
     STATIC_REQUIRE(Traits::has_value(std::optional{5}));
     STATIC_REQUIRE(Traits::has_value(std::optional<int>{}) == false);
-    STATIC_REQUIRE(std::same_as<decltype(Traits::error()), std::nullopt_t>);
+    STATIC_REQUIRE(std::same_as<decltype(Traits::error(std::optional<int>{})), unit>);
     STATIC_REQUIRE(Traits::make(10) == std::optional{10});
-    STATIC_REQUIRE(Traits::make_error(Traits::error()) == std::optional<int>{});
+    STATIC_REQUIRE(Traits::make_error(Traits::error(std::optional<int>{})) == std::optional<int>{});
 }
 
 TEST_CASE("has-error-channel") {
