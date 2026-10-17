@@ -12,6 +12,7 @@
 #include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/just.hpp>
 #include <beman/monadics/detail/just_error.hpp>
+#include <beman/monadics/detail/make_value.hpp>
 #include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/or_else.hpp>
 #include <beman/monadics/detail/propagate_error.hpp>
@@ -42,6 +43,7 @@ using detail::just;
 using detail::just_error;
 using detail::just_error_t;
 using detail::just_t;
+using detail::make_value;
 using detail::never;
 using detail::no_case;
 using detail::no_error_case;
