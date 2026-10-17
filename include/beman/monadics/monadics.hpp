@@ -24,6 +24,7 @@ using detail::and_thenable;
 using detail::box;
 using detail::box_traits;
 using detail::callable_adaptor;
+using detail::error_only;
 using detail::get_box_traits;
 using detail::has_error_channel;
 using detail::invoke_with_error;
@@ -39,6 +40,7 @@ using detail::transform_errorable;
 using detail::transformable;
 using detail::unit;
 using detail::unreachable;
+using detail::value_only;
 
 } // namespace beman::monadics
 

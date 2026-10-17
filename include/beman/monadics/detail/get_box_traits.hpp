@@ -76,7 +76,18 @@ template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 template<typename Box>
-concept has_error_channel = box<Box> && !std::same_as<typename get_box_traits<Box>::error_type, unit>;
+concept value_only = box<Box> && std::same_as<typename get_box_traits<Box>::error_type, never>;
+
+template<typename Box>
+concept error_only = box<Box> && std::same_as<typename get_box_traits<Box>::value_type, never>;
+
+template<typename Box>
+concept single_case = value_only<Box> || error_only<Box>;
+
+template<typename Box>
+concept has_error_channel = box<Box>
+                         && !std::same_as<typename get_box_traits<Box>::error_type, unit>
+                         && !std::same_as<typename get_box_traits<Box>::error_type, never>;
 
 } // namespace beman::monadics::detail
 
