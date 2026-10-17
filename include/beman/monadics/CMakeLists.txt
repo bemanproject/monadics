@@ -36,8 +36,6 @@ target_sources(
                 detail/make_value.hpp
                 detail/never.hpp
                 detail/or_else.hpp
-                detail/propagate_value.hpp
-                detail/propagate_error.hpp
                 detail/same_box.hpp
                 detail/to.hpp
                 detail/transform.hpp

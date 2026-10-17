@@ -34,8 +34,6 @@ set(tests
     carry_value
     compose
     either
-    propagate_error
-    propagate_value
     same_box
     unreachable
 )

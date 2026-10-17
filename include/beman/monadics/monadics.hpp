@@ -18,8 +18,6 @@
 #include <beman/monadics/detail/make_value.hpp>
 #include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/or_else.hpp>
-#include <beman/monadics/detail/propagate_error.hpp>
-#include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/to.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
@@ -56,8 +54,6 @@ using detail::no_error_case;
 using detail::no_value_case;
 using detail::or_else;
 using detail::or_elseable;
-using detail::propagate_error;
-using detail::propagate_value;
 using detail::transform;
 using detail::transform_error;
 using detail::transform_errorable;
