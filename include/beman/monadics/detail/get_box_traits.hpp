@@ -55,6 +55,7 @@ struct traits {
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template<typename E>
+        requires requires { typename get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>; }
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
     static constexpr auto has_value = get_value_query_fn<Box, Traits>();
