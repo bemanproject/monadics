@@ -34,5 +34,6 @@ target_sources(
                 detail/transform_error.hpp
                 detail/utility.hpp
                 detail/unit.hpp
+                detail/unreachable.hpp
                 monadics.hpp
 )

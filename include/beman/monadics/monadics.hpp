@@ -14,6 +14,7 @@
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
 #include <beman/monadics/detail/unit.hpp>
+#include <beman/monadics/detail/unreachable.hpp>
 
 namespace beman::monadics {
 
@@ -35,6 +36,7 @@ using detail::transform_error;
 using detail::transform_errorable;
 using detail::transformable;
 using detail::unit;
+using detail::unreachable;
 
 } // namespace beman::monadics
 
