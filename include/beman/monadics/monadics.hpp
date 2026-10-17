@@ -13,6 +13,7 @@
 #include <beman/monadics/detail/propagate_value.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
+#include <beman/monadics/detail/unit.hpp>
 
 namespace beman::monadics {
 
@@ -33,6 +34,7 @@ using detail::transform;
 using detail::transform_error;
 using detail::transform_errorable;
 using detail::transformable;
+using detail::unit;
 
 } // namespace beman::monadics
 
