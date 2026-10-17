@@ -28,6 +28,7 @@ set(tests
     meta_rebind
     never
     callable_adaptor
+    compose
     propagate_error
     propagate_value
     same_box

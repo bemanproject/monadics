@@ -5,6 +5,7 @@
 
 #include <beman/monadics/detail/and_then.hpp>
 #include <beman/monadics/detail/callable_adaptor.hpp>
+#include <beman/monadics/detail/compose.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
@@ -26,6 +27,7 @@ using detail::and_thenable;
 using detail::box;
 using detail::box_traits;
 using detail::callable_adaptor;
+using detail::compose;
 using detail::error_only;
 using detail::get_box_traits;
 using detail::has_error_channel;

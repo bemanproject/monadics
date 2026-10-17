@@ -9,6 +9,7 @@ target_sources(
                 detail/as_pointer.hpp
                 detail/box_traits.hpp
                 detail/callable_adaptor.hpp
+                detail/compose.hpp
                 detail/decomposable.hpp
                 detail/get_box_traits.hpp
                 detail/get_error_fn.hpp
