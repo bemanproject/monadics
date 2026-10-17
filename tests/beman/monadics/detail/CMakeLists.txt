@@ -8,6 +8,7 @@ set(tests
     as_pointer
     box_traits
     decomposable
+    get_box_traits
     get_error_fn
     get_error_type
     get_make_error_fn

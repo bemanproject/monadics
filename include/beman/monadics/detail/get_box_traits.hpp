@@ -23,6 +23,15 @@ namespace beman::monadics::detail {
 namespace _get_box_traits {
 
 template<typename Box, typename Traits>
+concept both_cases_carry_nothing =
+    std::is_void_v<get_value_type_t<Box, Traits>> && std::same_as<get_error_type_t<Box, Traits>, unit>;
+
+template<typename Box, typename Traits>
+concept states_are_distinct = !both_cases_carry_nothing<Box, Traits> || requires { Traits::make(); } || requires {
+    Traits::make_error(unit{});
+} || on_error<"a box whose value and failure both carry nothing must provide Traits::make() or make_error(unit)">;
+
+template<typename Box, typename Traits>
 concept box = has_box_traits<Box>
            && has_value_type<Box, Traits>
            && has_error_type<Box, Traits>
@@ -32,7 +41,8 @@ concept box = has_box_traits<Box>
            && has_value_fn<Box, Traits>
            && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
            && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
-           && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
+           && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
+           && states_are_distinct<Box, Traits>;
 
 template<typename Box, typename Traits>
 struct traits {
