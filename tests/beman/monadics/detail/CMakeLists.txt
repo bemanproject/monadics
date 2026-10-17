@@ -20,6 +20,7 @@ set(tests
     get_value_type
     instance_of
     just
+    just_error
     invoke_with_error
     invoke_with_value
     meta_extract_value_type

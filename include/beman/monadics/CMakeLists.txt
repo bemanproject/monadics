@@ -27,6 +27,7 @@ target_sources(
                 detail/meta_rebind_error.hpp
                 detail/meta_rebind.hpp
                 detail/just.hpp
+                detail/just_error.hpp
                 detail/never.hpp
                 detail/or_else.hpp
                 detail/propagate_value.hpp
