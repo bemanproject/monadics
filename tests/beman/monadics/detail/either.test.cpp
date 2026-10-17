@@ -149,6 +149,20 @@ TEST_CASE("a-carrier-is-not-special-the-handlers-must-still-agree") {
     STATIC_REQUIRE_FALSE(either_call<detail::just_fn, detail::just_error_fn, X&>);
 }
 
+TEST_CASE("tells-the-result-to-the-handler-that-does-not-name-one") {
+    STATIC_REQUIRE(detail::either(pass_value, told, O{5}) == 5);
+    STATIC_REQUIRE(detail::either(pass_value, told, O{}) == 1);
+    STATIC_REQUIRE(detail::either(told, [](unit) { return 7; }, O{}) == 7);
+    STATIC_REQUIRE(detail::either(told, [](unit) { return 7; }, O{5}) == 1);
+}
+
+TEST_CASE("a-told-handler-takes-nothing-where-the-value-carries-nothing") {
+    STATIC_REQUIRE(detail::either(told, any, detail::just_t<void>{}) == 0);
+}
+
+TEST_CASE("neither-handler-naming-a-result-is-not-enough") {
+    STATIC_REQUIRE_FALSE(either_call<decltype(told), decltype(told), O&>);
+}
 TEST_CASE("rejects-a-non-box") {
     STATIC_REQUIRE_FALSE(either_call<decltype(any), decltype(any), int&>);
 }
