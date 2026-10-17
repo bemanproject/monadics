@@ -37,7 +37,7 @@ concept assembled_box = has_box_traits<Box>
                      && has_error_type<Box, Traits>
                      && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
-                     && has_value_query_fn<Box, Traits>
+                     && has_value_query_fn<Box, Traits, get_value_type_t<Box, Traits>, get_error_type_t<Box, Traits>>
                      && has_value_fn<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
                      && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
@@ -58,7 +58,7 @@ struct traits {
         requires requires { typename get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>; }
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
-    static constexpr auto has_value = get_value_query_fn<Box, Traits>();
+    static constexpr auto has_value = get_value_query_fn<Box, Traits, value_type, error_type>();
     static constexpr auto value = get_value_fn<Box, Traits, value_type>();
     static constexpr auto error = get_error_fn<Box, Traits, error_type>();
 
