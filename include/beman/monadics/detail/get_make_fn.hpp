@@ -40,6 +40,12 @@ template<typename Box, typename Traits, typename T>
                 return Box{};
             };
         }
+    } else if constexpr (!std::constructible_from<Box, T> && std::constructible_from<Box, T&>) {
+        return [](auto& v) -> decltype(auto)
+                   requires requires { Box{v}; }
+        {
+            return Box{v};
+        };
     } else if constexpr (std::constructible_from<Box, T>) {
         return [](auto&& v) -> decltype(auto)
                    requires requires { Box{std::forward<decltype(v)>(v)}; }
