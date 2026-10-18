@@ -24,6 +24,7 @@ set(test_global_target "beman.monadics.tests")
 add_custom_target(${test_global_target})
 
 add_subdirectory(detail)
+add_subdirectory(laws)
 
 if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
     add_subdirectory(to)
