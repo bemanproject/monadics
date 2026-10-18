@@ -46,24 +46,20 @@ concept never_side_is_not_supplied =
      && (!std::same_as<get_error_type_t<Box, Traits>, never> || !supplies_error_side<Box, Traits>))
     || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
 
-template<typename Box, typename Traits, typename Fn, typename Declared>
+template<typename Box, typename Fn, typename Declared>
 concept reads_as = std::same_as<std::invoke_result_t<Fn, Box>, Declared>
                 || std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
 
 template<typename Box, typename Traits>
-concept value_read_agrees = reads_as<Box,
-                                     Traits,
-                                     decltype(get_value_fn<Box, Traits, get_value_type_t<Box, Traits>>()),
-                                     get_value_type_t<Box, Traits>>
-                         || std::is_void_v<get_value_type_t<Box, Traits>>
-                         || on_error<"Traits::value must yield the value_type the box names">;
+concept value_read_agrees =
+    reads_as<Box, decltype(get_value_fn<Box, Traits, get_value_type_t<Box, Traits>>()), get_value_type_t<Box, Traits>>
+    || std::is_void_v<get_value_type_t<Box, Traits>>
+    || on_error<"Traits::value must yield the value_type the box names">;
 
 template<typename Box, typename Traits>
-concept error_read_agrees = reads_as<Box,
-                                     Traits,
-                                     decltype(get_error_fn<Box, Traits, get_error_type_t<Box, Traits>>()),
-                                     get_error_type_t<Box, Traits>>
-                         || on_error<"Traits::error must yield the error_type the box names">;
+concept error_read_agrees =
+    reads_as<Box, decltype(get_error_fn<Box, Traits, get_error_type_t<Box, Traits>>()), get_error_type_t<Box, Traits>>
+    || on_error<"Traits::error must yield the error_type the box names">;
 
 template<typename Box, typename Traits>
 concept assembled_box = has_box_traits<Box>
