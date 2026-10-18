@@ -48,7 +48,7 @@ class to_closure {
         requires(!has_error_channel<To> || has_error_channel<From> || no_error_case<From>)
              || on_error<"From has no error channel: provide a fallback error">
     [[nodiscard]] friend constexpr auto operator|(From&& from, to_closure&&) {
-        return make_to_result<To>(std::forward<From>(from), [&] {
+        return make_to_result<To>(std::forward<From>(from), [&]() -> decltype(auto) {
             if constexpr (has_error_channel<From> && has_error_channel<To>) {
                 return get_box_traits<From>::error(std::forward<From>(from));
             } else {

@@ -4,6 +4,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
 #include <expected>
 #include <optional>
 
@@ -22,6 +23,40 @@ struct box_traits<std::expected<T, E>> {
 };
 
 } // namespace beman::monadics
+
+namespace beman::monadics::tests {
+
+namespace {
+
+struct RefError {
+    int* e{};
+};
+
+} // namespace
+
+} // namespace beman::monadics::tests
+
+template<>
+struct beman::monadics::box_traits<beman::monadics::tests::RefError> {
+    using value_type = int;
+    using error_type = int&;
+
+    template<std::same_as<int> U>
+    using rebind = tests::RefError;
+
+    template<std::same_as<int&> E>
+    using rebind_error = tests::RefError;
+
+    [[nodiscard]] static constexpr bool has_value(const tests::RefError& b) noexcept { return b.e == nullptr; }
+
+    [[nodiscard]] static constexpr int value(const tests::RefError&) noexcept { return 0; }
+
+    [[nodiscard]] static constexpr int& error(const tests::RefError& b) noexcept { return *b.e; }
+
+    [[nodiscard]] static constexpr tests::RefError make(int) noexcept { return {}; }
+
+    [[nodiscard]] static constexpr tests::RefError make_error(int& e) noexcept { return {&e}; }
+};
 
 namespace beman::monadics::tests {
 
@@ -74,6 +109,18 @@ TEST_CASE("widening-without-a-fallback-is-rejected") {
 TEST_CASE("a-fallback-is-rejected-where-an-error-already-exists") {
     STATIC_REQUIRE(converts<std::expected<int, int>, std::optional<int>>);
     STATIC_REQUIRE_FALSE(converts_with_fallback<std::expected<int, int>, std::optional<int>, int>);
+}
+
+TEST_CASE("a-conversion-carries-a-reference-error-without-decaying-it") {
+    STATIC_REQUIRE(box<RefError>);
+    STATIC_REQUIRE(std::same_as<get_box_traits<RefError>::error_type, int&>);
+
+    int e = 7;
+    const RefError failed{&e};
+    const auto round_tripped = failed | to<RefError>();
+
+    REQUIRE_FALSE(round_tripped.e == nullptr);
+    REQUIRE(&get_box_traits<RefError>::error(round_tripped) == &e);
 }
 
 } // namespace beman::monadics::tests
