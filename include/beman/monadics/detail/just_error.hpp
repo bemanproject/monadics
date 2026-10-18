@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_JUST_ERROR_HPP
 #define BEMAN_MONADICS_DETAIL_JUST_ERROR_HPP
 
+#include <beman/monadics/detail/binds_temporary.hpp>
 #include <beman/monadics/detail/box_traits.hpp>
 #include <beman/monadics/detail/never.hpp>
 
@@ -21,7 +22,7 @@ class just_error_t {
     using rebind_error = just_error_t<F>;
 
     template<typename U>
-        requires std::constructible_from<T, U&&>
+        requires std::constructible_from<T, U&&> && (!binds_temporary<T, U>)
     constexpr explicit(false) just_error_t(U&& e) noexcept(std::is_nothrow_constructible_v<T, U&&>)
         : error_(std::forward<U>(e)) {}
 

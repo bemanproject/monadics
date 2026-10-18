@@ -58,11 +58,50 @@ TEST_CASE("carrying-an-lvalue-refers-to-it") {
     REQUIRE(&carried.value() == &v);
 }
 
+TEST_CASE("refuses-to-refer-to-something-with-no-address") {
+    STATIC_REQUIRE_FALSE(std::constructible_from<just_t<const int&>, int>);
+    STATIC_REQUIRE(std::constructible_from<just_t<const int&>, int&>);
+    STATIC_REQUIRE(std::constructible_from<just_t<int&>, int&>);
+
+    STATIC_REQUIRE(std::constructible_from<just_t<int>, int>);
+}
+
+TEST_CASE("a-carried-reference-goes-through-every-operation") {
+    using Ref = just_t<int&>;
+
+    STATIC_REQUIRE(same_box<Ref, Ref>);
+    STATIC_REQUIRE(std::same_as<get_box_traits<Ref>::value_type, int&>);
+    STATIC_REQUIRE(and_thenable<Ref&, decltype([](int& v) { return Ref{v}; })>);
+    STATIC_REQUIRE(inspectable<Ref&, decltype([](const int&) {})>);
+
+    STATIC_REQUIRE(transformable<Ref&, decltype([](int& v) { return v * 2; })>);
+    STATIC_REQUIRE(
+        std::same_as<decltype(std::declval<Ref&>() | transform([](int& v) { return v * 2; })), just_t<int>>
+    );
+}
+
 TEST_CASE("reading-refers-to-the-value-it-holds") {
     STATIC_REQUIRE(std::same_as<decltype(std::declval<J&>().value()), int&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<const J&>().value()), const int&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<J&&>().value()), int&&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<const J&&>().value()), const int&&>);
+}
+
+TEST_CASE("reading-a-reference-carrier-never-moves-from-the-referent") {
+    using Ref = just_t<int&>;
+
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<Ref&>().value()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<const Ref&>().value()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<Ref&&>().value()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<const Ref&&>().value()), int&>);
+
+    STATIC_REQUIRE([] {
+        int v{7};
+        Ref r{v};
+        const Ref c{v};
+
+        return &r.value() == &v && &std::move(r).value() == &v && &c.value() == &v && &std::move(c).value() == &v;
+    }());
 }
 
 TEST_CASE("a-value-that-carries-nothing") {

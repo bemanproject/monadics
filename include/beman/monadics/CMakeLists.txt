@@ -7,6 +7,7 @@ target_sources(
             FILES
                 detail/and_then.hpp
                 detail/as_pointer.hpp
+                detail/binds_temporary.hpp
                 detail/box_traits.hpp
                 detail/callable_adaptor.hpp
                 detail/carry_error.hpp

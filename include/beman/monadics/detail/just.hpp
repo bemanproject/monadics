@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_JUST_HPP
 #define BEMAN_MONADICS_DETAIL_JUST_HPP
 
+#include <beman/monadics/detail/binds_temporary.hpp>
 #include <beman/monadics/detail/box_traits.hpp>
 #include <beman/monadics/detail/never.hpp>
 
@@ -15,10 +16,10 @@ namespace beman::monadics::detail {
 template<typename T>
 class just_t {
   public:
-    using value_type = std::remove_cvref_t<T>;
+    using value_type = T;
 
     template<typename U>
-        requires std::constructible_from<T, U&&>
+        requires std::constructible_from<T, U&&> && (!binds_temporary<T, U>)
     constexpr explicit(false) just_t(U&& v) noexcept(std::is_nothrow_constructible_v<T, U&&>)
         : value_(std::forward<U>(v)) {}
 

@@ -57,11 +57,34 @@ TEST_CASE("carrying-an-lvalue-refers-to-it") {
     REQUIRE(&carried.error() == &e);
 }
 
+TEST_CASE("refuses-to-refer-to-something-with-no-address") {
+    STATIC_REQUIRE_FALSE(std::constructible_from<just_error_t<const int&>, int>);
+    STATIC_REQUIRE(std::constructible_from<just_error_t<const int&>, int&>);
+    STATIC_REQUIRE(std::constructible_from<just_error_t<int>, int>);
+}
+
 TEST_CASE("reading-refers-to-the-error-it-holds") {
     STATIC_REQUIRE(std::same_as<decltype(std::declval<E&>().error()), int&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<const E&>().error()), const int&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<E&&>().error()), int&&>);
     STATIC_REQUIRE(std::same_as<decltype(std::declval<const E&&>().error()), const int&&>);
+}
+
+TEST_CASE("reading-a-reference-carrier-never-moves-from-the-referent") {
+    using Ref = just_error_t<int&>;
+
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<Ref&>().error()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<const Ref&>().error()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<Ref&&>().error()), int&>);
+    STATIC_REQUIRE(std::same_as<decltype(std::declval<const Ref&&>().error()), int&>);
+
+    STATIC_REQUIRE([] {
+        int v{7};
+        Ref r{v};
+        const Ref c{v};
+
+        return &r.error() == &v && &std::move(r).error() == &v && &c.error() == &v && &std::move(c).error() == &v;
+    }());
 }
 
 TEST_CASE("cannot-claim-a-value-it-has-no-room-for") {
