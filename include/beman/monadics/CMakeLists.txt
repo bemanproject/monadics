@@ -23,6 +23,7 @@ target_sources(
                 detail/get_make_fn.hpp
                 detail/get_rebind.hpp
                 detail/get_rebind_error.hpp
+                detail/get_value.hpp
                 detail/get_value_fn.hpp
                 detail/get_value_query_fn.hpp
                 detail/get_value_type.hpp

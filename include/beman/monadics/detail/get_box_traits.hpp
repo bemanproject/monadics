@@ -13,6 +13,7 @@
 #include <beman/monadics/detail/get_make_fn.hpp>
 #include <beman/monadics/detail/get_rebind.hpp>
 #include <beman/monadics/detail/get_rebind_error.hpp>
+#include <beman/monadics/detail/get_value.hpp>
 #include <beman/monadics/detail/get_value_fn.hpp>
 #include <beman/monadics/detail/get_value_query_fn.hpp>
 #include <beman/monadics/detail/get_value_type.hpp>
@@ -47,29 +48,21 @@ concept never_side_is_not_supplied =
     || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
 
 template<typename Box, typename Traits>
-concept value_read_agrees =
-    reads_as<Box, decltype(get_value_fn<Box, Traits, get_value_type_t<Box, Traits>>()), get_value_type_t<Box, Traits>>
-    || std::is_void_v<get_value_type_t<Box, Traits>>
-    || on_error<"Traits::value must yield the value_type the box names">;
-
-template<typename Box, typename Traits>
 concept error_read_agrees =
     reads_as<Box, decltype(get_error_fn<Box, Traits, get_error_type_t<Box, Traits>>()), get_error_type_t<Box, Traits>>
     || on_error<"Traits::error must yield the error_type the box names">;
 
 template<typename Box, typename Traits>
 concept assembled_box = has_box_traits<Box>
-                     && has_value_type<Box, Traits>
+                     && has_value_access<Box, Traits>
                      && has_error_type<Box, Traits>
                      && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
                      && has_value_query_fn<Box, Traits, get_value_type_t<Box, Traits>, get_error_type_t<Box, Traits>>
-                     && has_value_fn<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
                      && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
                      && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
                      && states_are_distinct<Box, Traits>
-                     && value_read_agrees<Box, Traits>
                      && error_read_agrees<Box, Traits>
                      && never_side_is_not_supplied<Box, Traits>;
 
@@ -88,7 +81,7 @@ struct traits {
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
     static constexpr auto has_value = get_value_query_fn<Box, Traits, value_type, error_type>();
-    static constexpr auto value = get_value_fn<Box, Traits, value_type>();
+    static constexpr auto value = get_value<Box, Traits>();
     static constexpr auto error = get_error_fn<Box, Traits, error_type>();
 
     static constexpr auto make = get_make_fn<Box, Traits, value_type>();

@@ -15,6 +15,7 @@ set(tests
     get_make_fn
     get_rebind
     get_rebind_error
+    get_value
     get_value_fn
     get_value_query_fn
     get_value_type
