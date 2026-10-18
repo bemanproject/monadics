@@ -5,7 +5,7 @@ add_custom_target(${examples_global_target})
 set(examples optional)
 
 if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
-    list(APPEND examples expected to)
+    list(APPEND examples either expected to)
 endif()
 
 foreach(example ${examples})
