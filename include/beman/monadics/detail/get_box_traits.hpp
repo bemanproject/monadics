@@ -16,6 +16,7 @@
 #include <beman/monadics/detail/get_value_fn.hpp>
 #include <beman/monadics/detail/get_value_query_fn.hpp>
 #include <beman/monadics/detail/get_value_type.hpp>
+#include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/unit.hpp>
 
 namespace beman::monadics::detail {
@@ -46,7 +47,8 @@ concept never_side_is_not_supplied =
     || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
 
 template<typename Box, typename Traits, typename Fn, typename Declared>
-concept reads_as = std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
+concept reads_as = std::same_as<std::invoke_result_t<Fn, Box>, Declared>
+                || std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
 
 template<typename Box, typename Traits>
 concept value_read_agrees = reads_as<Box,

@@ -63,6 +63,50 @@ struct beman::monadics::detail::box_traits<NamesUnitReadsInt> {
     [[nodiscard]] static constexpr auto make(int) noexcept { return NamesUnitReadsInt{}; }
 };
 
+struct NamesAReference {
+    int* p{};
+};
+
+template<>
+struct beman::monadics::detail::box_traits<NamesAReference> {
+    using value_type = int&;
+    using error_type = unit;
+
+    template<typename U>
+    using rebind = NamesAReference;
+
+    template<std::same_as<unit> E>
+    using rebind_error = NamesAReference;
+
+    [[nodiscard]] static constexpr bool has_value(const NamesAReference& b) noexcept { return b.p != nullptr; }
+
+    [[nodiscard]] static constexpr int& value(const NamesAReference& b) noexcept { return *b.p; }
+
+    [[nodiscard]] static constexpr NamesAReference make(int& v) noexcept { return {&v}; }
+};
+
+struct PromisesAReferenceReadsAValue {
+    int v{};
+};
+
+template<>
+struct beman::monadics::detail::box_traits<PromisesAReferenceReadsAValue> {
+    using value_type = int&;
+    using error_type = unit;
+
+    template<typename U>
+    using rebind = PromisesAReferenceReadsAValue;
+
+    template<std::same_as<unit> E>
+    using rebind_error = PromisesAReferenceReadsAValue;
+
+    [[nodiscard]] static constexpr bool has_value(const PromisesAReferenceReadsAValue&) noexcept { return true; }
+
+    [[nodiscard]] static constexpr int value(const PromisesAReferenceReadsAValue& b) noexcept { return b.v; }
+
+    [[nodiscard]] static constexpr PromisesAReferenceReadsAValue make(int& v) noexcept { return {v}; }
+};
+
 struct NamesNeverAndSuppliesIt {
     int e{7};
 };
@@ -103,6 +147,15 @@ TEST_CASE("a-read-must-yield-the-case-type-the-box-names") {
 
 TEST_CASE("a-side-named-never-must-not-also-be-supplied") {
     STATIC_REQUIRE_FALSE(box<NamesNeverAndSuppliesIt>);
+}
+
+TEST_CASE("a-case-type-may-be-a-reference-if-the-read-is-one-too") {
+    STATIC_REQUIRE(box<NamesAReference>);
+    STATIC_REQUIRE(std::same_as<get_box_traits<NamesAReference>::value_type, int&>);
+}
+
+TEST_CASE("promising-a-reference-and-reading-a-value-is-refused") {
+    STATIC_REQUIRE_FALSE(box<PromisesAReferenceReadsAValue>);
 }
 
 TEST_CASE("a-box-with-neither-case-is-neither-value-only-nor-error-only") {
