@@ -64,7 +64,7 @@ TEST_CASE("value-return-another-error-2") {
 
     STATIC_REQUIRE(std::same_as<decltype(result), const Result<double, int>>);
     STATIC_REQUIRE(result.has_value() == false);
-    STATIC_REQUIRE(result.error() == static_cast<char>('c'));
+    STATIC_REQUIRE(result.error() == 'c');
 }
 
 TEMPLATE_TEST_CASE_SIG("keep-value-category",
