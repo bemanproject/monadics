@@ -65,6 +65,23 @@ struct common_payload<t::normalizing<t::Parse>, t::normalizing<t::Io>> {
     using type = t::normalizing<t::Io, t::Parse>;
 };
 
+template<>
+struct common_payload<t::normalizing<t::Io, t::Parse>, t::normalizing<t::Io>> {
+    using type = t::normalizing<t::Io, t::Parse>;
+};
+template<>
+struct common_payload<t::normalizing<t::Io>, t::normalizing<t::Io, t::Parse>> {
+    using type = t::normalizing<t::Io, t::Parse>;
+};
+template<>
+struct common_payload<t::normalizing<t::Io, t::Parse>, t::normalizing<t::Parse>> {
+    using type = t::normalizing<t::Io, t::Parse>;
+};
+template<>
+struct common_payload<t::normalizing<t::Parse>, t::normalizing<t::Io, t::Parse>> {
+    using type = t::normalizing<t::Io, t::Parse>;
+};
+
 template<typename... As, typename... Bs>
 struct common_payload<t::ordered<As...>, t::ordered<Bs...>> {
     using type = t::ordered<As..., Bs...>;
@@ -110,6 +127,10 @@ TEST_CASE("an-algebra-names-the-payload-that-holds-either") {
 
 TEST_CASE("an-answer-that-depends-on-the-order-is-refused") {
     STATIC_REQUIRE_FALSE(has_common_payload<ordered<Io>, ordered<Parse>>);
+}
+
+TEST_CASE("an-answer-that-grows-when-rejoined-is-refused") {
+    STATIC_REQUIRE_FALSE(has_common_payload<ordered<Io, Parse>, ordered<Parse>>);
 }
 
 TEST_CASE("a-payload-that-holds-neither-is-refused") {

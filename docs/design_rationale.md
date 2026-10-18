@@ -378,7 +378,13 @@ and an operation over them keeps refusing rather than picking a side:
 
 What an algebra does have to satisfy is checked. The two orders must answer alike, and the type
 named must be constructible from each payload, since the operation has to put whichever error it
-holds into it:
+holds into it.
+
+Associativity needs three payloads and an operation only ever has two, so what is checkable where
+the operation asks is the instance over the pair: joining the answer with a payload it already
+covers must name the answer again. That is why the answer's own joins appear below alongside the
+pair's. An algebra that concatenates fails this check, which is why one that sums has to normalize
+rather than append:
 
 ```cpp
 struct request_error {
@@ -386,8 +392,11 @@ struct request_error {
     request_error(parse_error);
 };
 
-template<> struct beman::monadics::common_payload<io_error, parse_error> { using type = request_error; };
-template<> struct beman::monadics::common_payload<parse_error, io_error> { using type = request_error; };
+namespace bms = beman::monadics;
+template<> struct bms::common_payload<io_error, parse_error>    { using type = request_error; };
+template<> struct bms::common_payload<parse_error, io_error>    { using type = request_error; };
+template<> struct bms::common_payload<request_error, io_error>  { using type = request_error; };
+template<> struct bms::common_payload<request_error, parse_error> { using type = request_error; };
 
 std::expected<int, io_error> e = ...;
 e | and_then([](int v) { return std::expected<int, parse_error>{v}; });

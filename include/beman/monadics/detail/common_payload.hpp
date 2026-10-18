@@ -47,6 +47,22 @@ concept injects = requires {
     requires std::constructible_from<typename common_payload<P1, P2>::type, P2>;
 };
 
+template<typename P1, typename P2>
+concept answered = structural<P1, P2> || named<P1, P2>;
+
+template<typename P1, typename P2>
+    requires answered<P1, P2>
+using payload_of = typename decltype(computed<P1, P2>())::type;
+
+template<typename P1, typename P2>
+concept absorbs = requires {
+    requires answered<P1, P2>;
+    requires answered<payload_of<P1, P2>, P1>;
+    requires answered<payload_of<P1, P2>, P2>;
+    requires std::same_as<payload_of<payload_of<P1, P2>, P1>, payload_of<P1, P2>>;
+    requires std::same_as<payload_of<payload_of<P1, P2>, P2>, payload_of<P1, P2>>;
+};
+
 } // namespace _common_payload
 
 template<typename P1, typename P2>
@@ -57,7 +73,9 @@ concept has_common_payload =
         && (_common_payload::commutative<P1, P2>
             || on_error<"specialize common_payload for both orders, or normalize so the orders answer alike">)
         && (_common_payload::injects<P1, P2>
-            || on_error<"give the type common_payload names a converting constructor from each payload">));
+            || on_error<"give the type common_payload names a converting constructor from each payload">)
+        && (_common_payload::absorbs<P1, P2>
+            || on_error<"joining the answer with a payload it already holds must name the answer again">));
 
 template<typename P1, typename P2>
     requires has_common_payload<P1, P2>
