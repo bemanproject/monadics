@@ -49,6 +49,7 @@ foreach(test_dir ${tests})
         transform
         transform_error
         compose
+        inspect
     )
 
     set(test_dir_target "${test_global_target}.${test_dir}")

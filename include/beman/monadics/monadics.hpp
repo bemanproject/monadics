@@ -10,6 +10,8 @@
 #include <beman/monadics/detail/compose.hpp>
 #include <beman/monadics/detail/either.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
+#include <beman/monadics/detail/inspect.hpp>
+#include <beman/monadics/detail/inspect_error.hpp>
 #include <beman/monadics/detail/invoke_with_error.hpp>
 #include <beman/monadics/detail/invoke_with_value.hpp>
 #include <beman/monadics/detail/just.hpp>
@@ -40,6 +42,10 @@ using detail::eitherable;
 using detail::error_only;
 using detail::get_box_traits;
 using detail::has_error_channel;
+using detail::inspect;
+using detail::inspect_error;
+using detail::inspect_errorable;
+using detail::inspectable;
 using detail::invoke_with_error;
 using detail::invoke_with_value;
 using detail::just;
