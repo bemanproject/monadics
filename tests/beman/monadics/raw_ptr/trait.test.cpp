@@ -19,14 +19,14 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(std::same_as<Traits::rebind_error<unit>, int*>);
 
     constexpr auto value = []() {
-        int value = 10;
-        return Traits::value(&value);
+        int held = 10;
+        return Traits::value(&held);
     }();
     STATIC_REQUIRE(value == 10);
 
     constexpr auto hasValue = []() {
-        int value = 10;
-        return Traits::has_value(&value);
+        int held = 10;
+        return Traits::has_value(&held);
     }();
     STATIC_REQUIRE(hasValue);
 
@@ -41,8 +41,8 @@ TEST_CASE("box-trait-for") {
     // STATIC_REQUIRE(Traits::make_error() == static_cast<int*>(nullptr));
 
     constexpr auto liftValue = []() {
-        int value = 10;
-        return *Traits::make(value);
+        int held = 10;
+        return *Traits::make(held);
     }();
     STATIC_REQUIRE(liftValue == 10);
 }
