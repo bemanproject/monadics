@@ -11,6 +11,7 @@ target_sources(
                 detail/callable_adaptor.hpp
                 detail/carry_error.hpp
                 detail/carry_value.hpp
+                detail/common_payload.hpp
                 detail/compose.hpp
                 detail/decomposable.hpp
                 detail/either.hpp

@@ -7,6 +7,7 @@
 #include <beman/monadics/detail/callable_adaptor.hpp>
 #include <beman/monadics/detail/carry_error.hpp>
 #include <beman/monadics/detail/carry_value.hpp>
+#include <beman/monadics/detail/common_payload.hpp>
 #include <beman/monadics/detail/compose.hpp>
 #include <beman/monadics/detail/either.hpp>
 #include <beman/monadics/detail/get_box_traits.hpp>
@@ -36,12 +37,15 @@ using detail::box_traits;
 using detail::callable_adaptor;
 using detail::carry_error;
 using detail::carry_value;
+using detail::common_payload;
+using detail::common_payload_t;
 using detail::compose;
 using detail::either;
 using detail::either_result_t;
 using detail::eitherable;
 using detail::error_only;
 using detail::get_box_traits;
+using detail::has_common_payload;
 using detail::has_error_channel;
 using detail::inspect;
 using detail::inspect_error;

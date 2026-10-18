@@ -349,9 +349,50 @@ Only the first two reach `either` directly. `transform` is `bind (return . f)` a
 `and_then` whose continuation applies `fn` and settles the result into `R`, so the two cannot
 disagree on any box and the functor laws follow from the monad laws. It also inherits
 `and_then`'s rule about what a continuation may return, which is why `transform` refuses a box
-whose `rebind` would change the error type, something neither `std::optional` nor
-`std::expected` permits. An operation you write against the same pieces inherits the same
-guarantee.
+whose `rebind` would change the error type to one the two cannot share, something neither
+`std::optional` nor `std::expected` permits. An operation you write against the same pieces
+inherits the same guarantee.
+
+### The payload two cases share
+
+An operation can leave a channel with two candidate types where at most one will inhabit it.
+`and_then` is that case: the continuation returns a box of the same family, and that box names an
+error type of its own, so the result's error channel has both the input's error and the returned
+box's error to hold. `or_else` is the mirror on the value channel.
+
+`common_payload<P1, P2>` names the type that holds either. It is a property of the two payloads,
+not of the channel they sit on, so each operation asks for it on whichever of its channels has two
+candidates.
+
+Two laws hold by construction and no algebra writes them: a payload joined with itself is itself,
+and a payload joined with `never`, the case a one-sided box does not have, is itself. A chain whose
+steps all fail the same way therefore needs no specialization, and that is every chain over
+`std::optional` or over one `std::expected<T, E>`.
+
+The library ships no specialization of its own. Payloads nobody adapted have no common payload,
+and an operation over them keeps refusing rather than picking a side:
+
+```
+  'specialize common_payload for these two payloads to name the type that holds either'
+```
+
+What an algebra does have to satisfy is checked. The two orders must answer alike, and the type
+named must be constructible from each payload, since the operation has to put whichever error it
+holds into it:
+
+```cpp
+struct request_error {
+    request_error(io_error);
+    request_error(parse_error);
+};
+
+template<> struct beman::monadics::common_payload<io_error, parse_error> { using type = request_error; };
+template<> struct beman::monadics::common_payload<parse_error, io_error> { using type = request_error; };
+
+std::expected<int, io_error> e = ...;
+e | and_then([](int v) { return std::expected<int, parse_error>{v}; });
+// std::expected<int, request_error>
+```
 
 ### Example: `filter`
 

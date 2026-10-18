@@ -33,6 +33,7 @@ set(tests
     carry_error
     carry_value
     compose
+    common_payload
     either
     same_box
     unreachable
