@@ -20,6 +20,7 @@
 #include <beman/monadics/detail/make_value.hpp>
 #include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/or_else.hpp>
+#include <beman/monadics/detail/same_box.hpp>
 #include <beman/monadics/detail/to.hpp>
 #include <beman/monadics/detail/transform.hpp>
 #include <beman/monadics/detail/transform_error.hpp>
@@ -46,8 +47,12 @@ using detail::inspect;
 using detail::inspect_error;
 using detail::inspect_errorable;
 using detail::inspectable;
+using detail::invocable_with_error;
+using detail::invocable_with_value;
 using detail::invoke_with_error;
+using detail::invoke_with_error_t;
 using detail::invoke_with_value;
+using detail::invoke_with_value_t;
 using detail::just;
 using detail::just_error;
 using detail::just_error_t;
@@ -58,8 +63,14 @@ using detail::never;
 using detail::no_case;
 using detail::no_error_case;
 using detail::no_value_case;
+using detail::object_result;
+using detail::on_error;
 using detail::or_else;
 using detail::or_elseable;
+using detail::same_box;
+using detail::same_box_and_error;
+using detail::same_box_and_value;
+using detail::single_case;
 using detail::transform;
 using detail::transform_error;
 using detail::transform_errorable;
