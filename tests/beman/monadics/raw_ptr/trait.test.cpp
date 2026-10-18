@@ -18,11 +18,11 @@ TEST_CASE("box-trait-for") {
     STATIC_REQUIRE(std::same_as<Traits::rebind<float>, float*>);
     STATIC_REQUIRE(std::same_as<Traits::rebind_error<unit>, int*>);
 
-    constexpr auto value = []() {
+    constexpr auto result = []() {
         int value = 10;
         return Traits::value(&value);
     }();
-    STATIC_REQUIRE(value == 10);
+    STATIC_REQUIRE(result == 10);
 
     constexpr auto hasValue = []() {
         int value = 10;
