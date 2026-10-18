@@ -3,6 +3,7 @@
 #ifndef BEMAN_MONADICS_DETAIL_UTILITY_HPP
 #define BEMAN_MONADICS_DETAIL_UTILITY_HPP
 
+#include <concepts>
 #include <cstddef>
 #include <type_traits>
 
@@ -27,6 +28,10 @@ concept on_error = false;
 
 template<typename T>
 concept deduced = !std::is_void_v<T>;
+
+template<typename Box, typename Fn, typename Declared>
+concept reads_as = std::same_as<std::invoke_result_t<Fn, Box>, Declared>
+                || std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
 
 template<typename T>
 concept object_result =

@@ -46,10 +46,6 @@ concept never_side_is_not_supplied =
      && (!std::same_as<get_error_type_t<Box, Traits>, never> || !supplies_error_side<Box, Traits>))
     || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
 
-template<typename Box, typename Fn, typename Declared>
-concept reads_as = std::same_as<std::invoke_result_t<Fn, Box>, Declared>
-                || std::same_as<std::remove_cvref_t<std::invoke_result_t<Fn, Box>>, Declared>;
-
 template<typename Box, typename Traits>
 concept value_read_agrees =
     reads_as<Box, decltype(get_value_fn<Box, Traits, get_value_type_t<Box, Traits>>()), get_value_type_t<Box, Traits>>
