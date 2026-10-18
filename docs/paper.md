@@ -170,13 +170,14 @@ struct std::box::box_traits<std::expected<T, E>> {
 };
 ```
 
-`std::optional<T>` needs only `error()` - `std::nullopt` is a compile-time constant, not
-something stored inside the object:
+`std::optional<T>` stores nothing on its failure side, so its error type deduces to `unit`.
+What cannot be deduced is how to build an empty one, since value-initialising a box means the
+engaged state for some types and the empty state for others:
 
 ```cpp
 template <typename T>
 struct std::box::box_traits<std::optional<T>> {
-    static constexpr auto error() { return std::nullopt; }
+    using error_type = unit;
 };
 ```
 
@@ -186,7 +187,7 @@ one-line specialization suffices:
 ```cpp
 template <typename T>
 struct std::box::box_traits<boost::optional<T>> {
-    static constexpr auto error() { return boost::none; }
+    using error_type = unit;
 };
 ```
 
