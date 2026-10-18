@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 find_package(Catch2 3 REQUIRED)
+
+# Held to our own warnings from here down. Set after the dependency is brought
+# in, because it is fetched into this directory's scope and its sources are not
+# ours to keep clean.
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
 include(Catch)
 

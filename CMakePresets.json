@@ -11,7 +11,30 @@
         "CMAKE_CXX_EXTENSIONS": false,
         "CMAKE_CXX_STANDARD_REQUIRED": true,
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
-        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/infra/cmake/use-fetch-content.cmake"
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/infra/cmake/use-fetch-content.cmake",
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_LINK_WARNING_AS_ERROR": "ON"
+      }
+    },
+    {
+      "name": "_gnu-warnings",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Wcast-qual -Wcast-align -Wdouble-promotion -Wimplicit-fallthrough -Wzero-as-null-pointer-constant -Wunused -Wuseless-cast -Wduplicated-cond -Wduplicated-branches -Wlogical-op -fconcepts-diagnostics-depth=3"
+      }
+    },
+    {
+      "name": "_clang-warnings",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Wcast-qual -Wcast-align -Wdouble-promotion -Wimplicit-fallthrough -Wzero-as-null-pointer-constant -Wunused -ferror-limit=0 -ftemplate-backtrace-limit=0"
+      }
+    },
+    {
+      "name": "_msvc-warnings",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "/W4 /Zc:__cplusplus /Zc:preprocessor /bigobj /utf-8 /diagnostics:caret"
       }
     },
     {
@@ -34,7 +57,8 @@
       "displayName": "GCC Debug Build",
       "inherits": [
         "_root-config",
-        "_debug-base"
+        "_debug-base",
+        "_gnu-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/gnu-toolchain.cmake"
@@ -45,7 +69,8 @@
       "displayName": "GCC Release Build",
       "inherits": [
         "_root-config",
-        "_release-base"
+        "_release-base",
+        "_gnu-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/gnu-toolchain.cmake"
@@ -56,7 +81,8 @@
       "displayName": "Clang Debug Build",
       "inherits": [
         "_root-config",
-        "_debug-base"
+        "_debug-base",
+        "_clang-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/llvm-toolchain.cmake"
@@ -72,7 +98,8 @@
       "displayName": "Clang Release Build",
       "inherits": [
         "_root-config",
-        "_release-base"
+        "_release-base",
+        "_clang-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/llvm-toolchain.cmake"
@@ -88,7 +115,8 @@
       "displayName": "Appleclang Debug Build",
       "inherits": [
         "_root-config",
-        "_debug-base"
+        "_debug-base",
+        "_clang-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
@@ -104,7 +132,8 @@
       "displayName": "Appleclang Release Build",
       "inherits": [
         "_root-config",
-        "_release-base"
+        "_release-base",
+        "_clang-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
@@ -120,7 +149,8 @@
       "displayName": "MSVC Debug Build",
       "inherits": [
         "_root-config",
-        "_debug-base"
+        "_debug-base",
+        "_msvc-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
@@ -136,7 +166,8 @@
       "displayName": "MSVC Release Build",
       "inherits": [
         "_root-config",
-        "_release-base"
+        "_release-base",
+        "_msvc-warnings"
       ],
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
