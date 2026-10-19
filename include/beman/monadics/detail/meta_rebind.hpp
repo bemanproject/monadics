@@ -15,12 +15,19 @@ struct meta_rebind {
     using rebind = Box<T, Args...>;
 };
 
+namespace _meta_rebind {
+
+template<template<typename...> typename Box, typename V, typename... Args>
+[[nodiscard]] consteval auto of(Box<V, Args...>*) noexcept {
+    return std::type_identity<meta_rebind<Box, Args...>>{};
+}
+
+} // namespace _meta_rebind
+
 template<decomposable<1> Box>
 [[nodiscard]] consteval auto get_meta_rebind() noexcept {
-    return []<template<typename...> typename T, typename V, typename... Args>(T<V, Args...>*) {
-        return std::type_identity<meta_rebind<T, Args...>>{};
-    }(as_pointer<Box>);
-};
+    return _meta_rebind::of(as_pointer<Box>);
+}
 
 } // namespace beman::monadics::detail
 
