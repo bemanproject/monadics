@@ -17,6 +17,7 @@ target_sources(
                 detail/decomposable.hpp
                 detail/either.hpp
                 detail/get_box_traits.hpp
+                detail/get_error.hpp
                 detail/get_error_fn.hpp
                 detail/get_error_type.hpp
                 detail/get_make_error_fn.hpp

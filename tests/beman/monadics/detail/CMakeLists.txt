@@ -9,6 +9,7 @@ set(tests
     box_traits
     decomposable
     get_box_traits
+    get_error
     get_error_fn
     get_error_type
     get_make_error_fn
