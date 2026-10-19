@@ -20,8 +20,8 @@ namespace {
 
 using E = just_error_t<int>;
 
-template<typename Box, typename V>
-concept rebindable_to = requires { typename get_box_traits<Box>::template rebind<V>; };
+template<typename Traits, typename V>
+concept rebindable_to = requires { typename Traits::template rebind<V>; };
 
 } // namespace
 
@@ -88,9 +88,9 @@ TEST_CASE("reading-a-reference-carrier-never-moves-from-the-referent") {
 }
 
 TEST_CASE("cannot-claim-a-value-it-has-no-room-for") {
-    STATIC_REQUIRE(rebindable_to<E, never>);
+    STATIC_REQUIRE(rebindable_to<get_box_traits<E>, never>);
     STATIC_REQUIRE(std::same_as<get_box_traits<E>::rebind<never>, E>);
-    STATIC_REQUIRE_FALSE(rebindable_to<E, int>);
+    STATIC_REQUIRE_FALSE(rebindable_to<get_box_traits<E>, int>);
 }
 
 TEST_CASE("leaves-its-family-through-to") {
