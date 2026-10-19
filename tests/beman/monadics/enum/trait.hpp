@@ -24,26 +24,26 @@ typedef enum {
 
 }; // extern "C"
 
-template<std::same_as<CURLcode> Box>
-struct beman::monadics::box_traits<Box> {
+template<>
+struct beman::monadics::box_traits<CURLcode> {
     using value_type = void;
     using error_type = CURLcode;
 
     template<std::same_as<value_type> V>
-    using rebind = Box;
+    using rebind = CURLcode;
 
     template<std::same_as<error_type> E>
-    using rebind_error = Box;
+    using rebind_error = CURLcode;
 
-    [[nodiscard]] static constexpr bool has_value(const Box& box) noexcept { return box == CURLE_OK; }
+    [[nodiscard]] static constexpr bool has_value(const CURLcode& box) noexcept { return box == CURLE_OK; }
 
-    static constexpr value_type value(Box&&) noexcept {}
+    static constexpr value_type value(CURLcode&&) noexcept {}
 
     [[nodiscard]] static constexpr decltype(auto) error(auto&& box) noexcept {
         return std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] static constexpr decltype(auto) make() noexcept { return Box{CURLE_OK}; }
+    [[nodiscard]] static constexpr decltype(auto) make() noexcept { return CURLcode{CURLE_OK}; }
 
     [[nodiscard]] static constexpr decltype(auto) make_error(auto&& e) noexcept {
         return std::forward<decltype(e)>(e);
