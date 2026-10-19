@@ -44,7 +44,7 @@ namespace beman::monadics::detail::tests {
 TEST_CASE("with-error-channel") {
     constexpr auto result = []() {
         Box<int, double> box{false, 0, 3.5};
-        return invoke_with_error([](double e) -> int { return e * 2; }, std::move(box));
+        return invoke_with_error([](double e) -> int { return static_cast<int>(e * 2); }, std::move(box));
     }();
     STATIC_REQUIRE(result == 7);
 }
