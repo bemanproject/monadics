@@ -19,7 +19,7 @@ TEST_CASE("runs-on-the-value-and-hands-the-box-back") {
     const auto same = box | inspect([&seen](int v) { seen = v; });
 
     REQUIRE(seen == 10);
-    REQUIRE(same == box);
+    REQUIRE((same == box));
 }
 
 TEST_CASE("skipped-when-failed") {
@@ -29,7 +29,7 @@ TEST_CASE("skipped-when-failed") {
     const auto same = box | inspect([&seen](int v) { seen = v; });
 
     REQUIRE(seen == 0);
-    REQUIRE(same == box);
+    REQUIRE((same == box));
 }
 
 TEST_CASE("inspect_error-receives-the-stored-error") {
@@ -39,7 +39,7 @@ TEST_CASE("inspect_error-receives-the-stored-error") {
     const auto same = box | inspect_error([&seen](int e) { seen = e; });
 
     REQUIRE(seen == 7);
-    REQUIRE(same == box);
+    REQUIRE((same == box));
 }
 
 TEST_CASE("inspect_error-skipped-when-engaged") {
@@ -48,7 +48,7 @@ TEST_CASE("inspect_error-skipped-when-engaged") {
     const auto same = Box{10} | inspect_error([&seen](int e) { seen = e; });
 
     REQUIRE(seen == 0);
-    REQUIRE(same == Box{10});
+    REQUIRE((same == Box{10}));
 }
 
 TEST_CASE("a-nullary-handler-is-rejected-where-an-error-is-stored") {
@@ -67,7 +67,7 @@ TEST_CASE("chains-with-the-other-operations") {
 
     REQUIRE(seen == 0);
     REQUIRE(errs == 7);
-    REQUIRE(result == Box{70});
+    REQUIRE((result == Box{70}));
 }
 
 } // namespace beman::monadics::tests
