@@ -8,6 +8,7 @@
 #include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
+#include <type_traits>
 #include <utility>
 
 namespace beman::monadics::detail {
@@ -30,9 +31,22 @@ template<typename Fn, box Box>
     }
 }
 
+namespace _invoke_with_error {
+
+template<typename Fn, typename Box, typename Traits = get_box_traits<Box>>
+[[nodiscard]] consteval decltype(auto) result() noexcept {
+    if constexpr (requires { std::declval<Fn>()(Traits::error(std::declval<Box>())); }) {
+        return std::type_identity<decltype(std::declval<Fn>()(Traits::error(std::declval<Box>())))>{};
+    } else {
+        return std::type_identity<decltype(std::declval<Fn>()())>{};
+    }
+}
+
+} // namespace _invoke_with_error
+
 template<typename Fn, typename Box>
     requires invocable_with_error<Fn, Box>
-using invoke_with_error_t = decltype(invoke_with_error(std::declval<Fn>(), std::declval<Box>()));
+using invoke_with_error_t = typename decltype(_invoke_with_error::result<Fn, Box>())::type;
 
 } // namespace beman::monadics::detail
 
