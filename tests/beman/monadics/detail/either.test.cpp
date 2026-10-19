@@ -83,7 +83,7 @@ inline constexpr auto any = [](auto&&) {
     return 0;
 };
 
-inline constexpr auto told = []<typename R>(auto&&... v) -> R {
+inline constexpr auto told = []<typename R>([[maybe_unused]] auto&&... v) -> R {
     return R{static_cast<int>(sizeof...(v))};
 };
 

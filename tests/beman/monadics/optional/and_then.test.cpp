@@ -28,7 +28,8 @@ TEST_CASE("with-nullopt") {
 }
 
 TEST_CASE("with-value-variadic") {
-    constexpr auto result = std::optional<int>{10} | and_then([](auto&&... v) { return std::optional{sizeof...(v)}; });
+    constexpr auto result =
+        std::optional<int>{10} | and_then([]([[maybe_unused]] auto&&... v) { return std::optional{sizeof...(v)}; });
     STATIC_REQUIRE(std::same_as<decltype(result), const std::optional<std::size_t>>);
     STATIC_REQUIRE(result.has_value() == true);
     STATIC_REQUIRE(result.value() == 1);
