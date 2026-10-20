@@ -6,6 +6,8 @@
 
 #include <helpers/move_only.hpp>
 
+#include <functional>
+
 namespace beman::monadics::tests {
 
 TEST_CASE("with-value") {
@@ -26,7 +28,8 @@ TEST_CASE("with-nullopt") {
 }
 
 TEST_CASE("with-value-variadic") {
-    constexpr auto result = std::optional<int>{10} | and_then([](auto&&... v) { return std::optional{sizeof...(v)}; });
+    constexpr auto result =
+        std::optional<int>{10} | and_then([]([[maybe_unused]] auto&&... v) { return std::optional{sizeof...(v)}; });
     STATIC_REQUIRE(std::same_as<decltype(result), const std::optional<std::size_t>>);
     STATIC_REQUIRE(result.has_value() == true);
     STATIC_REQUIRE(result.value() == 1);
@@ -69,6 +72,14 @@ TEMPLATE_TEST_CASE_SIG(
     (std::optional<helpers::MoveOnly>&, [](helpers::MoveOnly) { return std::optional<helpers::MoveOnly>{}; }, false)
 ) {
     STATIC_REQUIRE(and_thenable<Box, decltype(Fn)> == Expected);
+}
+
+TEST_CASE("rejects-a-callable-that-returns-a-reference") {
+    using Nested = std::optional<std::optional<int>>;
+
+    STATIC_REQUIRE_FALSE(and_thenable<Nested, std::identity>);
+    STATIC_REQUIRE_FALSE(or_elseable<Nested, std::identity>);
+    STATIC_REQUIRE_FALSE(transformable<std::optional<int>&, decltype([](int& v) -> int& { return v; })>);
 }
 
 } // namespace beman::monadics::tests

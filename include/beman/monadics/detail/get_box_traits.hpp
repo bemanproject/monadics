@@ -3,34 +3,62 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
 #define BEMAN_MONADICS_DETAIL_GET_BOX_TRAITS_HPP
 
+#include <concepts>
 #include <type_traits>
 
 #include <beman/monadics/detail/box_traits.hpp>
+#include <beman/monadics/detail/get_error.hpp>
 #include <beman/monadics/detail/get_error_fn.hpp>
 #include <beman/monadics/detail/get_error_type.hpp>
 #include <beman/monadics/detail/get_make_error_fn.hpp>
 #include <beman/monadics/detail/get_make_fn.hpp>
 #include <beman/monadics/detail/get_rebind.hpp>
 #include <beman/monadics/detail/get_rebind_error.hpp>
+#include <beman/monadics/detail/get_value.hpp>
 #include <beman/monadics/detail/get_value_fn.hpp>
 #include <beman/monadics/detail/get_value_query_fn.hpp>
 #include <beman/monadics/detail/get_value_type.hpp>
+#include <beman/monadics/detail/never.hpp>
+#include <beman/monadics/detail/unit.hpp>
 
 namespace beman::monadics::detail {
 
 namespace _get_box_traits {
 
 template<typename Box, typename Traits>
-concept box = has_box_traits<Box>
-           && has_value_type<Box, Traits>
-           && has_error_type<Box, Traits>
-           && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
-           && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
-           && has_value_query_fn<Box, Traits>
-           && has_value_fn<Box, Traits>
-           && has_error_fn<Box, Traits>
-           && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
-           && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>;
+concept both_cases_carry_nothing =
+    std::is_void_v<get_value_type_t<Box, Traits>> && std::same_as<get_error_type_t<Box, Traits>, unit>;
+
+template<typename Box, typename Traits>
+concept states_are_distinct = !both_cases_carry_nothing<Box, Traits> || requires { Traits::make(); } || requires {
+    Traits::make_error(unit{});
+} || on_error<"a box whose value and failure both carry nothing must provide Traits::make() or make_error(unit)">;
+
+template<typename Box, typename Traits>
+concept supplies_value_side = requires { Traits::value(std::declval<Box>()); }
+                           || requires { Traits::make(std::declval<get_value_type_t<Box, Traits>>()); };
+
+template<typename Box, typename Traits>
+concept supplies_error_side = requires { Traits::error(std::declval<Box>()); }
+                           || requires { Traits::make_error(std::declval<get_error_type_t<Box, Traits>>()); };
+
+template<typename Box, typename Traits>
+concept never_side_is_not_supplied =
+    ((!std::same_as<get_value_type_t<Box, Traits>, never> || !supplies_value_side<Box, Traits>)
+     && (!std::same_as<get_error_type_t<Box, Traits>, never> || !supplies_error_side<Box, Traits>))
+    || on_error<"a side named never is synthesized, so box_traits must not also supply its operations">;
+
+template<typename Box, typename Traits>
+concept assembled_box = has_box_traits<Box>
+                     && has_value_access<Box, Traits>
+                     && has_error_access<Box, Traits>
+                     && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
+                     && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
+                     && has_value_query_fn<Box, Traits, get_value_type_t<Box, Traits>, get_error_type_t<Box, Traits>>
+                     && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
+                     && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
+                     && states_are_distinct<Box, Traits>
+                     && never_side_is_not_supplied<Box, Traits>;
 
 template<typename Box, typename Traits>
 struct traits {
@@ -39,14 +67,16 @@ struct traits {
     using error_type = get_error_type_t<Box, Traits>;
 
     template<typename T>
+        requires requires { typename get_rebind_t<Box, Traits, value_type>::template rebind<T>; }
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template<typename E>
+        requires requires { typename get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>; }
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
-    static constexpr auto has_value = get_value_query_fn<Box, Traits>();
-    static constexpr auto value = get_value_fn<Box, Traits>();
-    static constexpr auto error = get_error_fn<Box, Traits>();
+    static constexpr auto has_value = get_value_query_fn<Box, Traits, value_type, error_type>();
+    static constexpr auto value = get_value<Box, Traits>();
+    static constexpr auto error = get_error<Box, Traits>();
 
     static constexpr auto make = get_make_fn<Box, Traits, value_type>();
     static constexpr auto make_error = get_make_error_fn<Box, Traits, error_type>();
@@ -55,16 +85,34 @@ struct traits {
 } // namespace _get_box_traits
 
 template<typename Box>
-concept box = _get_box_traits::box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
-                                   box_traits<std::remove_cvref_t<Box>>>;
+concept box = _get_box_traits::assembled_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
+                                             box_traits<std::remove_cvref_t<Box>>>;
 
 template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
 
 template<typename Box>
-concept has_error_channel = requires {
-    { get_box_traits<Box>::error(std::declval<Box>()) };
-};
+concept no_value_case = box<Box> && std::same_as<typename get_box_traits<Box>::value_type, never>;
+
+template<typename Box>
+concept no_error_case = box<Box> && std::same_as<typename get_box_traits<Box>::error_type, never>;
+
+template<typename Box>
+concept value_only = no_error_case<Box> && !no_value_case<Box>;
+
+template<typename Box>
+concept error_only = no_value_case<Box> && !no_error_case<Box>;
+
+template<typename Box>
+concept single_case = value_only<Box> || error_only<Box>;
+
+template<typename Box>
+concept no_case = no_value_case<Box> && no_error_case<Box>;
+
+template<typename Box>
+concept has_error_channel = box<Box>
+                         && !std::same_as<typename get_box_traits<Box>::error_type, unit>
+                         && !std::same_as<typename get_box_traits<Box>::error_type, never>;
 
 } // namespace beman::monadics::detail
 

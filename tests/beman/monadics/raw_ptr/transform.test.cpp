@@ -6,7 +6,7 @@
 
 namespace beman::monadics::tests {
 
-TEMPLATE_TEST_CASE_SIG("invocable",
+TEMPLATE_TEST_CASE_SIG("a-pointer-cannot-be-built-from-a-transformed-value",
                        "",
                        ((typename Box, auto Fn, bool Expected), Box, Fn, Expected),
                        (

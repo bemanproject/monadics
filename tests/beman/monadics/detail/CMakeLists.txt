@@ -8,25 +8,37 @@ set(tests
     as_pointer
     box_traits
     decomposable
+    get_box_traits
+    get_error
     get_error_fn
     get_error_type
     get_make_error_fn
     get_make_fn
     get_rebind
     get_rebind_error
+    get_value
     get_value_fn
     get_value_query_fn
     get_value_type
     instance_of
+    just
+    just_error
     invoke_with_error
     invoke_with_value
     meta_extract_value_type
     meta_rebind_error
     meta_rebind
+    make_error
+    make_value
+    never
     callable_adaptor
-    propagate_error
-    propagate_value
+    carry_error
+    carry_value
+    compose
+    common_payload
+    either
     same_box
+    unreachable
 )
 
 foreach(test_name ${tests})

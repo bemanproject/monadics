@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_value_query_fn.hpp>
+#include <beman/monadics/detail/never.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -59,25 +60,25 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (MemberHasValueWrongReturnType, false)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
-        STATIC_REQUIRE(has_value_query_fn<Box, Traits>);
+        STATIC_REQUIRE(has_value_query_fn<Box, Traits, int, int>);
     } else {
-        STATIC_REQUIRE_FALSE(has_value_query_fn<Box, Traits>);
+        STATIC_REQUIRE_FALSE(has_value_query_fn<Box, Traits, int, int>);
     }
 }
 
 TEMPLATE_TEST_CASE("get", "", MemberHasValue, TraitsHasValue, MemberAndTraits) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{}) == false);
-    STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{true}) == true);
+    STATIC_REQUIRE(get_value_query_fn<Box, Traits, int, int>()(Box{}) == false);
+    STATIC_REQUIRE(get_value_query_fn<Box, Traits, int, int>()(Box{true}) == true);
 }
 
 TEST_CASE("traits-over-member-function") {
     using Box = MemberAndTraits;
     using Traits = box_traits<Box>;
 
-    STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{.valid = true, .value_flag = false}) == true);
-    STATIC_REQUIRE(get_value_query_fn<Box, Traits>()(Box{.valid = false, .value_flag = true}) == false);
+    STATIC_REQUIRE(get_value_query_fn<Box, Traits, int, int>()(Box{.valid = true, .value_flag = false}) == true);
+    STATIC_REQUIRE(get_value_query_fn<Box, Traits, int, int>()(Box{.valid = false, .value_flag = true}) == false);
 }
 
 } // namespace beman::monadics::detail::tests

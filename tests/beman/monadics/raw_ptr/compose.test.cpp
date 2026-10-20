@@ -8,16 +8,16 @@ namespace beman::monadics::tests {
 
 TEST_CASE("with-null-then-else-then") {
     constexpr int value = []() {
-        int value{10};
+        int held{10};
         int* p = nullptr;
 
         auto result = p
-                    | and_then([&value](auto&& v) {
-                          value = v;
-                          value += 100;
-                          return &value;
+                    | and_then([&held](auto&& v) {
+                          held = v;
+                          held += 100;
+                          return &held;
                       })
-                    | or_else([&value]() { return &value; })
+                    | or_else([&held]() { return &held; })
                     | and_then([](auto&& v) {
                           v += 10;
                           return &v;
@@ -30,21 +30,21 @@ TEST_CASE("with-null-then-else-then") {
 
 TEST_CASE("with-value-else-then-else-then") {
     constexpr int value = []() {
-        int value{10};
-        int* p = &value;
+        int held{10};
+        int* p = &held;
 
         auto result = p
                     | or_else([]() {
-                          static int value = 1;
-                          return &value;
+                          static int fallback = 1;
+                          return &fallback;
                       })
                     | and_then([](auto&& v) {
                           v += 1;
                           return &v;
                       })
                     | or_else([]() {
-                          int* p = nullptr;
-                          return p;
+                          int* none = nullptr;
+                          return none;
                       })
                     | and_then([](auto&& v) {
                           v += 10;

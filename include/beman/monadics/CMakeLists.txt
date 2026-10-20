@@ -7,31 +7,47 @@ target_sources(
             FILES
                 detail/and_then.hpp
                 detail/as_pointer.hpp
+                detail/binds_temporary.hpp
                 detail/box_traits.hpp
                 detail/callable_adaptor.hpp
+                detail/carry_error.hpp
+                detail/carry_value.hpp
+                detail/common_payload.hpp
+                detail/compose.hpp
                 detail/decomposable.hpp
+                detail/either.hpp
                 detail/get_box_traits.hpp
+                detail/get_error.hpp
                 detail/get_error_fn.hpp
                 detail/get_error_type.hpp
                 detail/get_make_error_fn.hpp
                 detail/get_make_fn.hpp
                 detail/get_rebind.hpp
                 detail/get_rebind_error.hpp
+                detail/get_value.hpp
                 detail/get_value_fn.hpp
                 detail/get_value_query_fn.hpp
                 detail/get_value_type.hpp
+                detail/inspect.hpp
+                detail/inspect_error.hpp
                 detail/instance_of.hpp
                 detail/invoke_with_value.hpp
                 detail/invoke_with_error.hpp
                 detail/meta_extract_value_type.hpp
                 detail/meta_rebind_error.hpp
                 detail/meta_rebind.hpp
+                detail/just.hpp
+                detail/just_error.hpp
+                detail/make_error.hpp
+                detail/make_value.hpp
+                detail/never.hpp
                 detail/or_else.hpp
-                detail/propagate_value.hpp
-                detail/propagate_error.hpp
                 detail/same_box.hpp
+                detail/to.hpp
                 detail/transform.hpp
                 detail/transform_error.hpp
                 detail/utility.hpp
+                detail/unit.hpp
+                detail/unreachable.hpp
                 monadics.hpp
 )

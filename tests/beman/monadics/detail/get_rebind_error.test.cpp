@@ -4,6 +4,8 @@
 
 #include <catch2/catch_template_test_macros.hpp>
 
+#include <beman/monadics/detail/unit.hpp>
+
 namespace beman::monadics::detail::tests {
 
 namespace {
@@ -36,11 +38,6 @@ struct box_traits<TraitsWithRebindError> {
 
 struct TypeWithoutErrorChannel {};
 
-template<>
-struct box_traits<TypeWithoutErrorChannel> {
-    static constexpr int error() noexcept { return -1; }
-};
-
 template<typename T, typename E>
 struct MetaRebindError {};
 
@@ -59,7 +56,7 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (TypeAndTraitsWithRebindError<int, int>, true),
                        (TypeWithRebind<int, int>, true),
                        (TraitsWithRebindError, true),
-                       (TypeWithoutErrorChannel, true),
+                       (TypeWithoutErrorChannel, false),
                        (MetaRebindError<int, int>, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
@@ -74,13 +71,20 @@ TEMPLATE_TEST_CASE_SIG("get",
                        ((typename Box, typename Expected), Box, Expected),
                        (TraitsWithRebindError, TraitsWithRebindError),
                        (TypeWithRebind<int, int>, TypeWithRebind<int, double>),
-                       (TypeWithoutErrorChannel, TypeWithoutErrorChannel),
                        (MetaRebindError<int, int>, MetaRebindError<int, double>),
                        (TypeAndTraitsWithRebindError<int, int>, TypeAndTraitsWithRebindError<int, double>)) {
     using Traits = box_traits<Box>;
     STATIC_REQUIRE(
         std::same_as<typename get_rebind_error_t<Box, Traits, int>::template rebind_error<double>, Expected>
     );
+}
+
+TEST_CASE("a-failure-storing-nothing-rebinds-to-unit-and-nothing-else") {
+    using Box = TypeWithoutErrorChannel;
+    using Traits = box_traits<Box>;
+    STATIC_REQUIRE(has_rebind_error<Box, Traits, unit>);
+    STATIC_REQUIRE_FALSE(has_rebind_error<Box, Traits, double>);
+    STATIC_REQUIRE(std::same_as<typename get_rebind_error_t<Box, Traits, unit>::template rebind_error<unit>, Box>);
 }
 
 } // namespace beman::monadics::detail::tests

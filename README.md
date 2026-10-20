@@ -33,7 +33,7 @@ This library generalizes the monadic vocabulary to any type that models a "box".
 
 - Free-function monadic operations
 - Pipe (`|`) syntax for composition
-- Extensible via `box_traits`
+- Extensible via `box_traits`, often a single function
 - Value-category preserving
 - Concept-constrained APIs
 - Semantics aligned with standard monadic operations
@@ -51,6 +51,14 @@ The initial operation set mirrors the C++23/C++26 monadic vocabulary:
 
 Semantics follow `std::expected` / `std::optional`.
 
+Built on the same basis, and available for a box of any shape:
+
+- `inspect` and `inspect_error` observe a value or a failure and hand the box
+  back unchanged
+- `to` moves a result between box types, widening or narrowing the failure
+- `either` is the case-analysis primitive the four operations derive from,
+  exposed so a user can write their own operation against it
+
 The goal is to validate the unifying abstraction first.
 
 ---
@@ -67,7 +75,7 @@ The goal is to validate the unifying abstraction first.
 
 template <typename T>
 struct beman::monadics::box_traits<std::optional<T>> {
-    [[nodiscard]] static constexpr auto error() noexcept { return std::nullopt; }
+    using error_type = unit;
 };
 
 int main() {
@@ -82,7 +90,7 @@ int main() {
               return static_cast<int>(v);
           })
         | bms::and_then([](int) {
-              return std::optional<char>{};  // failure
+              return std::optional<int>{};  // failure
           })
         | bms::or_else([] {
               return std::optional{EXIT_SUCCESS};
@@ -94,10 +102,14 @@ int main() {
 
 ## `std::shared_ptr`
 
-`std::shared_ptr` can act as a box: it may contain a value or be empty. Unlike `std::optional`, it has no error type, so `transform_error` is disabled. We can still use `and_then`, `transform`, and `or_else`.
+`std::shared_ptr` can act as a box: it may contain a value or be empty. Nothing is
+stored on the failure side, so its `error_type` is `unit` and `transform_error` is
+unavailable. `and_then`, `transform`, `or_else` and `inspect` all still apply, and a
+handler for the failure side takes no argument because there is nothing to pass it.
 
 ```cpp
 #include <beman/monadics/monadics.hpp>
+#include <iostream>
 #include <memory>
 
 template <typename T>
@@ -109,8 +121,6 @@ struct beman::monadics::box_traits<std::shared_ptr<T>> {
     [[nodiscard]] static constexpr decltype(auto) value(auto&& box) noexcept {
         return *std::forward<decltype(box)>(box);
     }
-
-    [[nodiscard]] static constexpr auto error() noexcept { return nullptr; }
 
     [[nodiscard]] static constexpr decltype(auto) make(auto&& value) noexcept {
         return std::make_shared<T>(std::forward<decltype(value)>(value));

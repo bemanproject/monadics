@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_make_error_fn.hpp>
+#include <beman/monadics/detail/unit.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -43,7 +44,28 @@ struct NonTypeConstructibleWithError {
     explicit NonTypeConstructibleWithError(struct tag) {}
 };
 
+struct DefaultConstructsToItsFailure {
+    int err{-1};
+
+    constexpr bool operator==(const DefaultConstructsToItsFailure&) const = default;
+};
+
 } // namespace
+
+TEST_CASE("a-failure-that-carries-nothing-is-the-default-constructed-box") {
+    using Box = DefaultConstructsToItsFailure;
+    using Traits = box_traits<Box>;
+
+    STATIC_REQUIRE(has_make_error_fn<Box, Traits, unit>);
+
+    constexpr auto fn = get_make_error_fn<Box, Traits, unit>();
+    STATIC_REQUIRE(fn(unit{}) == Box{});
+}
+
+TEST_CASE("a-box-that-cannot-be-default-constructed-gets-nothing-synthesized") {
+    using Box = NonTypeConstructibleWithError;
+    STATIC_REQUIRE_FALSE(has_make_error_fn<Box, box_traits<Box>, unit>);
+}
 
 TEMPLATE_TEST_CASE_SIG("concept",
                        "",

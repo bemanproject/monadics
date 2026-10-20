@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
-#define BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
+#ifndef BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP
+#define BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP
 
 #include <beman/monadics/monadics.hpp>
 
@@ -9,6 +9,8 @@
 
 template<typename T>
 struct beman::monadics::box_traits<std::shared_ptr<T>> {
+    using error_type = unit;
+
     [[nodiscard]] static constexpr bool has_value(const std::shared_ptr<T>& box) noexcept {
         return static_cast<bool>(box);
     }
@@ -17,11 +19,9 @@ struct beman::monadics::box_traits<std::shared_ptr<T>> {
         return *std::forward<decltype(box)>(box);
     }
 
-    [[nodiscard]] static constexpr auto error() noexcept { return nullptr; }
-
     [[nodiscard]] static constexpr decltype(auto) make(auto&& value) noexcept {
         return std::make_shared<T>(std::forward<decltype(value)>(value));
     }
 };
 
-#endif // BEMAN_MONADICS_OPTIONAL_TRAIT_HPP
+#endif // BEMAN_MONADICS_SHARED_PTR_TRAIT_HPP

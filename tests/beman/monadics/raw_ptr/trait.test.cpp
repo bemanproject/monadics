@@ -14,19 +14,19 @@ concept hm = requires {
 TEST_CASE("box-trait-for") {
     using Traits = get_box_traits<int*>;
     STATIC_REQUIRE(std::same_as<Traits::value_type, int>);
-    STATIC_REQUIRE(std::same_as<Traits::error_type, std::nullptr_t>);
+    STATIC_REQUIRE(std::same_as<Traits::error_type, unit>);
     STATIC_REQUIRE(std::same_as<Traits::rebind<float>, float*>);
-    STATIC_REQUIRE(std::same_as<Traits::rebind_error<float>, int*>);
+    STATIC_REQUIRE(std::same_as<Traits::rebind_error<unit>, int*>);
 
     constexpr auto value = []() {
-        int value = 10;
-        return Traits::value(&value);
+        int held = 10;
+        return Traits::value(&held);
     }();
     STATIC_REQUIRE(value == 10);
 
     constexpr auto hasValue = []() {
-        int value = 10;
-        return Traits::has_value(&value);
+        int held = 10;
+        return Traits::has_value(&held);
     }();
     STATIC_REQUIRE(hasValue);
 
@@ -35,14 +35,14 @@ TEST_CASE("box-trait-for") {
     }();
     STATIC_REQUIRE(noValue == false);
 
-    STATIC_REQUIRE(Traits::error() == nullptr);
+    STATIC_REQUIRE(std::same_as<decltype(Traits::error(std::declval<int*>())), unit>);
 
     // should be ok
     // STATIC_REQUIRE(Traits::make_error() == static_cast<int*>(nullptr));
 
     constexpr auto liftValue = []() {
-        int value = 10;
-        return *Traits::make(value);
+        int held = 10;
+        return *Traits::make(held);
     }();
     STATIC_REQUIRE(liftValue == 10);
 }

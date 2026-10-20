@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 find_package(Catch2 3 REQUIRED)
+
+# Held to our own warnings from here down. Set after the dependency is brought
+# in, because it is fetched into this directory's scope and its sources are not
+# ours to keep clean.
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
 include(Catch)
 
@@ -24,6 +29,11 @@ set(test_global_target "beman.monadics.tests")
 add_custom_target(${test_global_target})
 
 add_subdirectory(detail)
+add_subdirectory(laws)
+
+if(BEMAN_MONADICS_HAVE_STD_EXPECTED)
+    add_subdirectory(to)
+endif()
 
 set(tests
     optional
@@ -45,6 +55,7 @@ foreach(test_dir ${tests})
         transform
         transform_error
         compose
+        inspect
     )
 
     set(test_dir_target "${test_global_target}.${test_dir}")
