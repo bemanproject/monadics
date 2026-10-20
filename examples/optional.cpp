@@ -18,5 +18,5 @@ int main() {
                       | bms::transform([](auto&& v) { return static_cast<int>(v); })
                       | bms::and_then([](auto) { return std::optional<std::size_t>{}; })
                       | bms::or_else([]() { return std::optional<std::size_t>{EXIT_SUCCESS}; });
-    return result.value_or(EXIT_FAILURE);
+    return static_cast<int>(result.value_or(EXIT_FAILURE));
 }
