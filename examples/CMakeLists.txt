@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+
 set(examples_global_target "beman.monadics.examples")
 add_custom_target(${examples_global_target})
 
