@@ -160,9 +160,7 @@ You can disable building examples by setting CMake option `BEMAN_MONADICS_BUILD_
 | GCC        | 12-11   | C++23, C++20  | libstdc++         |
 | Clang      | 23-19   | C++26-C++20   | libstdc++, libc++ |
 | Clang      | 18      | C++26-C++20   | libc++            |
-| Clang      | 18      | C++23, C++20  | libstdc++         |
 | Clang      | 17      | C++26-C++20   | libc++            |
-| Clang      | 17      | C++20         | libstdc++         |
 | AppleClang | latest  | C++26-C++20   | libc++            |
 | MSVC       | latest  | C++23         | MSVC STL          |
 
