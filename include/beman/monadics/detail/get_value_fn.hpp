@@ -3,15 +3,25 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_VALUE_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_VALUE_FN_HPP
 
+#include <beman/monadics/detail/never.hpp>
+#include <beman/monadics/detail/unreachable.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
+#include <concepts>
 #include <utility>
 
 namespace beman::monadics::detail {
 
 template<typename Box, typename Traits>
+concept supplies_value = requires { Traits::value(std::declval<Box>()); };
+
+template<typename Box, typename Traits, typename V>
 [[nodiscard]] consteval decltype(auto) get_value_fn() noexcept {
-    if constexpr (requires { Traits::value(std::declval<Box>()); }) {
+    if constexpr (std::same_as<V, never>) {
+        return [](auto&&) -> never {
+            unreachable();
+        };
+    } else if constexpr (supplies_value<Box, Traits>) {
         return [](auto&& b) -> decltype(auto)
                    requires requires { Traits::value(std::forward<decltype(b)>(b)); }
         {
@@ -26,10 +36,13 @@ template<typename Box, typename Traits>
     }
 }
 
-template<typename Box, typename Traits>
-concept has_value_fn = requires {
-    { get_value_fn<Box, Traits>() } -> deduced;
-} || on_error<"provide Traits::value(Box) or Box::value()">;
+template<typename Box, typename Traits, typename V>
+concept has_value_fn = (requires {
+                           { get_value_fn<Box, Traits, V>() } -> deduced;
+                       } || on_error<"provide Traits::value(Box) or Box::value()">)
+                    && (!std::same_as<V, never>
+                        || !supplies_value<Box, Traits>
+                        || on_error<"a value named never is synthesized, so box_traits must not supply value">);
 
 } // namespace beman::monadics::detail
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_make_fn.hpp>
+#include <beman/monadics/detail/never.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -61,6 +62,13 @@ struct NonTypeConstructibleWithValue {
     NonTypeConstructibleWithValue() = delete;
 
     explicit NonTypeConstructibleWithValue(tag) {}
+};
+
+struct SuppliesMakeForNever {};
+
+template<>
+struct box_traits<SuppliesMakeForNever> {
+    static constexpr SuppliesMakeForNever make(never) noexcept;
 };
 
 } // namespace
@@ -147,6 +155,14 @@ TEST_CASE("rvalue-arg-is-moved-not-copied") {
 
     STATIC_REQUIRE(result.val.moves == 1);
     STATIC_REQUIRE(result.val.copies == 0);
+}
+
+TEST_CASE("naming-never-stands-in-for-a-case-that-cannot-be-built") {
+    STATIC_REQUIRE(has_make_fn<TraitsMakeBox, box_traits<TraitsMakeBox>, never>);
+}
+
+TEST_CASE("a-value-named-never-must-not-also-be-built") {
+    STATIC_REQUIRE_FALSE(has_make_fn<SuppliesMakeForNever, box_traits<SuppliesMakeForNever>, never>);
 }
 
 } // namespace beman::monadics::detail::tests

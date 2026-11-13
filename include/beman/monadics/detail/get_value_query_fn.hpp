@@ -3,17 +3,26 @@
 #ifndef BEMAN_MONADICS_DETAIL_GET_VALUE_QUERY_FN_HPP
 #define BEMAN_MONADICS_DETAIL_GET_VALUE_QUERY_FN_HPP
 
+#include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/utility.hpp>
 
 #include <concepts>
 
 namespace beman::monadics::detail {
 
-template<typename Box, typename Traits>
+template<typename Box, typename Traits, typename V, typename E>
 [[nodiscard]] consteval decltype(auto) get_value_query_fn() noexcept {
-    if constexpr (requires {
-                      { Traits::has_value(std::declval<const Box&>()) } -> std::same_as<bool>;
-                  }) {
+    if constexpr (std::same_as<E, never>) {
+        return [](const auto&) {
+            return true;
+        };
+    } else if constexpr (std::same_as<V, never>) {
+        return [](const auto&) {
+            return false;
+        };
+    } else if constexpr (requires {
+                             { Traits::has_value(std::declval<const Box&>()) } -> std::same_as<bool>;
+                         }) {
         return [](const auto& box) {
             return Traits::has_value(box);
         };
@@ -26,9 +35,9 @@ template<typename Box, typename Traits>
     }
 }
 
-template<typename Box, typename Traits>
+template<typename Box, typename Traits, typename V, typename E>
 concept has_value_query_fn = requires {
-    { get_value_query_fn<Box, Traits>() } -> deduced;
+    { get_value_query_fn<Box, Traits, V, E>() } -> deduced;
 } || on_error<"provide box_traits<Box>::has_value(const Box&) const, or Box::has_value() const">;
 
 } // namespace beman::monadics::detail

@@ -32,17 +32,17 @@ concept states_are_distinct = !both_cases_carry_nothing<Box, Traits> || requires
 } || on_error<"a box whose value and failure both carry nothing must provide Traits::make() or make_error(unit)">;
 
 template<typename Box, typename Traits>
-concept box = has_box_traits<Box>
-           && has_value_type<Box, Traits>
-           && has_error_type<Box, Traits>
-           && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
-           && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
-           && has_value_query_fn<Box, Traits>
-           && has_value_fn<Box, Traits>
-           && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
-           && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
-           && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
-           && states_are_distinct<Box, Traits>;
+concept assembled_box = has_box_traits<Box>
+                     && has_value_type<Box, Traits>
+                     && has_error_type<Box, Traits>
+                     && has_rebind<Box, Traits, get_value_type_t<Box, Traits>>
+                     && has_rebind_error<Box, Traits, get_error_type_t<Box, Traits>>
+                     && has_value_query_fn<Box, Traits, get_value_type_t<Box, Traits>, get_error_type_t<Box, Traits>>
+                     && has_value_fn<Box, Traits, get_value_type_t<Box, Traits>>
+                     && has_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
+                     && has_make_fn<Box, Traits, get_value_type_t<Box, Traits>>
+                     && has_make_error_fn<Box, Traits, get_error_type_t<Box, Traits>>
+                     && states_are_distinct<Box, Traits>;
 
 template<typename Box, typename Traits>
 struct traits {
@@ -51,13 +51,15 @@ struct traits {
     using error_type = get_error_type_t<Box, Traits>;
 
     template<typename T>
+        requires requires { typename get_rebind_t<Box, Traits, value_type>::template rebind<T>; }
     using rebind = get_rebind_t<Box, Traits, value_type>::template rebind<T>;
 
     template<typename E>
+        requires requires { typename get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>; }
     using rebind_error = get_rebind_error_t<Box, Traits, error_type>::template rebind_error<E>;
 
-    static constexpr auto has_value = get_value_query_fn<Box, Traits>();
-    static constexpr auto value = get_value_fn<Box, Traits>();
+    static constexpr auto has_value = get_value_query_fn<Box, Traits, value_type, error_type>();
+    static constexpr auto value = get_value_fn<Box, Traits, value_type>();
     static constexpr auto error = get_error_fn<Box, Traits, error_type>();
 
     static constexpr auto make = get_make_fn<Box, Traits, value_type>();
@@ -67,8 +69,8 @@ struct traits {
 } // namespace _get_box_traits
 
 template<typename Box>
-concept box = _get_box_traits::box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
-                                   box_traits<std::remove_cvref_t<Box>>>;
+concept box = _get_box_traits::assembled_box<std::remove_cvref_t<Box>, // maybe should preserve qualifiers?
+                                             box_traits<std::remove_cvref_t<Box>>>;
 
 template<box T>
 using get_box_traits = _get_box_traits::traits<std::remove_cvref_t<T>, box_traits<std::remove_cvref_t<T>>>;
