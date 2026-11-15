@@ -4,7 +4,21 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
+#include <expected>
+#include <utility>
+
 namespace beman::monadics::tests {
+
+namespace {
+
+struct io_error {};
+struct parse_error {};
+
+template<typename Box, typename E>
+concept builds_error_from = requires(E&& e) { get_box_traits<Box>::make_error(std::forward<E>(e)); };
+
+} // namespace
 
 TEST_CASE("box-trait-for-void-value") {
     using Expected = std::expected<void, int>;
@@ -58,6 +72,11 @@ TEST_CASE("has-error-channel") {
     STATIC_REQUIRE(has_error_channel<std::expected<int, double>>);
     STATIC_REQUIRE(has_error_channel<std::expected<void, int>>);
     STATIC_REQUIRE(has_error_channel<std::expected<int, int>>);
+}
+
+TEST_CASE("box-trait-refuses-an-error-it-cannot-hold") {
+    STATIC_REQUIRE(builds_error_from<std::expected<int, io_error>, io_error>);
+    STATIC_REQUIRE_FALSE(builds_error_from<std::expected<int, io_error>, parse_error>);
 }
 
 } // namespace beman::monadics::tests
