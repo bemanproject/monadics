@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_value_fn.hpp>
+#include <beman/monadics/detail/never.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -74,21 +75,21 @@ TEMPLATE_TEST_CASE_SIG("concept",
                        (MemberAndTraitsDisagree, true)) {
     using Traits = box_traits<Box>;
     if constexpr (Has) {
-        STATIC_REQUIRE(has_value_fn<Box, Traits>);
+        STATIC_REQUIRE(has_value_fn<Box, Traits, int>);
     } else {
-        STATIC_REQUIRE_FALSE(has_value_fn<Box, Traits>);
+        STATIC_REQUIRE_FALSE(has_value_fn<Box, Traits, int>);
     }
 }
 
 TEMPLATE_TEST_CASE("get", "", MemberValue, TraitsValue, MemberAndTraitsDisagree) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    STATIC_REQUIRE(get_value_fn<Box, Traits>()(Box{}) == 42);
+    STATIC_REQUIRE(get_value_fn<Box, Traits, int>()(Box{}) == 42);
 }
 
 TEST_CASE("a-read-the-box-cannot-reach-answers-rather-than-fails") {
     using Traits = box_traits<RvalueOnlyValue>;
-    constexpr auto fn = get_value_fn<RvalueOnlyValue, Traits>();
+    constexpr auto fn = get_value_fn<RvalueOnlyValue, Traits, int>();
 
     STATIC_REQUIRE(fn(RvalueOnlyValue{}) == 42);
     STATIC_REQUIRE_FALSE(std::invocable<decltype(fn), RvalueOnlyValue&>);
@@ -97,8 +98,16 @@ TEST_CASE("a-read-the-box-cannot-reach-answers-rather-than-fails") {
 TEMPLATE_TEST_CASE("keep-value-category", "", TraitsValue, MemberValue) {
     using Box = TestType;
     using Traits = box_traits<Box>;
-    using Fn = decltype(get_value_fn<Box, Traits>());
+    using Fn = decltype(get_value_fn<Box, Traits, int>());
     STATIC_REQUIRE(helpers::keeps_return_value_category<Fn, Box, int>);
+}
+
+TEST_CASE("naming-never-stands-in-for-a-case-that-cannot-be-read") {
+    STATIC_REQUIRE(has_value_fn<NoValue, box_traits<NoValue>, never>);
+}
+
+TEST_CASE("a-value-named-never-must-not-also-be-supplied") {
+    STATIC_REQUIRE_FALSE(has_value_fn<TraitsValue, box_traits<TraitsValue>, never>);
 }
 
 } // namespace beman::monadics::detail::tests

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/monadics/detail/get_make_error_fn.hpp>
+#include <beman/monadics/detail/never.hpp>
 #include <beman/monadics/detail/unit.hpp>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -48,6 +49,13 @@ struct DefaultConstructsToItsFailure {
     int err{-1};
 
     constexpr bool operator==(const DefaultConstructsToItsFailure&) const = default;
+};
+
+struct SuppliesMakeErrorForNever {};
+
+template<>
+struct box_traits<SuppliesMakeErrorForNever> {
+    static constexpr SuppliesMakeErrorForNever make_error(never) noexcept;
 };
 
 } // namespace
@@ -129,6 +137,14 @@ TEST_CASE("rvalue-arg-is-moved-not-copied") {
 
     STATIC_REQUIRE(result.err.moves == 1);
     STATIC_REQUIRE(result.err.copies == 0);
+}
+
+TEST_CASE("naming-never-stands-in-for-a-case-that-cannot-be-built") {
+    STATIC_REQUIRE(has_make_error_fn<TraitsMakeError, box_traits<TraitsMakeError>, never>);
+}
+
+TEST_CASE("an-error-named-never-must-not-also-be-built") {
+    STATIC_REQUIRE_FALSE(has_make_error_fn<SuppliesMakeErrorForNever, box_traits<SuppliesMakeErrorForNever>, never>);
 }
 
 } // namespace beman::monadics::detail::tests
